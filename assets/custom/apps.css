@@ -1,0 +1,9 @@
+.skin-green .wrapper, .skin-green .main-sidebar, .skin-green .left-side, .content-wrapper {
+    background-color: #FFFFFF;
+}
+.main-content {
+    background-color: #ecf0f5;
+}
+.skin-green .content-header, .background-wrapper, .skin-green .wrapper, .content-wrapper {
+    background: #ecf0f5;
+}
