@@ -68,10 +68,54 @@ class Data_2 extends CI_Controller {
                     )
                 ),
             ),
-            'url' => 'data_2/data',
+            'urlDatatables' => 'data_2/data',
+            'form' => 'data_1/form',
             "title" => "Data 2",
             "subTitle" => "Detail Data 2",
             "boxTitle" => "Tabel Data 2",
+            "requestAdd" => true
+        );
+
+        echo json_encode($data);
+    }
+
+    public function form() {
+        $data = array(
+            'form' => array(
+                array(
+                    "key" => "name",
+                    "type" => "text",
+                    "title" => "Nama Lengkap",
+                    "placeholder" => "Nama Lengkap Anda"
+                ),
+                array(
+                    "key" => "gender",
+                    "type" => "text",
+                    "title" => "Jenis Kelamin",
+                    "placeholder" => "Jenis Kelamin"
+                )
+            ),
+            'schema' => array(
+                "type" => "object",
+                "title" => "Comment",
+                "properties" => array(
+                    "name" => array(
+                        "title" => "Name",
+                        "type" => "string"
+                    ),
+                    "gender" => array(
+                        "title" => "Jenis Kelamin",
+                        "type" => "string",
+                        "description" => "Jenis Kelamin Anda"
+                    ),
+                ),
+                "required" => array(
+                    "name",
+                    "gender",
+                )
+            ),
+            'model' => array(
+            )
         );
 
         echo json_encode($data);

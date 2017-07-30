@@ -62,8 +62,48 @@ class Data_1 extends CI_Controller {
                     )
                 ),
             ),
+            'modal' => array(
+                'add' => array(
+                    'form' => array(
+                        array(
+                            "key" => "first_name",
+                            "type" => "text",
+                            "title" => "Nama Depan",
+                            "placeholder" => "Nama Lengkap Anda"
+                        ),
+                        array(
+                            "key" => "last_name",
+                            "type" => "text",
+                            "title" => "Nama Belakang",
+                            "placeholder" => "Nama Belakang Anda"
+                        )
+                    ),
+                    'schema' => array(
+                        "type" => "object",
+                        "title" => "Comment",
+                        "properties" => array(
+                            "name" => array(
+                                "title" => "first_name",
+                                "type" => "string"
+                            ),
+                            "last_name" => array(
+                                "title" => "Jenis Kelamin",
+                                "type" => "string",
+                                "description" => "Nama Belakang Anda"
+                            ),
+                        ),
+                        "required" => array(
+                            "first_name",
+                            "last_name",
+                        )
+                    ),
+                )
+            ),
             'urlDatatables' => 'data_1/data',
-            'form' => 'data_1/form',
+            'urlCreate' => 'data_1/create',
+            'urlUpdate' => 'data_1/update',
+            'urlDelete' => 'data_1/delete',
+            'urlView' => 'data_1/view/',
             "title" => "Data 1",
             "subTitle" => "Detail Data 1",
             "boxTitle" => "Tabel Data 1",
@@ -72,47 +112,13 @@ class Data_1 extends CI_Controller {
 
         echo json_encode($data);
     }
+    
+    public function view($id) {
+        $this->db->from('data_1');
+        $this->db->where('id', $id);
+        $result = $this->db->get()->row();
 
-    public function form() {
-        $data = array(
-            'form' => array(
-                array(
-                    "key" => "name",
-                    "type" => "text",
-                    "title" => "Nama Lengkap",
-                    "placeholder" => "Nama Lengkap Anda"
-                ),
-                array(
-                    "key" => "gender",
-                    "type" => "text",
-                    "title" => "Jenis Kelamin",
-                    "placeholder" => "Jenis Kelamin"
-                )
-            ),
-            'schema' => array(
-                "type" => "object",
-                "title" => "Comment",
-                "properties" => array(
-                    "name" => array(
-                        "title" => "Name",
-                        "type" => "string"
-                    ),
-                    "gender" => array(
-                        "title" => "Jenis Kelamin",
-                        "type" => "string",
-                        "description" => "Jenis Kelamin Anda"
-                    ),
-                ),
-                "required" => array(
-                    "name",
-                    "gender",
-                )
-            ),
-            'model' => array(
-            )
-        );
-
-        echo json_encode($data, JSON_PRETTY_PRINT);
+        echo json_encode($result);
     }
 
 }

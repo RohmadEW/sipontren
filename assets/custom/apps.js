@@ -13,7 +13,7 @@ mainApp.config(['$routeProvider', '$locationProvider',
                     }
                 })
                 .otherwise({
-                    redirectTo: '/home'
+                    redirectTo: '/home/home'
                 });
     }
 ]);
@@ -163,8 +163,11 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $http, gener
             ariaDescribedBy: 'modal-body',
             templateUrl: 'modalForm.html',
             controller: 'ModalInstanceCtrl',
-            size: 'lg'
+            size: 'lg',
+            backdrop: 'static'
         });
+        
+        dataScopeShared.addData('DATA_CHANGED_INFO', id ? $scope.dataChanged[id] : null);
 
         modalInstance.result.then(function () {
             $log.info('Modal closed');
@@ -178,9 +181,9 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $http, gener
     function successCallback(response) {
         $scope.response = response.data;
 
-        dataScopeShared.addData('RESPONSE_INFO', $scope.response);
-
         $scope = datatablesService.create($scope);
+
+        dataScopeShared.addData('RESPONSE_INFO', $scope.response);
         
         $scope.columnReady = true;
     }
@@ -206,6 +209,7 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $http, gener
 mainApp.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstance, $q, $timeout, generalService, $routeParams, dataScopeShared) {
     $scope.mainURI = $routeParams.thecontroller;
     $scope.dataShared = dataScopeShared.getData('RESPONSE_INFO');
+    $scope.dataChanged = dataScopeShared.getData('DATA_CHANGED_INFO');
 
     $scope.modalSubmit = function () {
         $uibModalInstance.close();
@@ -218,14 +222,14 @@ mainApp.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstan
     if ($scope.dataShared === null) {
         alert("Halaman belum siap membuat form.");
     } else {
-        $http.get($scope.dataShared.form).then(successCallback, generalService.errorCallback);
+        $scope.form = $scope.dataShared.modal.edit ? $scope.dataShared.modal.edit.form : $scope.dataShared.modal.add.form;
+        $scope.schema = $scope.dataShared.modal.edit ? $scope.dataShared.modal.edit.schema : $scope.dataShared.modal.add.schema;
+        $scope.model = {};
+            
+        if($scope.dataChanged !== null) $http.get($scope.dataShared.urlView + $scope.dataChanged.id).then(successCallback, generalService.errorCallback);
 
         function successCallback(response) {
-            var dataResponse = response.data;
-
-            $scope.form = dataResponse.form;
-            $scope.schema = dataResponse.schema;
-            $scope.model = dataResponse.model;
+            $scope.model = response.data;
         }
     }
 
