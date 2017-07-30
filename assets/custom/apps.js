@@ -1,4 +1,4 @@
-var mainApp = angular.module("mainApp", ['ngRoute', 'datatables', 'ngResource', 'datatables.buttons', 'datatables.bootstrap', 'datatables.light-columnfilter', 'schemaForm', 'ngMaterial', 'ngAnimate', 'ui.bootstrap']);
+var mainApp = angular.module("mainApp", ['ngRoute', 'datatables', 'ngResource', 'datatables.buttons', 'datatables.bootstrap', 'datatables.light-columnfilter', 'schemaForm', 'ui.bootstrap']); //, 'ngMaterial', 'ngAnimate'
 
 mainApp.value('url_menu', 'template/menu');
 mainApp.value('url_info', 'template/info');
@@ -24,6 +24,23 @@ mainApp.service('generalService', function () {
     };
 });
 
+mainApp.service("dataResponseShared", function () {
+    var dataList = null;
+
+    var addData = function (dataShared) {
+        dataList = dataShared;
+    };
+
+    var getData = function () {
+        return dataList;
+    };
+
+    return {
+        addData: addData,
+        getData: getData
+    };
+});
+
 mainApp.controller('headerController', function ($scope, $http, generalService, url_menu) {
     $http.get(url_menu).then(callbackMenu, generalService.errorCallback);
 
@@ -35,17 +52,17 @@ mainApp.controller('headerController', function ($scope, $http, generalService, 
 
 mainApp.controller('footerController', function ($scope, $http, generalService, url_info) {
     $http.get(url_info).then(callbackInfo, generalService.errorCallback);
-    
+
     function callbackInfo(response) {
         $scope.info = response.data;
     }
 });
 
-mainApp.controller('homeController', function ($scope, $http) {
+mainApp.controller('homeController', function ($scope, $http, $q, $timeout) {
 
 });
 
-mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DTOptionsBuilder, DTColumnBuilder, $http, $q, $resource, generalService, $timeout, $uibModal, $log, $document) {
+mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DTOptionsBuilder, DTColumnBuilder, $http, $q, $resource, generalService, $timeout, $uibModal, $log, $document, dataResponseShared) {
     $scope.mainURI = $routeParams.thecontroller;
     $scope.columnReady = false;
     $scope.message = '';
@@ -82,6 +99,8 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DT
     function successCallback(response) {
         $scope.response = response.data;
 
+        dataResponseShared.addData($scope.response);
+
         $scope.dtColumns = [];
         $scope.columnsFilter = [];
 
@@ -110,7 +129,7 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DT
 
         $scope.dtOptions = DTOptionsBuilder.newOptions()
                 .withOption('ajax', {
-                    url: $scope.response.url,
+                    url: $scope.response.urlDatatables,
                     type: 'POST'
                 })
                 .withDataProp('data')
@@ -123,7 +142,7 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DT
                 .withOption('headerCallback', headerCallback)
                 .withButtons([
                     {extend: 'copy', text: '<i class="fa fa-clone"></i>&nbsp;&nbsp;Salin', className: 'btn btn-primary btn-flat'},
-                    {extend: 'csv', text: '<i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;CSV', title: 'Download data dalam CSV', className: 'btn btn-primary btn-flat'},
+//                    {extend: 'csv', text: '<i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;CSV', title: 'Download data dalam CSV', className: 'btn btn-primary btn-flat'},
                     {extend: 'pdf', text: '<i class="fa fa-file-pdf-o"></i>&nbsp;&nbsp;PDF', title: 'Download data dalam PDF', className: 'btn btn-primary btn-flat'},
                     {extend: 'excel', text: '<i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;XLSX', title: 'Download data dalam XLS', className: 'btn btn-primary btn-flat'},
                     {extend: 'print', text: '<i class="fa fa-print"></i>&nbsp;&nbsp;Cetak', className: 'btn btn-primary btn-flat'},
@@ -133,6 +152,13 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DT
                         action: function (e, dt, node, config) {
                             dt.ajax.reload();
                         }
+                    },
+                    {
+                        text: '<i class="fa fa-plus"></i>&nbsp;&nbsp;Tambah',
+                        className: 'btn btn-primary btn-flat',
+                        action: function (e, dt, node, config) {
+                            $scope.modalOpen('lg');
+                        }
                     }
                 ])
                 .withBootstrap()
@@ -141,16 +167,6 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DT
 
         $scope.dtInstance = {};
         $scope.columnReady = true;
-
-//        resetTemplate();
-
-//        console.log('INSTANCE', $scope);
-    }
-
-    function resetTemplate() {
-        var buttonDatatables = angular.element(document.querySelector('.dt-button'));
-        buttonDatatables.addClass('btn btn-primary btn-flat');
-        buttonDatatables.removeClass('dt-button');
     }
 
     function edit(id) {
@@ -180,14 +196,10 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DT
     }
 });
 
-mainApp.directive('buttonDirective', function () {
-    return {
-        restrict: 'E',
-        template: '<button type="button" class="btn btn-primary btn-flat animated fadeIn" ng-click="modalOpen(\'lg\')"><i class="fa fa-plus"></i>&nbsp;&nbsp;Tambah</button>'
-    };
-});
+mainApp.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstance, $q, $timeout, generalService, $routeParams, dataResponseShared) {
+    $scope.mainURI = $routeParams.thecontroller;
+    $scope.dataShared = dataResponseShared.getData();
 
-mainApp.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, $q, $timeout) {
     $scope.modalSubmit = function () {
         $uibModalInstance.close();
     };
@@ -196,83 +208,19 @@ mainApp.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, $q,
         $uibModalInstance.dismiss('cancel');
     };
 
-    $scope.schema = {
-        "type": "object",
-        "title": "Comment",
-        "properties": {
-            "name": {
-                "title": "Name",
-                "type": "string"
-            },
-            "email": {
-                "title": "Email",
-                "type": "string",
-                "pattern": "^\\S+@\\S+$",
-                "description": "Email will be used for evil."
-            },
-            "comment": {
-                "title": "Comment",
-                "type": "string"
-            }
-        },
-        "required": ["name", "email", "comment"]
-    };
+    if ($scope.dataShared === null) {
+        alert("Halaman belum siap membuat form.");
+    } else {
+        $http.get($scope.dataShared.form).then(successCallback, generalService.errorCallback);
 
-    $scope.form = [
-        {
-            key: 'name',
-            placeholder: 'Anything but "Bob"',
-            $asyncValidators: {
-                'async': function (name) {
-                    var deferred = $q.defer();
-                    $timeout(function () {
-                        if (angular.isString(name) && name.toLowerCase().indexOf('bob') !== -1) {
-                            deferred.reject();
-                        } else {
-                            deferred.resolve();
-                        }
-                    }, 500);
-                    return deferred.promise;
-                }
-            },
-            validationMessage: {
-                'async': "Wooohoo thats not an OK name!"
-            }
+        function successCallback(response) {
+            var dataResponse = response.data;
 
-        },
-        {
-            key: 'email',
-            placeholder: 'Not MY email',
-            ngModel: function (ngModel) {
-                ngModel.$validators.myMail = function (value) {
-                    return value !== 'david.lgj@gmail.com';
-                };
-            },
-            validationMessage: {
-                'myMail': "Thats my mail!"
-            }
-        },
-        {
-            "key": "comment",
-            "type": "textarea",
-            "placeholder": "Make a comment, write 'damn' and check the model",
-            $parsers: [
-                function (value) {
-                    if (value && value.replace) {
-                        return value.replace(/(damn|fuck|apple)/, '#!@%&');
-                    }
-                    return value;
-                }
-            ]
-        },
-        {
-            "type": "submit",
-            "style": "btn-info",
-            "title": "OK"
+            $scope.form = dataResponse.form;
+            $scope.schema = dataResponse.schema;
+            $scope.model = dataResponse.model;
         }
-    ];
-
-    $scope.model = {};
+    }
 
     $scope.$watch('model', function (value) {
         if (value) {

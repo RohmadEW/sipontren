@@ -49,7 +49,6 @@ class Data_1 extends CI_Controller {
                     'id' => 'ip_address',
                     'title' => 'IP Address',
                     'filter' => array(
-                        
                     )
                 ),
                 array(
@@ -60,17 +59,63 @@ class Data_1 extends CI_Controller {
                         array('function' => 'edit', 'title' => 'Edit', 'fa' => 'edit', 'class' => 'primary')
                     ),
                     'filter' => array(
-                        
                     )
                 ),
             ),
-            'url' => 'data_1/data',
+            'urlDatatables' => 'data_1/data',
+            'form' => 'data_1/form',
             "title" => "Data 1",
             "subTitle" => "Detail Data 1",
             "boxTitle" => "Tabel Data 1",
         );
 
         echo json_encode($data);
+    }
+
+    public function form() {
+        $data = array(
+            'form' => array(
+                array(
+                    "key" => "name",
+                    "type" => "text",
+                    "title" => "Nama Lengkap",
+                    "labelHtmlClass" => "col-md-3",
+                    "fieldHtmlClass" => "col-md-4",
+                    "placeholder" => "Nama Lengkap Anda"
+                ),
+                array(
+                    "key" => "gender",
+                    "type" => "text",
+                    "title" => "Jenis Kelamin",
+                    "labelHtmlClass" => "col-md-3",
+                    "fieldHtmlClass" => "col-md-7",
+                    "placeholder" => "Jenis Kelamin"
+                )
+            ),
+            'schema' => array(
+                "type" => "object",
+                "title" => "Comment",
+                "properties" => array(
+                    "name" => array(
+                        "title" => "Name",
+                        "type" => "string"
+                    ),
+                    "gender" => array(
+                        "title" => "Jenis Kelamin",
+                        "type" => "string",
+                        "description" => "Jenis Kelamin Anda"
+                    ),
+                ),
+                "required" => array(
+                    "name",
+                    "gender",
+                )
+            ),
+            'model' => array(
+            )
+        );
+
+        echo json_encode($data, JSON_PRETTY_PRINT);
     }
 
 }
