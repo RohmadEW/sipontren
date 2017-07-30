@@ -80,16 +80,12 @@ class Data_1 extends CI_Controller {
                     "key" => "name",
                     "type" => "text",
                     "title" => "Nama Lengkap",
-                    "labelHtmlClass" => "col-md-3",
-                    "fieldHtmlClass" => "col-md-4",
                     "placeholder" => "Nama Lengkap Anda"
                 ),
                 array(
                     "key" => "gender",
                     "type" => "text",
                     "title" => "Jenis Kelamin",
-                    "labelHtmlClass" => "col-md-3",
-                    "fieldHtmlClass" => "col-md-7",
                     "placeholder" => "Jenis Kelamin"
                 )
             ),

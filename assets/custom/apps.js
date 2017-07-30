@@ -141,8 +141,8 @@ mainApp.controller('homeController', function ($scope, $http, $q, $timeout) {
 
 });
 
-mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DTOptionsBuilder, DTColumnBuilder, $http, $q, $resource, generalService, $timeout, $uibModal, $log, $document, dataScopeShared, datatablesService) {
-//    dataScopeShared.addData('SIMAPES_TABLES', $scope);
+mainApp.controller('simapesTables', function ($scope, $routeParams, $http, generalService, $timeout, $uibModal, $log, dataScopeShared, datatablesService) {
+    dataScopeShared.addData('RESPONSE_INFO', null);
 
     $scope.mainURI = $routeParams.thecontroller;
     $scope.columnReady = false;
