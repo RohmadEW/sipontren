@@ -56,7 +56,7 @@ class Data_1 extends CI_Controller {
                     'title' => 'Aksi',
                     'unsortable' => true,
                     'render' => array(
-                        array('function' => 'edit', 'title' => 'Edit', 'fa' => 'edit', 'class' => 'primary')
+                        array('function' => 'modalOpen', 'title' => 'Edit', 'fa' => 'edit', 'class' => 'primary')
                     ),
                     'filter' => array(
                     )
@@ -67,6 +67,7 @@ class Data_1 extends CI_Controller {
             "title" => "Data 1",
             "subTitle" => "Detail Data 1",
             "boxTitle" => "Tabel Data 1",
+            "requestAdd" => true
         );
 
         echo json_encode($data);

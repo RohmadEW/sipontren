@@ -24,15 +24,15 @@ mainApp.service('generalService', function () {
     };
 });
 
-mainApp.service("dataResponseShared", function () {
-    var dataList = null;
+mainApp.service("dataScopeShared", function () {
+    var dataList = {};
 
-    var addData = function (dataShared) {
-        dataList = dataShared;
+    var addData = function (key, value) {
+        dataList[key] = value;
     };
 
-    var getData = function () {
-        return dataList;
+    var getData = function (key) {
+        return dataList[key];
     };
 
     return {
@@ -41,66 +41,8 @@ mainApp.service("dataResponseShared", function () {
     };
 });
 
-mainApp.controller('headerController', function ($scope, $http, generalService, url_menu) {
-    $http.get(url_menu).then(callbackMenu, generalService.errorCallback);
-
-    function callbackMenu(response) {
-        $scope.name_app = response.data.name_app;
-        $scope.menus = response.data.menu;
-    }
-});
-
-mainApp.controller('footerController', function ($scope, $http, generalService, url_info) {
-    $http.get(url_info).then(callbackInfo, generalService.errorCallback);
-
-    function callbackInfo(response) {
-        $scope.info = response.data;
-    }
-});
-
-mainApp.controller('homeController', function ($scope, $http, $q, $timeout) {
-
-});
-
-mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DTOptionsBuilder, DTColumnBuilder, $http, $q, $resource, generalService, $timeout, $uibModal, $log, $document, dataResponseShared) {
-    $scope.mainURI = $routeParams.thecontroller;
-    $scope.columnReady = false;
-    $scope.message = '';
-    $scope.title = 'Processing...';
-    $scope.selected = {};
-    $scope.selectAll = false;
-    $scope.edit = edit;
-    $scope.delete = deleteRow;
-    $scope.reloadDatatables = reloadDatatables;
-    $scope.dataChanged = {};
-    $scope.headerFilter = {};
-
-    $scope.modalOpen = function (size, parentSelector) {
-        var parentElem = parentSelector ? angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
-        var modalInstance = $uibModal.open({
-            animation: true,
-            ariaLabelledBy: 'modal-title',
-            ariaDescribedBy: 'modal-body',
-            templateUrl: 'modalForm.html',
-            controller: 'ModalInstanceCtrl',
-            size: size,
-            appendTo: parentElem
-        });
-
-        modalInstance.result.then(function () {
-            $log.info('Modal closed');
-        }, function () {
-            $log.info('Modal dismissed at: ' + new Date());
-        });
-    };
-
-    $http.get($scope.mainURI + '/info').then(successCallback, generalService.errorCallback);
-
-    function successCallback(response) {
-        $scope.response = response.data;
-
-        dataResponseShared.addData($scope.response);
-
+mainApp.service("datatablesService", function (DTColumnBuilder, DTOptionsBuilder, $compile) {
+    this.create = function ($scope) {
         $scope.dtColumns = [];
         $scope.columnsFilter = [];
 
@@ -127,6 +69,14 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DT
             $scope.columnsFilter.push(column.filter);
         });
 
+        $scope.buttonAddDatatables = $scope.response.requestAdd ? {
+            text: '<i class="fa fa-plus"></i>&nbsp;&nbsp;Tambah',
+            className: 'btn btn-primary btn-flat',
+            action: function (e, dt, node, config) {
+                $scope.modalOpen();
+            }
+        } : {};
+
         $scope.dtOptions = DTOptionsBuilder.newOptions()
                 .withOption('ajax', {
                     url: $scope.response.urlDatatables,
@@ -137,9 +87,16 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DT
                 .withOption('serverSide', true)
                 .withPaginationType('full_numbers')
                 .withDisplayLength(10)
-                .withOption('createdRow', createdRow)
+                .withOption('createdRow', function (row, data, dataIndex) {
+                    $compile(angular.element(row).contents())($scope);
+                })
                 .withOption('stateSave', true)
-                .withOption('headerCallback', headerCallback)
+                .withOption('headerCallback', function (header) {
+                    if (!$scope.headerCompiled) {
+                        $scope.headerCompiled = true;
+                        $compile(angular.element(header).contents())($scope);
+                    }
+                })
                 .withButtons([
                     {extend: 'copy', text: '<i class="fa fa-clone"></i>&nbsp;&nbsp;Salin', className: 'btn btn-primary btn-flat'},
 //                    {extend: 'csv', text: '<i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;CSV', title: 'Download data dalam CSV', className: 'btn btn-primary btn-flat'},
@@ -153,19 +110,78 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DT
                             dt.ajax.reload();
                         }
                     },
-                    {
-                        text: '<i class="fa fa-plus"></i>&nbsp;&nbsp;Tambah',
-                        className: 'btn btn-primary btn-flat',
-                        action: function (e, dt, node, config) {
-                            $scope.modalOpen('lg');
-                        }
-                    }
+                    $scope.buttonAddDatatables
                 ])
                 .withBootstrap()
                 .withLightColumnFilter($scope.columnsFilter)
                 .withDOM("<'row'<'col-sm-3'l><'col-sm-6 text-center'B><'col-sm-3 text-right'f>>t<'row'<'col-sm-6'i><'col-sm-6 text-right'p>>");
 
-        $scope.dtInstance = {};
+        return $scope;
+    };
+});
+
+mainApp.controller('headerController', function ($scope, $http, generalService, url_menu) {
+    $http.get(url_menu).then(callbackMenu, generalService.errorCallback);
+
+    function callbackMenu(response) {
+        $scope.name_app = response.data.name_app;
+        $scope.menus = response.data.menu;
+    }
+});
+
+mainApp.controller('footerController', function ($scope, $http, generalService, url_info) {
+    $http.get(url_info).then(callbackInfo, generalService.errorCallback);
+
+    function callbackInfo(response) {
+        $scope.info = response.data;
+    }
+});
+
+mainApp.controller('homeController', function ($scope, $http, $q, $timeout) {
+
+});
+
+mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DTOptionsBuilder, DTColumnBuilder, $http, $q, $resource, generalService, $timeout, $uibModal, $log, $document, dataScopeShared, datatablesService) {
+//    dataScopeShared.addData('SIMAPES_TABLES', $scope);
+
+    $scope.mainURI = $routeParams.thecontroller;
+    $scope.columnReady = false;
+    $scope.message = '';
+    $scope.title = 'Processing...';
+    $scope.selected = {};
+    $scope.selectAll = false;
+    $scope.edit = edit;
+    $scope.delete = deleteRow;
+    $scope.reloadDatatables = reloadDatatables;
+    $scope.dataChanged = {};
+    $scope.headerFilter = {};
+
+    $scope.modalOpen = function (id) {
+        var modalInstance = $uibModal.open({
+            animation: true,
+            ariaLabelledBy: 'modal-title',
+            ariaDescribedBy: 'modal-body',
+            templateUrl: 'modalForm.html',
+            controller: 'ModalInstanceCtrl',
+            size: 'lg'
+        });
+
+        modalInstance.result.then(function () {
+            $log.info('Modal closed');
+        }, function () {
+            $log.info('Modal dismissed at: ' + new Date());
+        });
+    };
+
+    $http.get($scope.mainURI + '/info').then(successCallback, generalService.errorCallback);
+
+    function successCallback(response) {
+        $scope.response = response.data;
+
+        dataScopeShared.addData('RESPONSE_INFO', $scope.response);
+
+        $scope = datatablesService.create($scope);
+        
         $scope.columnReady = true;
     }
 
@@ -177,9 +193,6 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DT
         $scope.message = 'You are trying to remove the row: ' + JSON.stringify(data);
         $scope.reloadDatatables();
     }
-    function createdRow(row, data, dataIndex) {
-        $compile(angular.element(row).contents())($scope);
-    }
     function reloadDatatables() {
         $timeout(function () {
             angular.element('#reloadDatatables').triggerHandler('click');
@@ -188,17 +201,11 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $compile, DT
     function callback(json) {
         console.log(json);
     }
-    function headerCallback(header) {
-        if (!$scope.headerCompiled) {
-            $scope.headerCompiled = true;
-            $compile(angular.element(header).contents())($scope);
-        }
-    }
 });
 
-mainApp.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstance, $q, $timeout, generalService, $routeParams, dataResponseShared) {
+mainApp.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstance, $q, $timeout, generalService, $routeParams, dataScopeShared) {
     $scope.mainURI = $routeParams.thecontroller;
-    $scope.dataShared = dataResponseShared.getData();
+    $scope.dataShared = dataScopeShared.getData('RESPONSE_INFO');
 
     $scope.modalSubmit = function () {
         $uibModalInstance.close();
