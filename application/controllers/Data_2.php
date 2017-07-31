@@ -61,12 +61,49 @@ class Data_2 extends CI_Controller {
                     'title' => 'Aksi',
                     'unsortable' => true,
                     'render' => array(
-                        array('function' => 'edit', 'title' => 'Edit', 'fa' => 'edit', 'class' => 'primary')
+                        array('function' => 'modalOpen', 'title' => 'Edit', 'fa' => 'edit', 'class' => 'primary')
                     ),
                     'filter' => array(
                         
                     )
                 ),
+            ),
+            'modal' => array(
+                'add' => array(
+                    'form' => array(
+                        array(
+                            "key" => "first_name",
+                            "type" => "text",
+                            "title" => "Nama Depan",
+                            "placeholder" => "Nama Lengkap Anda"
+                        ),
+                        array(
+                            "key" => "last_name",
+                            "type" => "text",
+                            "title" => "Nama Belakang",
+                            "placeholder" => "Nama Belakang Anda"
+                        )
+                    ),
+                    'schema' => array(
+                        "type" => "object",
+                        "title" => "Comment",
+                        "properties" => array(
+                            "name" => array(
+                                "title" => "first_name",
+                                "type" => "string"
+                            ),
+                            "last_name" => array(
+                                "title" => "Jenis Kelamin",
+                                "type" => "string",
+                                "description" => "Nama Belakang Anda"
+                            ),
+                        ),
+                        "required" => array(
+                            "first_name",
+                            "last_name",
+                        )
+                    ),
+                )
             ),
             'urlDatatables' => 'data_2/data',
             'urlCreate' => 'data_2/create',
@@ -76,7 +113,8 @@ class Data_2 extends CI_Controller {
             "title" => "Data 2",
             "subTitle" => "Detail Data 2",
             "boxTitle" => "Tabel Data 2",
-            "requestAdd" => true
+            "requestAdd" => true,
+            'titlePage' => 'Data 2 - SIMAPES'
         );
 
         echo json_encode($data);
@@ -85,7 +123,7 @@ class Data_2 extends CI_Controller {
     public function view() {
         $post = json_decode(file_get_contents('php://input'));
         
-        $this->db->from('data_1');
+        $this->db->from('data_2');
         $this->db->where('id', $post->id);
         $result = $this->db->get()->row();
 
@@ -94,7 +132,7 @@ class Data_2 extends CI_Controller {
     
     public function delete($id) {
         $where = array('id' => $id);
-        $this->db->delete('data_1', $where);
+        $this->db->delete('data_2', $where);
         
         $result = $this->db->affected_rows();
         

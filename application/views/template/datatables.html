@@ -22,7 +22,7 @@
                         <div class="box-body animated fadeIn" ng-if="columnReady">
                             <!--<p class="text-danger animated fadeIn"><strong>{{ message}}</strong></p>-->
                             <button class="btn btn-primary" ng-click="dtInstance.rerender()" ng-hide="true">Rerender</button>
-                            <button id="reloadDatatables" ng-click="dtInstance.reloadData()" type="button" class="btn btn-info" ng-hide="true">
+                            <button id="reloadDatatables" ng-click="dtInstance.reloadData(null, false)" type="button" class="btn btn-info" ng-hide="true">
                                 <i class="fa fa-refresh"></i>&nbsp;Reload data
                             </button>
                             <table datatable="" dt-options="dtOptions" dt-columns="dtColumns" dt-instance="dtInstance" class="row-border hover animated fadeIn"></table>

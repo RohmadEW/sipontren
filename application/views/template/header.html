@@ -22,6 +22,9 @@
         <link rel="stylesheet" href="assets/plugins/angular-datatables/angular-datatables.css">
         <link rel="stylesheet" href="assets/plugins/animate/animate.css">
         <link rel="stylesheet" href="assets/plugins/pace/pace.min.css">
+        <link rel="stylesheet" href="assets/plugins/datepicker/themes/default.css">
+        <link rel="stylesheet" href="assets/plugins/datepicker/themes/default.time.css">
+        <link rel="stylesheet" href="assets/plugins/datepicker/themes/default.date.css">
 
         <link rel="stylesheet" href="assets/plugins/angular-material/angular-material.css">
         
@@ -48,6 +51,10 @@
         <script src="assets/plugins/fastclick/fastclick.js"></script>
         <script src="assets/plugins/tv4/tv4.min.js"></script>
         <script src="assets/plugins/pace/pace.min.js"></script>
+        <script src="assets/plugins/pace/picker.js"></script>
+        <script src="assets/plugins/datepicker/picker.time.js"></script>
+        <script src="assets/plugins/datepicker/picker.date.js"></script>
+        <script src="assets/plugins/datepicker/translations/id_ID.js"></script>
 
         <script src="assets/vendor/angular/angular.min.js"></script>
         <script src="assets/vendor/angular/angular-animate.min.js"></script>
@@ -84,14 +91,18 @@
         <script src="assets/plugins/angular-sanitize/angular-sanitize.min.js"></script>
         <script src="assets/plugins/angular-schema-form/ObjectPath.js"></script>
         <script src="assets/plugins/angular-schema-form/schema-form.min.js"></script>
-        <script src="assets/plugins/angular-schema-form/bootstrap-decorator.js"></script>
+        <script src="assets/plugins/angular-schema-form/bootstrap-decorator.min.js"></script>
+        <script src="assets/plugins/angular-schema-form/bootstrap-datepicker.min.js"></script>
 
         <script src="assets/plugins/angular-material/angular-material.min.js"></script>
 
         <script src="assets/dist/js/app.min.js"></script>
         <script src="assets/dist/js/demo.js"></script>
 
-        <script src="assets/custom/apps.js"></script>
+        <script src="apps/route.js"></script>
+        <script src="apps/services/main_service.js"></script>
+        <script src="apps/controllers/main_controller.js"></script>
+        <script src="apps/controllers/datatables_controller.js"></script>
 
         <script type="text/javascript">
             $(document).ajaxStart(function () {

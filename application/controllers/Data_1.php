@@ -56,7 +56,8 @@ class Data_1 extends CI_Controller {
                     'title' => 'Aksi',
                     'unsortable' => true,
                     'render' => array(
-                        array('function' => 'modalOpen', 'title' => 'Edit', 'fa' => 'edit', 'class' => 'primary')
+                        array('function' => 'modalOpen', 'title' => 'Edit', 'fa' => 'edit', 'class' => 'primary'),
+                        array('function' => 'deleteRow', 'title' => 'Hapus', 'fa' => 'remove', 'class' => 'danger'),
                     ),
                     'filter' => array(
                     )
@@ -76,7 +77,48 @@ class Data_1 extends CI_Controller {
                             "type" => "text",
                             "title" => "Nama Belakang",
                             "placeholder" => "Nama Belakang Anda"
-                        )
+                        ),
+                        array(
+                            "key" => "gender_select",
+                            "type" => "select",
+                            "title" => "Jenis Kelamin",
+                            "titleMap" => array(
+                                array('value' => 'male', 'name' => 'Male'),
+                                array('value' => 'female', 'name' => 'Female')
+                            )
+                        ),
+                        array(
+                            "key" => "gender_checkboxes",
+                            "type" => "checkboxes",
+                            "title" => "Jenis Kelamin",
+                            "titleMap" => array(
+                                array('value' => 'male', 'name' => 'Male'),
+                                array('value' => 'female', 'name' => 'Female')
+                            )
+                        ),
+                        array(
+                            "key" => "gender_radios",
+                            "type" => "radios",
+                            "title" => "Jenis Kelamin",
+                            "titleMap" => array(
+                                array('value' => 'male', 'name' => 'Male'),
+                                array('value' => 'female', 'name' => 'Female')
+                            )
+                        ),
+                        array(
+                            "key" => "gender_radios-inline",
+                            "type" => "radios-inline",
+                            "title" => "Jenis Kelamin",
+                            "titleMap" => array(
+                                array('value' => 'male', 'name' => 'Male'),
+                                array('value' => 'female', 'name' => 'Female')
+                            )
+                        ),
+                        array(
+                            "key" => "gender_datepicker",
+                            "type" => "datepicker",
+                            "title" => "Jenis Kelamin",
+                        ),
                     ),
                     'schema' => array(
                         "type" => "object",
@@ -87,14 +129,40 @@ class Data_1 extends CI_Controller {
                                 "type" => "string"
                             ),
                             "last_name" => array(
-                                "title" => "Jenis Kelamin",
+                                "title" => "Nama Belakang",
                                 "type" => "string",
+                                "description" => "Nama Belakang Anda"
+                            ),
+                            "gender_select" => array(
+                                "title" => "Jenis Kelamin",
+                                "description" => "Nama Belakang Anda"
+                            ),
+                            "gender_checkboxes" => array(
+                                "title" => "Jenis Kelamin",
+                                "description" => "Nama Belakang Anda"
+                            ),
+                            "gender_radios" => array(
+                                "title" => "Jenis Kelamin",
+                                "description" => "Nama Belakang Anda"
+                            ),
+                            "gender_radios-inline" => array(
+                                "title" => "Jenis Kelamin",
+                                "description" => "Nama Belakang Anda"
+                            ),
+                            "gender_datepicker" => array(
+                                "title" => "Jenis Kelamin",
+                                "type" => "string", 
+                                "format" => "date",
                                 "description" => "Nama Belakang Anda"
                             ),
                         ),
                         "required" => array(
                             "first_name",
                             "last_name",
+                            "gender_select",
+                            "gender_checkboxes",
+                            "gender_radios",
+                            "gender_radios-inline",
                         )
                     ),
                 )
@@ -107,28 +175,31 @@ class Data_1 extends CI_Controller {
             "title" => "Data 1",
             "subTitle" => "Detail Data 1",
             "boxTitle" => "Tabel Data 1",
-            "requestAdd" => true
+            "requestAdd" => true,
+            'titlePage' => 'Data 1 - SIMAPES'
         );
 
         echo json_encode($data);
     }
-    
+
     public function view() {
         $post = json_decode(file_get_contents('php://input'));
-        
+
         $this->db->from('data_1');
         $this->db->where('id', $post->id);
         $result = $this->db->get()->row();
 
         echo json_encode($result);
     }
-    
-    public function delete($id) {
-        $where = array('id' => $id);
+
+    public function delete() {
+        $post = json_decode(file_get_contents('php://input'));
+
+        $where = array('id' => $post->id);
         $this->db->delete('data_1', $where);
-        
+
         $result = $this->db->affected_rows();
-        
+
         echo json_encode(array('status' => $result));
     }
 
