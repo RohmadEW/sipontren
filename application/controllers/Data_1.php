@@ -113,12 +113,23 @@ class Data_1 extends CI_Controller {
         echo json_encode($data);
     }
     
-    public function view($id) {
+    public function view() {
+        $post = json_decode(file_get_contents('php://input'));
+        
         $this->db->from('data_1');
-        $this->db->where('id', $id);
+        $this->db->where('id', $post->id);
         $result = $this->db->get()->row();
 
         echo json_encode($result);
+    }
+    
+    public function delete($id) {
+        $where = array('id' => $id);
+        $this->db->delete('data_1', $where);
+        
+        $result = $this->db->affected_rows();
+        
+        echo json_encode(array('status' => $result));
     }
 
 }

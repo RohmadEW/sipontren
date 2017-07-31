@@ -69,7 +69,10 @@ class Data_2 extends CI_Controller {
                 ),
             ),
             'urlDatatables' => 'data_2/data',
-            'form' => 'data_1/form',
+            'urlCreate' => 'data_2/create',
+            'urlUpdate' => 'data_2/update',
+            'urlDelete' => 'data_2/delete',
+            'urlView' => 'data_2/view/',
             "title" => "Data 2",
             "subTitle" => "Detail Data 2",
             "boxTitle" => "Tabel Data 2",
@@ -78,47 +81,24 @@ class Data_2 extends CI_Controller {
 
         echo json_encode($data);
     }
+    
+    public function view() {
+        $post = json_decode(file_get_contents('php://input'));
+        
+        $this->db->from('data_1');
+        $this->db->where('id', $post->id);
+        $result = $this->db->get()->row();
 
-    public function form() {
-        $data = array(
-            'form' => array(
-                array(
-                    "key" => "name",
-                    "type" => "text",
-                    "title" => "Nama Lengkap",
-                    "placeholder" => "Nama Lengkap Anda"
-                ),
-                array(
-                    "key" => "gender",
-                    "type" => "text",
-                    "title" => "Jenis Kelamin",
-                    "placeholder" => "Jenis Kelamin"
-                )
-            ),
-            'schema' => array(
-                "type" => "object",
-                "title" => "Comment",
-                "properties" => array(
-                    "name" => array(
-                        "title" => "Name",
-                        "type" => "string"
-                    ),
-                    "gender" => array(
-                        "title" => "Jenis Kelamin",
-                        "type" => "string",
-                        "description" => "Jenis Kelamin Anda"
-                    ),
-                ),
-                "required" => array(
-                    "name",
-                    "gender",
-                )
-            ),
-            'model' => array(
-            )
-        );
-
-        echo json_encode($data);
+        echo json_encode($result);
+    }
+    
+    public function delete($id) {
+        $where = array('id' => $id);
+        $this->db->delete('data_1', $where);
+        
+        $result = $this->db->affected_rows();
+        
+        echo json_encode(array('status' => $result));
     }
 
 }

@@ -150,7 +150,6 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $http, gener
     $scope.title = 'Processing...';
     $scope.selected = {};
     $scope.selectAll = false;
-    $scope.edit = edit;
     $scope.delete = deleteRow;
     $scope.reloadDatatables = reloadDatatables;
     $scope.dataChanged = {};
@@ -187,22 +186,25 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $http, gener
         
         $scope.columnReady = true;
     }
+    
+    function deleteRow(id) {
+        $http.post($scope.response.urlDelete, 'id=' + id).then(successCallback, generalService.errorCallback);
 
-    function edit(id) {
-        $scope.message = 'You are trying to edit the row: ' + JSON.stringify($scope.dataChanged[id]);
-        $scope.reloadDatatables();
+        function successCallback(response) {
+            if (response.data.status) {
+                alert('Sukses menghapus data.');
+                
+                $scope.reloadDatatables();
+            } else {
+                alert('Gagal menghapus data.');
+            }
+        }
     }
-    function deleteRow(data) {
-        $scope.message = 'You are trying to remove the row: ' + JSON.stringify(data);
-        $scope.reloadDatatables();
-    }
+    
     function reloadDatatables() {
         $timeout(function () {
             angular.element('#reloadDatatables').triggerHandler('click');
         });
-    }
-    function callback(json) {
-        console.log(json);
     }
 });
 
@@ -226,7 +228,12 @@ mainApp.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstan
         $scope.schema = $scope.dataShared.modal.edit ? $scope.dataShared.modal.edit.schema : $scope.dataShared.modal.add.schema;
         $scope.model = {};
             
-        if($scope.dataChanged !== null) $http.get($scope.dataShared.urlView + $scope.dataChanged.id).then(successCallback, generalService.errorCallback);
+        if($scope.dataChanged !== null) {
+            var dataPost = {
+                id: $scope.dataChanged.id
+            };
+            $http.post($scope.dataShared.urlView, dataPost).then(successCallback, generalService.errorCallback);
+        }
 
         function successCallback(response) {
             $scope.model = response.data;
