@@ -90,6 +90,23 @@ class Data_1 extends CI_Controller {
                                             "title" => "Nama Belakang",
                                             "placeholder" => "Nama Belakang Anda"
                                         ),
+                                        array(
+                                            "key" => "gender_select",
+                                            "type" => "select",
+                                            "title" => "Jenis Kelamin",
+                                            "titleMap" => array(
+                                                array('value' => 'male', 'name' => 'Male'),
+                                                array('value' => 'female', 'name' => 'Female')
+                                            )
+                                        ),
+                                        array(
+                                            "key" => "gender_datepicker",
+                                            "type" => "datepicker",
+                                            "title" => "Jenis Kelamin",
+                                            "minDate" => "1995-09-01",
+                                            "maxDate" => date("Y-m-d"),
+                                            "format" => "yyyy-mm-dd"
+                                        ),
                                     )
                                 ),
                                 array(
@@ -97,13 +114,25 @@ class Data_1 extends CI_Controller {
                                     'htmlClass' => 'col-sm-6',
                                     'items' => array(
                                         array(
-                                            "key" => "ip_address",
-                                            "type" => "text",
-                                            "title" => "IP Address",
-                                            "placeholder" => "Alamat IP Anda"
+                                            "key" => "gender_checkboxes",
+                                            "type" => "checkboxes",
+                                            "title" => "Jenis Kelamin",
+                                            "titleMap" => array(
+                                                array('value' => 'male', 'name' => 'Male'),
+                                                array('value' => 'female', 'name' => 'Female')
+                                            )
                                         ),
                                         array(
-                                            "key" => "gender",
+                                            "key" => "gender_radios",
+                                            "type" => "radios",
+                                            "title" => "Jenis Kelamin",
+                                            "titleMap" => array(
+                                                array('value' => 'male', 'name' => 'Male'),
+                                                array('value' => 'female', 'name' => 'Female')
+                                            )
+                                        ),
+                                        array(
+                                            "key" => "gender_radios-inline",
                                             "type" => "radios-inline",
                                             "title" => "Jenis Kelamin",
                                             "titleMap" => array(
@@ -114,44 +143,58 @@ class Data_1 extends CI_Controller {
                                     )
                                 ),
                             )
-                        )
+                        ),
                     ),
                     'schema' => array(
                         "type" => "object",
                         "title" => "Comment",
                         "properties" => array(
                             "first_name" => array(
-                                "title" => "Nama Depan",
-                                "type" => "string",
-                                "description" => "Nama Depan Anda"
+                                "title" => "first_name",
+                                "type" => "string"
                             ),
                             "last_name" => array(
                                 "title" => "Nama Belakang",
                                 "type" => "string",
                                 "description" => "Nama Belakang Anda"
                             ),
-                            "gender" => array(
+                            "gender_select" => array(
+                                "title" => "Jenis Kelamin",
+                                "description" => "Nama Belakang Anda"
+                            ),
+                            "gender_checkboxes" => array(
+                                "title" => "Jenis Kelamin",
+                                "description" => "Nama Belakang Anda"
+                            ),
+                            "gender_radios" => array(
+                                "title" => "Jenis Kelamin",
+                                "description" => "Nama Belakang Anda"
+                            ),
+                            "gender_radios-inline" => array(
+                                "title" => "Jenis Kelamin",
+                                "description" => "Nama Belakang Anda"
+                            ),
+                            "gender_datepicker" => array(
                                 "title" => "Jenis Kelamin",
                                 "type" => "string",
+                                "format" => "date",
+                                "description" => "Nama Belakang Anda"
                             ),
-                            "ip_address" => array(
-                                "title" => "IP Address",
-                                "type" => "string",
-                                "description" => "Alamat IP Anda"
-                            )
                         ),
                         "required" => array(
                             "first_name",
                             "last_name",
-                            "gender",
-                            "ip_address",
+                            "gender_select",
+                            "gender_checkboxes",
+                            "gender_radios",
+                            "gender_radios-inline",
                         )
                     ),
                 )
             ),
             'urlDatatables' => 'data_1/data',
             'urlCreate' => 'data_1/create',
-            'urlSave' => 'data_1/save',
+            'urlUpdate' => 'data_1/update',
             'urlDelete' => 'data_1/delete',
             'urlView' => 'data_1/view/',
             "title" => "Data 1",
@@ -170,36 +213,6 @@ class Data_1 extends CI_Controller {
         $this->db->from('data_1');
         $this->db->where('id', $post->id);
         $result = $this->db->get()->row();
-
-        echo json_encode($result);
-    }
-
-    public function save() {
-        $data = json_decode(file_get_contents('php://input'));
-
-        if (isset($data->id)) {
-            $where = array('id' => $data->id);
-            $result = $this->db->update('data_1', $data, $where);
-        } else {
-            $result = $this->db->insert('data_1', $data);
-        }
-
-        $result = array(
-            'status' => $result
-        );
-
-        if ($result['status'])
-            $result['notification'] = array(
-                'type' => 'success',
-                'title' => 'Berhasil',
-                'text' => 'Data berhasil diubah'
-            );
-        else
-            $result['notification'] = array(
-                'type' => 'error',
-                'title' => 'Gagal',
-                'text' => 'Data gagal diubah'
-            );
 
         echo json_encode($result);
     }

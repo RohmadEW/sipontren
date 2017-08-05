@@ -1,36 +1,18 @@
-mainApp.controller('simapesTables', function ($scope, $routeParams, $http, generalService, $timeout, $uibModal, $log, dataScopeShared, datatablesService) {
+mainApp.controller('simapesTables', function ($scope, $routeParams, $http, generalService, $timeout, $log, dataScopeShared, datatablesService, notificationService) { // $uibModal
     dataScopeShared.addData('RESPONSE_INFO', null);
 
     $scope.mainURI = $routeParams.thecontroller;
     $scope.columnReady = false;
     $scope.message = '';
     $scope.title = 'Processing...';
-    $scope.selected = {};
-    $scope.selectAll = false;
     $scope.deleteRow = deleteRow;
+    $scope.editRow = editRow;
     $scope.reloadDatatables = reloadDatatables;
+    $scope.removeLastField = removeLastField;
     $scope.dataChanged = {};
     $scope.headerFilter = {};
-
-    $scope.modalOpen = function (id) {
-        var modalInstance = $uibModal.open({
-            animation: true,
-            ariaLabelledBy: 'modal-title',
-            ariaDescribedBy: 'modal-body',
-            templateUrl: 'modalForm.html',
-            controller: 'ModalInstanceCtrl',
-            size: 'lg',
-            backdrop: 'static'
-        });
-
-        dataScopeShared.addData('DATA_CHANGED_INFO', id ? $scope.dataChanged[id] : null);
-
-        modalInstance.result.then(function () {
-            $log.info('Modal closed');
-        }, function () {
-            $log.info('Modal dismissed at: ' + new Date());
-        });
-    };
+    $scope.idModal = 'modalForm';
+    $scope.buttonTopDatatables = {};
 
     $http.get($scope.mainURI + '/info').then(successCallback, generalService.errorCallback);
 
@@ -41,7 +23,54 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $http, gener
 
         dataScopeShared.addData('RESPONSE_INFO', $scope.response);
 
+        createForm();
+
         $scope.columnReady = true;
+    }
+
+    function createForm() {
+        $scope.form = $scope.response.modal.edit ? $scope.response.modal.edit.form : $scope.response.modal.add.form;
+        $scope.schema = $scope.response.modal.edit ? $scope.response.modal.edit.schema : $scope.response.modal.add.schema;
+        $scope.model = {};
+    }
+
+    $scope.$watch('model', function (value) {
+        if (value) {
+            $scope.prettyModel = JSON.stringify(value, undefined, 2);
+        }
+    }, true);
+
+    $scope.onSubmit = function (form) {
+        $scope.laddaLoading = true;
+        $scope.$broadcast('schemaFormValidate');
+
+        if (form.$valid) {
+            $http.post($scope.response.urlSave, $scope.model).then(successCallback, generalService.errorCallback);
+
+            function successCallback(response) {
+                notificationService.flash(response.data.notification);
+                notificationService.swalDestroy();
+                reloadDatatables();
+            }
+            
+            $timeout(function () {
+                angular.element('#' + $scope.idModal).modal('hide');
+            });
+            
+            removeLastField();
+        }
+    };
+
+    function editRow(id) {
+        var dataPost = {
+            id: id
+        };
+
+        $http.post($scope.response.urlView, dataPost).then(successCallback, generalService.errorCallback);
+
+        function successCallback(response) {
+            $scope.model = response.data;
+        }
     }
 
     function deleteRow(id) {
@@ -49,16 +78,19 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $http, gener
             id: id
         };
 
+        notificationService.swalOptionAjax('Apakah Anda yakin?', 'Data yang telah dihapus tidak dapat dikembalikan. Pastikan data yang akan Anda hapus adalah benar', 'warning', function (isConfirm) {
+            if (isConfirm)
+                deletingRow(dataPost);
+        });
+    }
+
+    function deletingRow(dataPost) {
         $http.post($scope.response.urlDelete, dataPost).then(successCallback, generalService.errorCallback);
 
         function successCallback(response) {
-            if (response.data.status) {
-                alert('Sukses menghapus data.');
-
-                $scope.reloadDatatables();
-            } else {
-                alert('Gagal menghapus data.');
-            }
+            notificationService.flash(response.data.notification);
+            notificationService.swalDestroy();
+            reloadDatatables();
         }
     }
 
@@ -67,44 +99,11 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $http, gener
             angular.element('#reloadDatatables').triggerHandler('click');
         });
     }
-});
 
-mainApp.controller('ModalInstanceCtrl', function ($scope, $http, $uibModalInstance, $q, $timeout, generalService, $routeParams, dataScopeShared) {
-    $scope.mainURI = $routeParams.thecontroller;
-    $scope.dataShared = dataScopeShared.getData('RESPONSE_INFO');
-    $scope.dataChanged = dataScopeShared.getData('DATA_CHANGED_INFO');
-
-    $scope.modalSubmit = function () {
-        $uibModalInstance.close();
-    };
-
-    $scope.cancelModal = function () {
-        $uibModalInstance.dismiss('cancel');
-    };
-
-    if ($scope.dataShared === null) {
-        alert("Halaman belum siap membuat form.");
-    } else {
-        $scope.form = $scope.dataShared.modal.edit ? $scope.dataShared.modal.edit.form : $scope.dataShared.modal.add.form;
-        $scope.schema = $scope.dataShared.modal.edit ? $scope.dataShared.modal.edit.schema : $scope.dataShared.modal.add.schema;
+    function removeLastField() {
+        delete $scope.model;
         $scope.model = {};
-
-        if ($scope.dataChanged !== null) {
-            var dataPost = {
-                id: $scope.dataChanged.id
-            };
-
-            $http.post($scope.dataShared.urlView, dataPost).then(successCallback, generalService.errorCallback);
-        }
-
-        function successCallback(response) {
-            $scope.model = response.data;
-        }
+        $scope.$broadcast('schemaFormRedraw');
+        $scope.laddaLoading = false;
     }
-
-    $scope.$watch('model', function (value) {
-        if (value) {
-            $scope.prettyModel = JSON.stringify(value, undefined, 2);
-        }
-    }, true);
 });

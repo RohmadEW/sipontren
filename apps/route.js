@@ -1,4 +1,4 @@
-var mainApp = angular.module("mainApp", ['ngRoute', 'datatables', 'ngResource', 'datatables.buttons', 'datatables.bootstrap', 'datatables.light-columnfilter', 'schemaForm', 'ui.bootstrap']); //, 'ngMaterial', 'ngAnimate'
+var mainApp = angular.module("mainApp", ['ngRoute', 'datatables', 'ngResource', 'datatables.buttons', 'datatables.bootstrap', 'datatables.light-columnfilter', 'schemaForm', 'toastr', 'ngAnimate', 'angular-ladda']); //, 'ngMaterial', 'ngAnimate', 'ui.bootstrap'
 
 mainApp.value('url_menu', 'template/menu');
 mainApp.value('url_info', 'template/info');

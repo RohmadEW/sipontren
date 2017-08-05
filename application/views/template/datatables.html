@@ -6,7 +6,7 @@
         <section class="content-header animated fadeIn">
             <h1>
                 {{ response.title}}
-                <small>{{ response.subTitle }}</small>
+                <small>{{ response.subTitle}}</small>
             </h1>
         </section>
 
@@ -37,29 +37,33 @@
         </section>
         <!-- /.content -->
     </div>
-</div>
-<div class="modal-demo">
-    <script type="text/ng-template" id="modalForm.html">
-        <form name="theForm">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modal-title">I'm a modal!</h3>
-            </div>
-            <div class="modal-body" id="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div sf-schema="schema" sf-form="form" sf-model="model"></div>
-                        <div>
-                            The form is <em ng-show="theForm.$pristine">pristine</em><em ng-show="theForm.$dirty">dirty</em>
-                            and <em ng-show="theForm.$valid">valid</em><em ng-show="!theForm.$valid">invalid</em>.
+    <div class="modal fade" id="{{ idModal}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+        <form name="form_builder" ng-submit="onSubmit(form_builder)">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div sf-schema="schema" sf-form="form" sf-model="model" sf-options="{ formDefaults: { htmlClass: 'has-feedback' } }"></div>
+                                <div>
+                                    The form is <em ng-show="theForm.$pristine">pristine</em><em ng-show="theForm.$dirty">dirty</em>
+                                    and <em ng-show="theForm.$valid">valid</em><em ng-show="!theForm.$valid">invalid</em>.
+                                </div>
+                                <div>{{prettyModel}}</div>
+                            </div>
                         </div>
-                        <div>{{prettyModel}}</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="removeLastField();">Batal</button>
+                        <button type="button" class="btn btn-danger" ng-click="removeLastField();">Batal</button>
+                        <button type="submit" class="btn btn-primary ladda-button" ladda="laddaLoading" data-style="expand-right"><span class="ladda-label">Simpan</span></button>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" type="button" ng-click="modalSubmit()">OK</button>
-                <button class="btn btn-warning" type="button" ng-click="cancelModal()">Cancel</button>
-            </div>
         </form>
-    </script>
+    </div>
 </div>

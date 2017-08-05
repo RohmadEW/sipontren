@@ -4,7 +4,13 @@ mainApp.run(function (DTDefaultOptions) {
 
 mainApp.service('generalService', function () {
     this.errorCallback = function (error) {
-        alert('Status: ' + error.status + ' - ' + error.statusText + ' \n\nMessage:\n' + error.data);
+//        alert('Status: ' + error.status + ' - ' + error.statusText + ' \n\nMessage:\n' + error.data);
+        swal({
+            title: 'Error Ajax Response (XHR Failed)',
+            text: 'Status: ' + error.status + ' - ' + error.statusText + ' <hr>Message:<br>' + error.data,
+            type: 'error',
+            html: true,
+        });
     };
 });
 
@@ -25,7 +31,7 @@ mainApp.service("dataScopeShared", function () {
     };
 });
 
-mainApp.service("datatablesService", function (DTColumnBuilder, DTOptionsBuilder, $compile) {
+mainApp.service("datatablesService", function (DTColumnBuilder, DTOptionsBuilder, $compile, $timeout) {
     this.create = function ($scope) {
         $scope.dtColumns = [];
         $scope.columnsFilter = [];
@@ -43,7 +49,14 @@ mainApp.service("datatablesService", function (DTColumnBuilder, DTOptionsBuilder
                     var actionHTML = '';
 
                     angular.forEach(column.render, function (value, index) {
-                        actionHTML += '<button class="btn btn-' + value.class + ' btn-sm btn-flat" ng-click="' + value.function + '(' + data.id + ')" title="' + value.title + '"><i class="fa fa-' + value.fa + '"></i></button>&nbsp;';
+                        var functionAction = null;
+
+                        if (value.type === 'ng')
+                            functionAction = 'ng-click="' + value.function + '(' + data.id + ')"';
+                        else if (value.type === 'modal')
+                            functionAction = 'data-toggle="modal" data-target="#' + $scope.idModal + '" ng-click="' + value.function + '(' + data.id + ')"';
+
+                        actionHTML += '<button class="btn btn-' + value.class + ' btn-sm btn-flat" ' + functionAction + ' title="' + value.title + '"><i class="fa fa-' + value.fa + '"></i></button>&nbsp;';
                     });
 
                     return actionHTML;
@@ -57,9 +70,43 @@ mainApp.service("datatablesService", function (DTColumnBuilder, DTOptionsBuilder
             text: '<i class="fa fa-plus"></i>&nbsp;&nbsp;Tambah',
             className: 'btn btn-primary btn-flat',
             action: function (e, dt, node, config) {
-                $scope.modalOpen();
+                $timeout(function () {
+                    angular.element('#' + $scope.idModal).modal('show');
+                });
             }
         } : {};
+
+        $scope.buttonDatatables = [
+//                    {extend: 'copy', text: '<i class="fa fa-clone"></i>&nbsp;&nbsp;Salin', className: 'btn btn-primary btn-flat'},
+//                    {extend: 'csv', text: '<i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;CSV', title: 'Download data dalam CSV', className: 'btn btn-primary btn-flat'},
+            {
+                extend: 'pdf', 
+                text: '<i class="fa fa-file-pdf-o"></i>&nbsp;&nbsp;PDF', 
+                title: 'Download data dalam PDF', className: 'btn btn-primary btn-flat'
+            },
+            {
+                extend: 'excel', 
+                text: '<i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;XLSX', 
+                title: 'Download data dalam XLS', 
+                className: 'btn btn-primary btn-flat'
+            },
+            {
+                extend: 'print', 
+                text: '<i class="fa fa-print"></i>&nbsp;&nbsp;Cetak', 
+                className: 'btn btn-primary btn-flat'
+            },
+            {
+                text: '<i class="fa fa-refresh"></i>&nbsp;&nbsp;Muat Ulang',
+                className: 'btn btn-primary btn-flat',
+                action: function (e, dt, node, config) {
+//                            dt.ajax.reload();
+                    $scope.reloadDatatables();
+                }
+            }
+        ];
+
+        $scope.buttonDatatables = $scope.buttonDatatables.concat($scope.buttonAddDatatables);
+        $scope.buttonDatatables = $scope.buttonDatatables.concat($scope.buttonTopDatatables);
 
         $scope.dtOptions = DTOptionsBuilder.newOptions()
                 .withOption('ajax', {
@@ -98,28 +145,107 @@ mainApp.service("datatablesService", function (DTColumnBuilder, DTOptionsBuilder
                         $compile(angular.element(header).contents())($scope);
                     }
                 })
-                .withButtons([
-                    {extend: 'copy', text: '<i class="fa fa-clone"></i>&nbsp;&nbsp;Salin', className: 'btn btn-primary btn-flat'},
-//                    {extend: 'csv', text: '<i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;CSV', title: 'Download data dalam CSV', className: 'btn btn-primary btn-flat'},
-                    {extend: 'pdf', text: '<i class="fa fa-file-pdf-o"></i>&nbsp;&nbsp;PDF', title: 'Download data dalam PDF', className: 'btn btn-primary btn-flat'},
-                    {extend: 'excel', text: '<i class="fa fa-file-excel-o"></i>&nbsp;&nbsp;XLSX', title: 'Download data dalam XLS', className: 'btn btn-primary btn-flat'},
-                    {extend: 'print', text: '<i class="fa fa-print"></i>&nbsp;&nbsp;Cetak', className: 'btn btn-primary btn-flat'},
-                    {
-                        text: '<i class="fa fa-refresh"></i>&nbsp;&nbsp;Muat Ulang',
-                        className: 'btn btn-primary btn-flat',
-                        action: function (e, dt, node, config) {
-//                            dt.ajax.reload();
-                            $scope.reloadDatatables();
-                        }
-                    },
-                    $scope.buttonAddDatatables
-                ])
+                .withButtons($scope.buttonDatatables)
                 .withBootstrap()
                 .withLightColumnFilter($scope.columnsFilter)
+                .withOption('lengthMenu', [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]])
                 .withDOM("<'row'<'col-sm-3'l><'col-sm-6 text-center'B><'col-sm-3 text-right'f>>t<'row'<'col-sm-6'i><'col-sm-6 text-right'p>>");
 
         $scope.dtInstance = {};
 
         return $scope;
+    };
+});
+
+mainApp.service("notificationService", function (toastr) {
+    this.swalOption = function (title, text, type, callback) {
+        swal({
+            title: title,
+            text: text,
+            type: type,
+            html: true,
+            showCancelButton: true,
+            confirmButtonColor: type === 'warning' ? "#DD6B55" : "#00c0ef",
+            confirmButtonText: "Ya",
+            cancelButtonText: "Tidak"
+        },
+                callback);
+
+    };
+
+    this.swalOptionAjax = function (title, text, type, callbackAfterAjaxDone) {
+        swal({
+            title: title,
+            text: text,
+            type: type,
+            html: true,
+            showCancelButton: true,
+            confirmButtonColor: type === 'warning' ? "#DD6B55" : "#00c0ef",
+            confirmButtonText: "Ya",
+            cancelButtonText: "Tidak",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true
+        },
+                callbackAfterAjaxDone);
+
+    };
+
+    this.swalInput = function (title, text, placeholder, callback) {
+        swal({
+            title: title,
+            text: text,
+            type: 'input',
+            html: true,
+            showCancelButton: true,
+            confirmButtonColor: type === 'warning' ? "#DD6B55" : "#00c0ef",
+            confirmButtonText: "OK",
+            cancelButtonText: "Batalkan",
+            closeOnConfirm: false,
+            animation: "slide-from-top",
+            inputPlaceholder: placeholder
+        },
+                callback);
+
+//                callback = function(inputValue){
+//  if (inputValue === false) return false;
+//  
+//  if (inputValue === "") {
+//    swal.showInputError("You need to write something!");
+//    return false
+//  }
+//  
+//  swal("Nice!", "You wrote: " + inputValue, "success");
+//}
+
+    };
+
+    this.swalTimer = function (title, text) {
+        swal({
+            title: title,
+            text: text,
+            timer: 2000,
+            html: true,
+            showConfirmButton: false
+        });
+    };
+
+    this.swalDestroy = function () {
+        swal.close();
+    };
+
+    this.flash = function (data) {
+        var buttonClose = {
+            closeButton: true,
+            closeHtml: '<button>x</button>'
+        };
+
+        if (data.type === 'info')
+            toastr.info(data.title, data.text, buttonClose);
+        else if (data.type === 'success')
+            toastr.success(data.title, data.text, buttonClose);
+        else if (data.type === 'error')
+            toastr.error(data.title, data.text, buttonClose);
+        else if (data.type === 'warning')
+            toastr.warning(data.title, data.text, buttonClose);
     };
 });
