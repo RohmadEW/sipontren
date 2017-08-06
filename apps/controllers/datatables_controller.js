@@ -1,6 +1,6 @@
-mainApp.controller('simapesTables', function ($scope, $routeParams, $http, generalService, $timeout, $log, dataScopeShared, datatablesService, notificationService) { // $uibModal
+mainApp.controller('simapesTables', function ($scope, $rootScope, $routeParams, $http, generalService, $timeout, $log, dataScopeShared, datatablesService, notificationService) { // $uibModal
     dataScopeShared.addData('RESPONSE_INFO', null);
-
+    console.log('ROOT SCOPE',$rootScope);
     $scope.mainURI = $routeParams.thecontroller;
     $scope.columnReady = false;
     $scope.message = '';
@@ -58,6 +58,8 @@ mainApp.controller('simapesTables', function ($scope, $routeParams, $http, gener
             });
             
             removeLastField();
+        } else {
+            $scope.laddaLoading = false;
         }
     };
 
