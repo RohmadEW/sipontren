@@ -1,10 +1,11 @@
-mainApp.controller('simapesTables', function ($scope, $rootScope, $routeParams, $http, generalService, $timeout, $log, dataScopeShared, datatablesService, notificationService) { // $uibModal
+mainApp.controller('simapesTables', function ($scope, $rootScope, $routeParams, $http, generalService, $timeout, $log, dataScopeShared, datatablesService, notificationService, $route, $templateCache) {
     dataScopeShared.addData('RESPONSE_INFO', null);
     console.log('ROOT SCOPE',$rootScope);
     $scope.mainURI = $routeParams.thecontroller;
     $scope.columnReady = false;
     $scope.message = '';
     $scope.title = 'Processing...';
+    $scope.reloadPage = reloadPage;
     $scope.deleteRow = deleteRow;
     $scope.editRow = editRow;
     $scope.reloadDatatables = reloadDatatables;
@@ -101,6 +102,12 @@ mainApp.controller('simapesTables', function ($scope, $rootScope, $routeParams, 
             notificationService.swalDestroy();
             reloadDatatables();
         }
+    }
+    
+    function reloadPage() {
+        var currentPageTemplate = $route.current.templateUrl;
+        $templateCache.remove(currentPageTemplate);
+        $route.reload();
     }
 
     function reloadDatatables() {

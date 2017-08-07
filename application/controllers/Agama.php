@@ -7,6 +7,8 @@ class Agama extends CI_Controller
 
     var $controller = 'agama';
     var $primary_key = "ID_AGAMA";
+    var $idEditable = false;
+    var $idInsertable = false;
 
     public function __construct()
     {
@@ -113,8 +115,8 @@ class Agama extends CI_Controller
             "subTitle" => "Detail Agama",
             "boxTitle" => "Tabel Agama",
             "requestAdd" => true,
-            "idEditable" => false,
-            "idInsertable" => false,
+            "idEditable" => $this->idEditable,
+            "idInsertable" => $this->idInsertable,
             "id" => $this->primary_key,
             'titlePage' => 'Agama - SIMAPES'
         );
@@ -133,61 +135,29 @@ class Agama extends CI_Controller
 
     public function save()
     {
-        $data = json_decode(file_get_contents('php://input'));
+        $data = json_decode(file_get_contents('php://input'), true);
 
-        if (isset($data->id)) {
-            $where = array('id' => $data->id);
-            $result = $this->db->update($this->controller . '', $data, $where);
+        if (isset($data[$this->primary_key])) {
+            $where = array($this->primary_key => $data[$this->primary_key]);
+            if (!$this->idEditable) unset($data[$this->primary_key]);
+            $result = $this->agama->update($data, $where);
+            $message = 'diubah';
         } else {
-            $result = $this->db->insert($this->controller . '', $data);
+            $result = $this->agama->insert($data);
+            $message = 'dibuat';
         }
 
-        $result = array(
-            'status' => $result
-        );
-
-        if ($result['status'])
-            $result['notification'] = array(
-                'type' => 'success',
-                'title' => 'Berhasil',
-                'text' => 'Data berhasil diubah'
-            );
-        else
-            $result['notification'] = array(
-                'type' => 'error',
-                'title' => 'Gagal',
-                'text' => 'Data gagal diubah'
-            );
-
-
-        $this->output_handler->output_JSON($result);
+        $this->output_handler->output_JSON($result, $message);
     }
 
     public function delete()
     {
         $post = json_decode(file_get_contents('php://input'));
 
-        $where = array('id' => $post->id);
-        $this->db->delete($this->controller . '', $where);
+        $result = $this->agama->delete($post->id);
+        $message = 'dihapus';
 
-        $result = array(
-            'status' => $this->db->affected_rows()
-        );
-
-        if ($result['status'])
-            $result['notification'] = array(
-                'type' => 'success',
-                'title' => 'Berhasil',
-                'text' => 'Data berhasil dihapus'
-            );
-        else
-            $result['notification'] = array(
-                'type' => 'error',
-                'title' => 'Gagal',
-                'text' => 'Data gagal dihapus'
-            );
-
-        $this->output_handler->output_JSON($result);
+        $this->output_handler->output_JSON($result, $message);
     }
 
 }

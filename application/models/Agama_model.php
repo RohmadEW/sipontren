@@ -49,13 +49,13 @@ class Agama_model extends CI_Model {
         return $this->db->get()->row();;
     }
 
-    public function save($data) {
+    public function insert($data) {
         $this->db->insert($this->table, $data);
 
         return $this->db->insert_id();
     }
 
-    public function update($where, $data) {
+    public function update($data, $where) {
         $this->db->update($this->table, $data, $where);
         
         return $this->db->affected_rows();
