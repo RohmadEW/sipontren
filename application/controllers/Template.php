@@ -21,6 +21,7 @@ class Template extends CI_Controller
         if ($this->auth->check_validation())
             $data['menu'] = array(
                 array('link' => 'template-home/home', 'title' => 'Home'),
+                array('link' => 'template-datatables/agama', 'title' => 'Agama'),
                 array('link' => 'template-datatables/data_1', 'title' => 'Data 1'),
                 array('link' => 'template-datatables/data_2', 'title' => 'Data 2'),
             );

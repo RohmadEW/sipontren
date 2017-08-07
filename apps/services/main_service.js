@@ -58,17 +58,16 @@ mainApp.service("datatablesService", function (DTColumnBuilder, DTOptionsBuilder
 
             if (column.render)
                 col.renderWith(function (data, type, full, meta) {
-                    $scope.dataChanged[data.id] = data;
-
                     var actionHTML = '';
 
                     angular.forEach(column.render, function (value, index) {
+                        $scope.dataChanged[data[value.pk]] = data;
                         var functionAction = null;
 
                         if (value.type === 'ng')
-                            functionAction = 'ng-click="' + value.function + '(' + data.id + ')"';
+                            functionAction = 'ng-click="' + value.function + '(' + data[value.pk] + ')"';
                         else if (value.type === 'modal')
-                            functionAction = 'data-toggle="modal" data-target="#' + $scope.idModal + '" ng-click="' + value.function + '(' + data.id + ')"';
+                            functionAction = 'data-toggle="modal" data-target="#' + $scope.idModal + '" ng-click="' + value.function + '(' + data[value.pk] + ')"';
 
                         actionHTML += '<button class="btn btn-' + value.class + ' btn-sm btn-flat" ' + functionAction + ' title="' + value.title + '"><i class="fa fa-' + value.fa + '"></i></button>&nbsp;';
                     });

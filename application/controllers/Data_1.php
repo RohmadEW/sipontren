@@ -155,6 +155,8 @@ class Data_1 extends CI_Controller {
             'urlDelete' => 'data_1/delete',
             'urlView' => 'data_1/view/',
             "title" => "Data 1",
+            "titleAdd" => "Tambah Agama",
+            "titleEdit" => "Ubah Agama",
             "subTitle" => "Detail Data 1",
             "boxTitle" => "Tabel Data 1",
             "requestAdd" => true,

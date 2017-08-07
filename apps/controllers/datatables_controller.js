@@ -23,15 +23,9 @@ mainApp.controller('simapesTables', function ($scope, $rootScope, $routeParams, 
 
         dataScopeShared.addData('RESPONSE_INFO', $scope.response);
 
-        createForm();
+        removeLastField();
 
         $scope.columnReady = true;
-    }
-
-    function createForm() {
-        $scope.form = $scope.response.modal.edit ? $scope.response.modal.edit.form : $scope.response.modal.add.form;
-        $scope.schema = $scope.response.modal.edit ? $scope.response.modal.edit.schema : $scope.response.modal.add.schema;
-        $scope.model = {};
     }
 
     $scope.$watch('model', function (value) {
@@ -51,19 +45,32 @@ mainApp.controller('simapesTables', function ($scope, $rootScope, $routeParams, 
                 notificationService.flash(response.data.notification);
                 notificationService.swalDestroy();
                 reloadDatatables();
+                $scope.modaltitle = $scope.response.titleAdd;
+
+                $timeout(function () {
+                    angular.element('#' + $scope.idModal).modal('hide');
+                });
+
+                removeLastField();
             }
-            
-            $timeout(function () {
-                angular.element('#' + $scope.idModal).modal('hide');
-            });
-            
-            removeLastField();
         } else {
             $scope.laddaLoading = false;
         }
     };
 
     function editRow(id) {
+        $scope.modaltitle = $scope.response.titleEdit;
+
+        if ($scope.response.idEditable)
+            $timeout(function () {
+                angular.element("#" + $scope.response.id).removeAttr('readonly');
+                angular.element("#" + $scope.response.id).attr('placeholder', ' ');
+            });
+        else
+            $timeout(function () {
+                angular.element("#" + $scope.response.id).attr('readonly', 'true');
+            });
+
         var dataPost = {
             id: id
         };
@@ -104,8 +111,22 @@ mainApp.controller('simapesTables', function ($scope, $rootScope, $routeParams, 
 
     function removeLastField() {
         delete $scope.model;
+
+        $scope.modaltitle = $scope.response.titleAdd;
+        $scope.form = $scope.response.modal.form;
+        $scope.schema = $scope.response.modal.schema;
         $scope.model = {};
         $scope.$broadcast('schemaFormRedraw');
         $scope.laddaLoading = false;
+
+        if ($scope.response.idInsertable)
+            $timeout(function () {
+                angular.element("#" + $scope.response.id).removeAttr('readonly');
+            });
+        else
+            $timeout(function () {
+                angular.element("#" + $scope.response.id).attr('readonly', 'true');
+                angular.element("#" + $scope.response.id).attr('placeholder', 'OTOMATIS');
+            });
     }
 });
