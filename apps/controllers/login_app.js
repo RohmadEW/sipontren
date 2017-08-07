@@ -1,5 +1,7 @@
 mainApp.controller('loginApps', function ($scope, $rootScope, $routeParams, $http, generalService, $timeout, notificationService, $location, menuService) {
+    $scope.checkingSessionOnServer = true;
     $scope.removeLastField = removeLastField;
+    checkSessionOnServer();
 
     if($rootScope.loggedUser) redirectLoggedIn();
 
@@ -63,6 +65,19 @@ mainApp.controller('loginApps', function ($scope, $rootScope, $routeParams, $htt
             $scope.laddaLoading = false;
         }
     };
+
+    function checkSessionOnServer() {
+        $http.post('login/check_session').then(successCallback, generalService.errorCallback);
+
+        function successCallback(response) {
+            if(response.data.status) {
+                $rootScope.loggedUser = response.data.user;
+                redirectLoggedIn();
+            } else {
+                $scope.checkingSessionOnServer =  false;
+            }
+        }
+    }
     
     function redirectLoggedIn() {
         $location.path("/template-home/home");

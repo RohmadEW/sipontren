@@ -7,6 +7,7 @@ class Template extends CI_Controller
 
     public function show($view)
     {
+//        $this->auth->log_out();
         $view = str_replace('-', '/', $view);
 
         $this->load->view($view);

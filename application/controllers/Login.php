@@ -14,7 +14,7 @@ class Login extends CI_Controller
     {
         $post = json_decode(file_get_contents('php://input'));
 
-        $result = $this->auth->check_login($post);
+        $result = $this->auth->proccess_login($post);
 
         $this->output_handler->output_JSON($result);
     }
@@ -31,6 +31,13 @@ class Login extends CI_Controller
                 'text' => 'Anda berhasil keluar.'
             )
         );
+
+        $this->output_handler->output_JSON($result);
+    }
+
+    public function check_session()
+    {
+        $result = $this->auth->check_login();
 
         $this->output_handler->output_JSON($result);
     }
