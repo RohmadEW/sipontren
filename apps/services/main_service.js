@@ -2,9 +2,12 @@ mainApp.run(function (DTDefaultOptions) {
     DTDefaultOptions.setLoadingTemplate('Sedang mengambil data...');
 });
 
-mainApp.service('generalService', function () {
+mainApp.service('generalService', function ($location) {
     this.errorCallback = function (error) {
-//        alert('Status: ' + error.status + ' - ' + error.statusText + ' \n\nMessage:\n' + error.data);
+        if(error.status == 403) {
+            $location.path("/user-login/login");
+        }
+
         swal({
             title: 'Error Ajax Response (XHR Failed)',
             text: 'Status: ' + error.status + ' - ' + error.statusText + ' <hr>Message:<br>' + error.data,
@@ -12,6 +15,17 @@ mainApp.service('generalService', function () {
             html: true,
         });
     };
+});
+
+mainApp.service('menuService', function ($http, generalService, url_menu, $rootScope) {
+    this.request = function () {
+        $http.get(url_menu).then(callbackMenu, generalService.errorCallback);
+
+        function callbackMenu(response) {
+            $rootScope.name_app = response.data.name_app;
+            $rootScope.menus = response.data.menu;
+        }
+    }
 });
 
 mainApp.service("dataScopeShared", function () {
@@ -240,12 +254,12 @@ mainApp.service("notificationService", function (toastr) {
         };
 
         if (data.type === 'info')
-            toastr.info(data.title, data.text, buttonClose);
+            toastr.info(data.text, data.title, buttonClose);
         else if (data.type === 'success')
-            toastr.success(data.title, data.text, buttonClose);
+            toastr.success(data.text, data.title, buttonClose);
         else if (data.type === 'error')
-            toastr.error(data.title, data.text, buttonClose);
+            toastr.error(data.text, data.title, buttonClose);
         else if (data.type === 'warning')
-            toastr.warning(data.title, data.text, buttonClose);
+            toastr.warning(data.text, data.title, buttonClose);
     };
 });

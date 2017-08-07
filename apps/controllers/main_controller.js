@@ -1,10 +1,7 @@
-mainApp.controller('headerController', function ($scope, $http, generalService, url_menu) {
-    $http.get(url_menu).then(callbackMenu, generalService.errorCallback);
+mainApp.controller('headerController', function ($scope, $rootScope, menuService) {
+    menuService.request($scope);
 
-    function callbackMenu(response) {
-        $scope.name_app = response.data.name_app;
-        $scope.menus = response.data.menu;
-    }
+    $scope = $rootScope;
 });
 
 mainApp.controller('footerController', function ($scope, $http, generalService, url_info) {
@@ -16,5 +13,5 @@ mainApp.controller('footerController', function ($scope, $http, generalService, 
 });
 
 mainApp.controller('homeController', function ($scope, $http, $q, $timeout) {
-    
+
 });

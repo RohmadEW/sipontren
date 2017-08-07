@@ -108,6 +108,7 @@
         <script src="apps/services/main_service.js"></script>
         <script src="apps/controllers/main_controller.js"></script>
         <script src="apps/controllers/datatables_controller.js"></script>
+        <script src="apps/controllers/login_app.js"></script>
 
         <script type="text/javascript">
             $(document).ajaxStart(function () {
@@ -116,9 +117,9 @@
         </script>
 
         <div class="wrapper">
-            <header class="main-header animated fadeIn" ng-include="'template/show/nav_bar.html'" ng-controller="headerController"></header>
+            <header class="main-header animated fadeIn" ng-include="'template/show/template-nav_bar.html'" ng-controller="headerController"></header>
             <div class="content-wrapper animated fadeIn"><ng-view></ng-view></div>
-            <footer class="main-footer animated fadeIn" ng-include="'template/show/footer.html'" ng-controller="footerController"></footer>
+            <footer class="main-footer animated fadeIn" ng-include="'template/show/template-footer.html'" ng-controller="footerController"></footer>
         </div>
     </body>
 </html>

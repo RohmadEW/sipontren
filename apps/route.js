@@ -6,26 +6,24 @@ mainApp.value('url_info', 'template/info');
 mainApp.config(['$routeProvider', '$locationProvider',
     function ($routeProvider, $locationProvider) {
         $locationProvider.hashPrefix('');
-        $routeProvider.
-                when('/:name/:thecontroller', {
-                    templateUrl: function (urlattr) {
-                        return 'template/show/' + urlattr.name + '.html';
-                    }
-                })
-                .otherwise({
-                    redirectTo: '/home/home'
-                });
+        $routeProvider.when('/:name/:thecontroller', {
+            templateUrl: function (urlattr) {
+                return 'template/show/' + urlattr.name + '.html';
+            }
+        })
+            .otherwise({
+                redirectTo: '/template-home/home'
+            });
     }
 ]);
 
 mainApp.run(function ($rootScope, $location, $timeout) {
+    $rootScope.menu = {};
     $rootScope.$on("$routeChangeStart", function (event, next, current) {
-        if ($rootScope.loggedUser === null || typeof $rootScope.loggedUser === 'undefined') {
-            if (next.templateUrl === 'template/show/login.html') {
-
-            } else {
-                $location.path("/login/login");
-            }
+        if (($rootScope.loggedUser === null || typeof $rootScope.loggedUser === 'undefined') && next.templateUrl !== 'template/show/user-login.html') {
+            $location.path("/user-login/login");
+        } else if (current.templateUrl === 'template/show/user-login.html') {
+            $location.path("/template-home/home");
         }
     });
     $rootScope.$on('$routeChangeSuccess', function (scope, next, current) {
