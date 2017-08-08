@@ -1,7 +1,7 @@
 mainApp.controller('simapesTables', function ($scope, $rootScope, $routeParams, $http, generalService, $timeout, $log, dataScopeShared, datatablesService, notificationService, $route, $templateCache) {
     dataScopeShared.addData('RESPONSE_INFO', null);
     console.log('ROOT SCOPE',$rootScope);
-    $scope.mainURI = $routeParams.thecontroller;
+    $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
     $scope.columnReady = false;
     $scope.message = '';
     $scope.title = 'Processing...';
@@ -19,6 +19,7 @@ mainApp.controller('simapesTables', function ($scope, $rootScope, $routeParams, 
 
     function successCallback(response) {
         $scope.response = response.data;
+        $scope.response.urlDatatables = $scope.mainURI + $scope.response.urlDatatables;
 
         $scope = datatablesService.create($scope);
 
@@ -40,7 +41,7 @@ mainApp.controller('simapesTables', function ($scope, $rootScope, $routeParams, 
         $scope.$broadcast('schemaFormValidate');
 
         if (form.$valid) {
-            $http.post($scope.response.urlSave, $scope.model).then(successCallback, generalService.errorCallback);
+            $http.post($scope.mainURI + $scope.response.urlSave, $scope.model).then(successCallback, generalService.errorCallback);
 
             function successCallback(response) {
                 notificationService.flash(response.data.notification);
@@ -76,7 +77,7 @@ mainApp.controller('simapesTables', function ($scope, $rootScope, $routeParams, 
             id: id
         };
 
-        $http.post($scope.response.urlView, dataPost).then(successCallback, generalService.errorCallback);
+        $http.post($scope.mainURI + $scope.response.urlView, dataPost).then(successCallback, generalService.errorCallback);
 
         function successCallback(response) {
             $scope.model = response.data;
@@ -95,7 +96,7 @@ mainApp.controller('simapesTables', function ($scope, $rootScope, $routeParams, 
     }
 
     function deletingRow(dataPost) {
-        $http.post($scope.response.urlDelete, dataPost).then(successCallback, generalService.errorCallback);
+        $http.post($scope.mainURI + $scope.response.urlDelete, dataPost).then(successCallback, generalService.errorCallback);
 
         function successCallback(response) {
             notificationService.flash(response.data.notification);

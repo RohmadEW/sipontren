@@ -16,6 +16,7 @@ class Agama extends CI_Controller
         $this->load->model(array(
             'agama_model' => 'agama'
         ));
+        $this->auth->validation();
     }
 
     public function data()
@@ -104,11 +105,11 @@ class Agama extends CI_Controller
                     )
                 )
             ),
-            'urlDatatables' => $this->controller . '/data',
-            'urlCreate' => $this->controller . '/create',
-            'urlSave' => $this->controller . '/save',
-            'urlDelete' => $this->controller . '/delete',
-            'urlView' => $this->controller . '/view/',
+            'urlDatatables' => '/data',
+            'urlCreate' => '/create',
+            'urlSave' => '/save',
+            'urlDelete' => '/delete',
+            'urlView' => '/view/',
             "title" => "Agama",
             "titleAdd" => "Tambah Agama",
             "titleEdit" => "Ubah Agama",

@@ -1,5 +1,6 @@
 mainApp.controller('loginApps', function ($scope, $rootScope, $routeParams, $http, generalService, $timeout, notificationService, $location, menuService) {
     $scope.checkingSessionOnServer = true;
+    $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
     $scope.removeLastField = removeLastField;
     checkSessionOnServer();
 
@@ -48,7 +49,7 @@ mainApp.controller('loginApps', function ($scope, $rootScope, $routeParams, $htt
         $scope.$broadcast('schemaFormValidate');
 
         if (form.$valid) {
-            $http.post('login/proccess', $scope.model).then(successCallback, generalService.errorCallback);
+            $http.post($scope.mainURI + '/proccess', $scope.model).then(successCallback, generalService.errorCallback);
 
             function successCallback(response) {
                 if(response.data.status) {
@@ -67,7 +68,7 @@ mainApp.controller('loginApps', function ($scope, $rootScope, $routeParams, $htt
     };
 
     function checkSessionOnServer() {
-        $http.post('login/check_session').then(successCallback, generalService.errorCallback);
+        $http.post($scope.mainURI + '/check_session').then(successCallback, generalService.errorCallback);
 
         function successCallback(response) {
             if(response.data.status) {

@@ -20,8 +20,8 @@ class Template extends CI_Controller
         $data['menu'] = array();
         if ($this->auth->check_validation())
             $data['menu'] = array(
-                array('link' => 'template-home/home', 'title' => 'Home'),
-                array('link' => 'template-datatables/agama', 'title' => 'Agama'),
+                array('link' => 'template-home/user/home', 'title' => 'Home'),
+                array('link' => 'template-datatables/master_data/agama', 'title' => 'Agama'),
                 array('link' => 'template-datatables/data_1', 'title' => 'Data 1'),
                 array('link' => 'template-datatables/data_2', 'title' => 'Data 2'),
             );

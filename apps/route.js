@@ -6,24 +6,24 @@ mainApp.value('url_info', 'template/info');
 mainApp.config(['$routeProvider', '$locationProvider',
     function ($routeProvider, $locationProvider) {
         $locationProvider.hashPrefix('');
-        $routeProvider.when('/:name/:thecontroller', {
+        $routeProvider.when('/:template/:ci_dir/:ci_class', {
             templateUrl: function (urlattr) {
-                return 'template/show/' + urlattr.name + '.html';
+                return 'template/show/' + urlattr.template + '.html';
             }
         })
             .otherwise({
-                redirectTo: '/template-home/home'
+                redirectTo: '/template-home/user/home'
             });
     }
 ]);
 
-mainApp.run(function ($rootScope, $location, $timeout) {
+mainApp.run(function ($rootScope, $location, $timeout, $routeParams) {
     $rootScope.menu = {};
     $rootScope.$on("$routeChangeStart", function (event, next, current) {
         if (($rootScope.loggedUser === null || typeof $rootScope.loggedUser === 'undefined') && next.templateUrl !== 'template/show/user-login.html') {
-            $location.path("/user-login/login");
+            $location.path("/user-login/user/login");
         } else if (current.templateUrl === 'template/show/user-login.html') {
-            $location.path("/template-home/home");
+            $location.path("/template-home/user/home");
         }
     });
     $rootScope.$on('$routeChangeSuccess', function (scope, next, current) {
