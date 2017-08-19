@@ -1,125 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="mainApp">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!--<meta http-equiv="Refresh" content="1">-->
         <title>SIMAPES - Sistem Informasi Manajemen Pesantren</title>
 
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-        <link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.min.css">
-        <link rel="stylesheet" href="assets/vendor/font-awesome-animation/font-awesome-animation.min.css">
 
-        <link rel="stylesheet" href="assets/vendor/ionicons/ionicons.min.css">
-        <link rel="stylesheet" href="assets/plugins/datatables/dataTables.bootstrap.css">
+        <!-- Angular Material style sheet -->
+        <link rel="stylesheet" href="assets/angular-material/angular-material.min.css">
+        <link rel="stylesheet" href="assets/custom/app.css">
 
-        <link rel="stylesheet" href="assets/vendor/datatables/jquery.dataTables.min.css">
-        <link rel="stylesheet" href="assets/vendor/datatables-colvis/dataTables.colVis.css">
-        <link rel="stylesheet" href="assets/vendor/datatables-tabletools/dataTables.tableTools.css">
-        <link rel="stylesheet" href="assets/plugins/bootstrap/datatables.bootstrap.min.css">
-        <link rel="stylesheet" href="assets/plugins/angular-datatables/angular-datatables.css">
-        <link rel="stylesheet" href="assets/plugins/animate/animate.css">
-        <link rel="stylesheet" href="assets/plugins/pace/pace.min.css">
-        <link rel="stylesheet" href="assets/plugins/ladda/ladda-themeless.min.css">
-        <link rel="stylesheet" href="assets/plugins/sweetalert/dist/sweetalert.css">
-        <link rel="stylesheet" href="assets/plugins/datepicker/themes/classic.css">
-        <link rel="stylesheet" href="assets/plugins/datepicker/themes/classic.time.css">
-        <link rel="stylesheet" href="assets/plugins/datepicker/themes/classic.date.css">
-
-        <link rel="stylesheet" href="assets/plugins/angular-material/angular-material.css">
-        <link rel="stylesheet" href="assets/plugins/toastr/angular-toastr.min.css">
-        
-        <link rel="stylesheet" href="assets/dist/css/AdminLTE.min.css">
-        <link rel="stylesheet" href="assets/dist/css/skins/skin-green.min.css">
-
-
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-
-        <link rel="stylesheet" href="assets/custom/apps.css">
     </head>
-    <body class="hold-transition skin-green layout-top-nav background-wrapper" ng-app="mainApp">
-
-        <script src="assets/plugins/jQuery/jquery-2.2.3.min.js"></script>
-        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-        <script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-        <script src="assets/plugins/datatables/dataTables.bootstrap.min.js"></script>
-        <script src="assets/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-        <script src="assets/plugins/fastclick/fastclick.js"></script>
-        <script src="assets/plugins/tv4/tv4.min.js"></script>
-        <script src="assets/plugins/pace/pace.min.js"></script>
-        <script src="assets/plugins/sweetalert/dist/sweetalert.min.js"></script>
-        <script src="assets/plugins/datepicker/picker.js"></script>
-        <script src="assets/plugins/datepicker/picker.time.js"></script>
-        <script src="assets/plugins/datepicker/picker.date.js"></script>
-        <script src="assets/plugins/datepicker/translations/id_ID.js"></script>
-        <script src="assets/plugins/ladda/prism.min.js"></script>
-
-        <script src="assets/vendor/angular/angular.min.js"></script>
-        <script src="assets/vendor/angular/angular-animate.min.js"></script>
-        <script src="assets/vendor/angular/angular-aria.min.js"></script>
-        <script src="assets/vendor/angular/angular-route.min.js"></script>
-        <script src="assets/vendor/angular/angular-messages.min.js"></script>
-        <script src="assets/vendor/angular/angular-touch.min.js"></script>
-        <script src="assets/vendor/angular-highlightjs/angular-highlightjs.min.js"></script>
-        <script src="assets/vendor/angular-resource/angular-resource.min.js"></script>
-        <script src="assets/vendor/datatables/jquery.dataTables.js"></script>
-        <script src="assets/vendor/datatables-colvis/dataTables.colVis.js"></script>
-        <script src="assets/vendor/datatables-scroller/dataTables.scroller.js"></script>
-        <script src="assets/vendor/datatables-light-columnfilter/dataTables.lightColumnFilter.min.js"></script>
-        <script src="assets/vendor/datatables-buttons/dataTables.buttons.js"></script>
-        <script src="assets/vendor/datatables-buttons/buttons.colVis.js"></script>
-        <script src="assets/vendor/datatables-buttons/buttons.flash.js"></script>
-        <script src="assets/vendor/datatables-buttons/jszip.min.js"></script>
-        <script src="assets/vendor/datatables-buttons/pdfmake.min.js"></script>
-        <script src="assets/vendor/datatables-buttons/vfs_fonts.js"></script>
-        <script src="assets/vendor/datatables-buttons/buttons.html5.js"></script>
-        <script src="assets/vendor/datatables-buttons/buttons.print.js"></script>
-
-        <script src="assets/plugins/angular-datatables/angular-datatables.min.js"></script>
-        <script src="assets/plugins/bootstrap/angular-datatables.bootstrap.min.js"></script>
-        <script src="assets/plugins/colvis/angular-datatables.colvis.min.js"></script>
-        <script src="assets/plugins/light-columnfilter/angular-datatables.light-columnfilter.js"></script>
-        <script src="assets/plugins/buttons/angular-datatables.buttons.min.js"></script>
-        
-        <script src="assets/plugins/toastr/angular-toastr.tpls.js"></script>
-        
-        <script src="assets/plugins/ladda/spin.min.js"></script>
-        <script src="assets/plugins/ladda/ladda.min.js"></script>
-        <script src="assets/plugins/ladda/angular-ladda.min.js"></script>
-
-        <script src="assets/plugins/angular-sanitize/angular-sanitize.min.js"></script>
-        <script src="assets/plugins/angular-schema-form/ObjectPath.js"></script>
-        <script src="assets/plugins/angular-schema-form/schema-form.min.js"></script>
-        <script src="assets/plugins/angular-schema-form/bootstrap-decorator.min.js"></script>
-        <script src="assets/plugins/angular-schema-form/bootstrap-datepicker.min.js"></script>
-
-        <!--<script src="assets/plugins/angular-material/angular-material.min.js"></script>-->
-
-        <!--<script src="assets/dist/js/app.min.js"></script>-->
-        <script src="assets/dist/js/app.js"></script>
-        <script src="assets/dist/js/demo.js"></script>
-
-        <script src="apps/route.js"></script>
-        <script src="apps/services/main_service.js"></script>
-        <script src="apps/controllers/main_controller.js"></script>
-        <script src="apps/controllers/datatables_controller.js"></script>
-        <script src="apps/controllers/login_app.js"></script>
-
-        <script type="text/javascript">
-            $(document).ajaxStart(function () {
-                Pace.restart();
-            });
-        </script>
-
-        <div class="wrapper">
-            <header class="main-header animated fadeIn" ng-include="'template/show/template-nav_bar.html'" ng-controller="headerController"></header>
-            <div class="content-wrapper animated fadeIn"><ng-view></ng-view></div>
-            <footer class="main-footer animated fadeIn" ng-include="'template/show/template-footer.html'" ng-controller="footerController"></footer>
+    <body ng-cloak class="kk-bg-dark">
+        <div ng-controller="DemoBasicCtrl as ctrl" ng-cloak>
+            <div layout="row" class="navbar md-whiteframe-3dp" ng-include="'template/show/template-nav_bar.html'" ng-controller="headerController">
+            </div>
+            <div layout="row">
+                <div flex="80" flex-offset="10" class="md-whiteframe-3dp kk-content" layout-padding>
+                    <!--<md-content flex >-->
+                    <!--<md-card>-->
+                    <h1>Untitled document</h1>
+                    <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum. Nulla vitae elit libero, a pharetra augue. Nullam id dolor id nibh ultricies vehicula ut id elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+                    <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Vestibulum id ligula porta felis euismod semper. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Nulla vitae elit libero, a pharetra augue. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.</p>
+                    <p>Etiam porta sem malesuada magna mollis euismod. Maecenas faucibus mollis interdum. Maecenas sed diam eget risus varius blandit sit amet non magna. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
+                    <!--</md-card>-->
+                    <!--</md-content>-->
+                </div>
+            </div>
         </div>
+
+        <!-- Angular Material requires Angular.js Libraries -->
+        <script src="assets/angular/angular.min.js"></script>
+        <script src="assets/angular/angular-animate.min.js"></script>
+        <script src="assets/angular/angular-aria.min.js"></script>
+        <script src="assets/angular/angular-messages.min.js"></script>
+        <script src="assets/angular/angular-route.min.js"></script>
+
+        <!-- Angular Material Library -->
+        <script src="assets/angular-material/angular-material.min.js"></script>
+
+        <!-- Angular Controller -->
+        <script src="assets/custom/app.js"></script>
     </body>
 </html>

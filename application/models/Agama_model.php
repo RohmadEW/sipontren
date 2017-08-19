@@ -42,11 +42,27 @@ class Agama_model extends CI_Model {
         return $result;
     }
 
-    public function get_by_id($id) {
+    public function get_by_id($id, $idEditable = FALSE) {
         $this->_get_table();
         $this->db->where($this->primary_key, $id);
-
-        return $this->db->get()->row();;
+        $result = $this->db->get()->row_array();
+        
+        if($idEditable) $result['OLD_ID'] = $result[$this->primary_key];
+        
+        return $result;
+    }
+    
+    public function save($data, $idEditable = FALSE) {
+        if (isset($data[$this->primary_key])) {
+            $where = array($this->primary_key => $data['OLD_ID']);
+            unset($data['OLD_ID']);
+            if (!$idEditable) unset($data[$this->primary_key]);
+            $result = $this->update($data, $where);
+        } else {
+            $result = $this->insert($data);
+        }
+        
+        return $result;
     }
 
     public function insert($data) {

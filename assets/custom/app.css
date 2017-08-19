@@ -1,0 +1,94 @@
+button, html, input, select, textarea {
+    font-family: Roboto,Helvetica Neue,sans-serif;
+}
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../../assets/iconfont/MaterialIcons-Regular.eot); /* For IE6-8 */
+    src: local('Material Icons'),
+        local('MaterialIcons-Regular'),
+        url(../../assets/iconfont/MaterialIcons-Regular.woff2) format('woff2'),
+        url(../../assets/iconfont/MaterialIcons-Regular.woff) format('woff'),
+        url(../../assets/iconfont/MaterialIcons-Regular.ttf) format('truetype');
+}
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;  /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+}
+/* Rules for sizing the icon. */
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
+/* Rules for using icons as black on a light background. */
+.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
+.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+
+/* Rules for using icons as white on a dark background. */
+.material-icons.md-light { color: rgba(255, 255, 255, 1); }
+.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
+
+.navbar {
+    background-color: #4caf50;
+    color: #fff;
+}
+.kk-toolbar-tools {
+    font-weight: 400;
+    color: #fff;
+    padding: 15px 20px;
+    font-size: 32px;
+    background-color: transparent;
+}
+md-toolbar.md-menu-toolbar {
+    background-color: transparent;
+    color: #fff;
+}
+.kk-menu-bar {
+    margin-top: 20px;
+}
+.kk-menu-bar md-menu.md-open>button, .kk-menu-bar md-menu.md-open button {
+    color: #4caf50;
+    background-color: #fff;
+}
+.kk-menu-bar md-menu>button, .kk-menu-bar button {
+    color: #fff;
+}
+.kk-content {
+    margin-top: 25px;
+    background-color: #fff;
+}
+.kk-bg-dark {
+    background-color: #2E7D32;
+}
+md-toolbar.md-menu-toolbar .kk-toolbar-filler {
+    background-color: #245871;
+}
+.kk-icon-title {
+    height: unset;
+    width: unset;
+}
+md-toolbar .kk-toolbar-filler {
+    width: 100px;
+}

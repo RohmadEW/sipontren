@@ -7,7 +7,7 @@ class Agama extends CI_Controller
 
     var $controller = 'agama';
     var $primary_key = "ID_AGAMA";
-    var $idEditable = false;
+    var $idEditable = true;
     var $idInsertable = false;
 
     public function __construct()
@@ -129,7 +129,7 @@ class Agama extends CI_Controller
     {
         $post = json_decode(file_get_contents('php://input'));
 
-        $data = $this->agama->get_by_id($post->id);
+        $data = $this->agama->get_by_id($post->id, $this->idEditable);
 
         $this->output_handler->output_JSON($data);
     }
@@ -138,15 +138,12 @@ class Agama extends CI_Controller
     {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        if (isset($data[$this->primary_key])) {
-            $where = array($this->primary_key => $data[$this->primary_key]);
-            if (!$this->idEditable) unset($data[$this->primary_key]);
-            $result = $this->agama->update($data, $where);
+        $result = $this->agama->save($data, $this->idEditable);
+        
+        if (isset($data[$this->primary_key]))
             $message = 'diubah';
-        } else {
-            $result = $this->agama->insert($data);
+        else
             $message = 'dibuat';
-        }
 
         $this->output_handler->output_JSON($result, $message);
     }
