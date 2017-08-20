@@ -5,52 +5,30 @@
             <md-toolbar-filler class="kk-toolbar-filler" layout layout-align="center center">
                 <md-icon class="material-icons md-48 kk-icon-title">home</md-icon>
             </md-toolbar-filler>
-
             <div>
-                <h2 class="md-toolbar-tools md-display-3 kk-toolbar-tools">SIMAPES</h2>
+                <h2 class="md-toolbar-tools md-display-3 kk-toolbar-tools">{{ name_app }}</h2>
                 <md-menu-bar class="kk-menu-bar">
                     <md-menu ng-repeat="menu in menus">
-                        <a href="#/{{ menu.link}}">
-                            <button ng-click="$mdMenu.open()">
-                                {{ menu.title}}
-                            </button>
-                        </a>
+                        <button ng-click="$mdMenu.open()">
+                            {{ menu.title}}
+                        </button>
                         <md-menu-content width="4">
-                            <md-menu-item>
-                                <md-button ng-click="ctrl.sampleAction('share', $event)">
-                                    Share...
+                            <md-menu-item ng-repeat="childMenu in menu.childMenus">
+                                <md-button ng-if="!childMenu.haveChild" ng-click="go(childMenu)">
+                                    {{ childMenu.title}}
                                 </md-button>
-                            </md-menu-item>
-                            <md-menu-divider></md-menu-divider>
-                            <md-menu-item>
-                                <md-menu>
-                                    <md-button ng-click="$mdMenu.open()">New</md-button>
+                                <md-menu ng-if="childMenu.haveChild">
+                                    <md-button ng-click="$mdMenu.open()">
+                                        {{ childMenu.title}}
+                                    </md-button>
                                     <md-menu-content width="4">
-                                        <md-menu-item><md-button ng-click="ctrl.sampleAction('New Document', $event)">Document</md-button></md-menu-item>
-                                        <md-menu-item><md-button ng-click="ctrl.sampleAction('New Spreadsheet', $event)">Spreadsheet</md-button></md-menu-item>
-                                        <md-menu-item><md-button ng-click="ctrl.sampleAction('New Presentation', $event)">Presentation</md-button></md-menu-item>
-                                        <md-menu-item><md-button ng-click="ctrl.sampleAction('New Form', $event)">Form</md-button></md-menu-item>
-                                        <md-menu-item><md-button ng-click="ctrl.sampleAction('New Drawing', $event)">Drawing</md-button></md-menu-item>
+                                        <md-menu-item ng-repeat="childMenuChild in childMenu.childMenuChilds">
+                                            <md-button ng-click="go(childMenuChild)">
+                                                {{ childMenuChild.title}}
+                                            </md-button>
+                                        </md-menu-item>
                                     </md-menu-content>
                                 </md-menu>
-                            </md-menu-item>
-                            <md-menu-item>
-                                <md-button ng-click="ctrl.sampleAction('Open', $event)">
-                                    Open...
-                                    <span class="md-alt-text"> {{ 'M-O' | keyboardShortcut }}</span>
-                                </md-button>
-                            </md-menu-item>
-                            <md-menu-item>
-                                <md-button disabled="disabled" ng-click="ctrl.sampleAction('Rename', $event)">
-                                    Rename
-                                </md-button>
-                            </md-menu-item>
-                            <md-menu-divider></md-menu-divider>
-                            <md-menu-item>
-                                <md-button ng-click="ctrl.sampleAction('Print', $event)">
-                                    Print
-                                    <span class="md-alt-text">{{ 'M-P' | keyboardShortcut }}</span>
-                                </md-button>
                             </md-menu-item>
                         </md-menu-content>
                     </md-menu>

@@ -14,16 +14,21 @@ class Template extends CI_Controller {
     public function menu() {
         $data = array();
         $data['name_app'] = 'SIMAPES';
-        $data['menu'] = array();
 //        if ($this->auth->check_validation())
-            $data['menu'] = array(
-                array('link' => 'template-home/user/home', 'title' => 'Home', 'haveChild' => FALSE),
-                array('link' => 'template-datatables/master_data/agama', 'title' => 'Agama', 'haveChild' => FALSE),
-                array('title' => 'Data', 'haveChild' => TRUE, 'childMenus' => array(
-                        array('link' => 'template-datatables/data_1', 'title' => 'Data 1', 'haveChild' => TRUE),
-                        array('link' => 'template-datatables/data_2', 'title' => 'Data 2', 'haveChild' => TRUE),
+        $data['menus'] = array(
+            array('title' => 'Home', 'childMenus' => array(
+                    array('link' => 'template-home/user/home', 'title' => 'Home')
+                )),
+            array('title' => 'Master Data', 'childMenus' => array(
+                    array('link' => 'template-datatables/master_data/agama', 'title' => 'Agama')
+                )),
+            array('title' => 'Data', 'childMenus' => array(
+                    array('link' => 'template-datatables/data_1', 'title' => 'Data 1', 'haveChild' => FALSE),
+                    array('link' => 'template-datatables/data_2', 'title' => 'Data 2', 'haveChild' => TRUE, 'childMenuChilds' => array(
+                        array('link' => 'template-datatables/master_data/agama', 'title' => 'Home')
                     )),
-            );
+                )),
+        );
 
         echo json_encode($data);
     }

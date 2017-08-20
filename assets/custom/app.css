@@ -1,17 +1,25 @@
-button, html, input, select, textarea {
-    font-family: Roboto,Helvetica Neue,sans-serif;
-}
 @font-face {
     font-family: 'Material Icons';
     font-style: normal;
     font-weight: 400;
-    src: url(../../assets/iconfont/MaterialIcons-Regular.eot); /* For IE6-8 */
+    src: url(../../assets/fonts/iconfont/MaterialIcons-Regular.eot); /* For IE6-8 */
     src: local('Material Icons'),
         local('MaterialIcons-Regular'),
-        url(../../assets/iconfont/MaterialIcons-Regular.woff2) format('woff2'),
-        url(../../assets/iconfont/MaterialIcons-Regular.woff) format('woff'),
-        url(../../assets/iconfont/MaterialIcons-Regular.ttf) format('truetype');
+        url(../../assets/fonts/iconfont/MaterialIcons-Regular.woff2) format('woff2'),
+        url(../../assets/fonts/iconfont/MaterialIcons-Regular.woff) format('woff'),
+        url(../../assets/fonts/iconfont/MaterialIcons-Regular.ttf) format('truetype');
 }
+@font-face {
+    font-family: 'Ubuntu';
+    font-style: normal;
+    src: local('Ubuntu'),
+        local('Ubuntu'),
+        url(../../assets/fonts/ubuntu/Ubuntu-Regular.ttf) format('truetype');
+}
+button, html, input, select, textarea {
+    font-family: 'Ubuntu',Roboto,Helvetica Neue,sans-serif;
+}
+
 .material-icons {
     font-family: 'Material Icons';
     font-weight: normal;
