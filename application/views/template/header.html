@@ -8,28 +8,25 @@
 
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
+        <!--Plugins-->
+        <link rel="stylesheet" href="assets/plugins/ng-table/ng-table.min.css">
+        <link rel="stylesheet" href="assets/plugins/animate/animate.css">
+
         <!-- Angular Material style sheet -->
         <link rel="stylesheet" href="assets/angular-material/angular-material.min.css">
+
+        <!--Custom CSS-->
         <link rel="stylesheet" href="assets/custom/app.css">
 
     </head>
     <body ng-cloak class="kk-bg-dark">
-        <div ng-controller="DemoBasicCtrl as ctrl" ng-cloak>
-            <div layout="row" class="navbar md-whiteframe-3dp" ng-include="'template/show/template-nav_bar.html'" ng-controller="headerController">
-            </div>
-            <div layout="row">
-                <div flex="80" flex-offset="10" class="md-whiteframe-3dp kk-content" layout-padding>
-                    <!--<md-content flex >-->
-                    <!--<md-card>-->
-                    <h1>Untitled document</h1>
-                    <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum. Nulla vitae elit libero, a pharetra augue. Nullam id dolor id nibh ultricies vehicula ut id elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
-                    <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Vestibulum id ligula porta felis euismod semper. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Nulla vitae elit libero, a pharetra augue. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.</p>
-                    <p>Etiam porta sem malesuada magna mollis euismod. Maecenas faucibus mollis interdum. Maecenas sed diam eget risus varius blandit sit amet non magna. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
-                    <!--</md-card>-->
-                    <!--</md-content>-->
-                </div>
-            </div>
+        <div layout="row" class="navbar md-whiteframe-3dp" ng-include="'template/show/template-nav_bar.html'" ng-controller="headerController" ng-cloak>
+        
         </div>
+        <div class="ajax-bar">
+            <md-progress-linear class="kk-progress-linear" md-mode="indeterminate" ng-show="ajaxRunning"></md-progress-linear>
+        </div>
+        <ng-view></ng-view>
 
         <!-- Angular Material requires Angular.js Libraries -->
         <script src="assets/angular/angular.min.js"></script>
@@ -38,8 +35,12 @@
         <script src="assets/angular/angular-messages.min.js"></script>
         <script src="assets/angular/angular-route.min.js"></script>
 
+
         <!-- Angular Material Library -->
         <script src="assets/angular-material/angular-material.min.js"></script>
+
+        <!-- Plugins -->
+        <script src="assets/plugins/ng-table/ng-table.min.js"></script>
 
         <!-- Angular Controller -->
         <script src="assets/custom/app.js"></script>

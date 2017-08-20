@@ -17,10 +17,10 @@ class Template extends CI_Controller {
 //        if ($this->auth->check_validation())
         $data['menus'] = array(
             array('title' => 'Home', 'childMenus' => array(
-                    array('link' => 'template-home/user/home', 'title' => 'Home')
+                    array('link' => 'template-content/user/home', 'title' => 'Home')
                 )),
             array('title' => 'Master Data', 'childMenus' => array(
-                    array('link' => 'template-datatables/master_data/agama', 'title' => 'Agama')
+                    array('link' => 'master_data-agama/master_data/agama', 'title' => 'Agama')
                 )),
             array('title' => 'Data', 'childMenus' => array(
                     array('link' => 'template-datatables/data_1', 'title' => 'Data 1', 'haveChild' => FALSE),
