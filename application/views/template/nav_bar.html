@@ -1,12 +1,12 @@
 
-<div flex="80" flex-offset="5">
+<div flex="60" flex-offset="5">
     <md-toolbar class="md-menu-toolbar">
         <div layout="row">
             <md-toolbar-filler class="kk-toolbar-filler" layout layout-align="center center">
                 <md-icon class="material-icons md-48 kk-icon-title">home</md-icon>
             </md-toolbar-filler>
             <div>
-                <h2 class="md-toolbar-tools md-display-3 kk-toolbar-tools">{{ name_app }}</h2>
+                <h2 class="md-toolbar-tools md-display-3 kk-toolbar-tools">{{ name_app}}</h2>
                 <md-menu-bar class="kk-menu-bar">
                     <md-menu ng-repeat="menu in menus">
                         <button ng-click="$mdMenu.open()">
@@ -37,8 +37,23 @@
         </div>
     </md-toolbar>
 </div>
-<div flex="10" layout="row" layout-align="end center">
+<div flex="30" layout="row" layout-align="end center">
     <div>
-        <md-icon class="material-icons md-36 kk-icon-title">exit_to_app</md-icon>
+        <md-button class="md-fab kk-button" aria-label="Cari Santri">
+            <md-tooltip md-direction="bottom">Cari Santri</md-tooltip>
+            <md-icon class="material-icons md-36 kk-icon-nav-bar">search</md-icon>
+        </md-button>
+    </div>
+    <div>
+        <md-button class="md-fab kk-button" aria-label="Tentang Aplikasi" ng-click="showInfoDev()">
+            <md-tooltip md-direction="bottom">Tentang Aplikasi</md-tooltip>
+            <md-icon class="material-icons md-36 kk-icon-nav-bar">help_outline</md-icon>
+        </md-button>
+    </div>
+    <div>
+        <md-button class="md-fab kk-button" aria-label="Keluar Aplikasi">
+            <md-tooltip md-direction="bottom">Keluar Aplikasi</md-tooltip>
+            <md-icon class="material-icons md-36 kk-icon-nav-bar">exit_to_app</md-icon>
+        </md-button>
     </div>
 </div>

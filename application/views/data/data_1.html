@@ -11,12 +11,9 @@
             </div>
             <div layout="row">
                 <div flex="100">
-                    <table ng-table="dataTables" class="table table-condensed table-bordered table-striped table-hover" show-filter="true">
-                        <tr ng-repeat="user in $data">
-                            <td title="'Name'" filter="{ name: 'text'}" sortable="'name'">
-                                {{user.name}}</td>
-                            <td title="'Age'" filter="{ age: 'number'}" sortable="'age'">
-                                {{user.age}}</td>
+                    <table ng-table-dynamic="dataTables with table" class="table table-condensed table-bordered table-striped table-hover" show-filter="true">
+                        <tr ng-repeat="row in $data">
+                            <td ng-repeat="col in $columns">{{row[col.field]}}</td>
                         </tr>
                     </table>
                 </div>

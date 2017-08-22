@@ -7,9 +7,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * and open the template in the editor.
  */
 
-class Agama_model extends CI_Model {
+class Kecamatan_model extends CI_Model {
 
-    var $table = 'md_agama';
+    var $table = 'md_kecamatan';
     var $column = array('ID_AGAMA', 'NAMA_AGAMA', 'ID_AGAMA');
     var $primary_key = "ID_AGAMA";
     var $order = array("ID_AGAMA" => 'ASC');
@@ -20,12 +20,14 @@ class Agama_model extends CI_Model {
 
     private function _get_table() {
         $this->db->from($this->table);
+        $this->db->join('md_kabupaten', 'KABUPATEN_KEC=ID_KAB');
+        $this->db->join('md_provinsi', 'PROVINSI_KAB=ID_PROV');
     }
 
     public function get_datatable() {
         $this->_get_table();
         $data = $this->db->get()->result();
-
+        
         $result = array(
             "data" => $data
         );

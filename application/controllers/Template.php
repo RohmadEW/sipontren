@@ -17,13 +17,16 @@ class Template extends CI_Controller {
 //        if ($this->auth->check_validation())
         $data['menus'] = array(
             array('title' => 'Home', 'childMenus' => array(
-                    array('link' => 'template-content/user/home', 'title' => 'Home')
+                    array('link' => 'template-content/index/user/home', 'title' => 'Home')
                 )),
             array('title' => 'Master Data', 'childMenus' => array(
-                    array('link' => 'master_data-agama/master_data/agama', 'title' => 'Agama')
+                    array('link' => 'master_data-agama/index/master_data/agama', 'title' => 'Agama'),
+                    array('link' => '#', 'title' => 'Wilayah', 'haveChild' => TRUE, 'childMenuChilds' => array(
+                        array('link' => 'master_data-kecamatan/index/master_data/kecamatan', 'title' => 'Kecamatan')
+                    )),
                 )),
             array('title' => 'Data', 'childMenus' => array(
-                    array('link' => 'template-datatables/data_1', 'title' => 'Data 1', 'haveChild' => FALSE),
+                    array('link' => 'data-data_1/data/data_1', 'title' => 'Data 1', 'haveChild' => FALSE),
                     array('link' => 'template-datatables/data_2', 'title' => 'Data 2', 'haveChild' => TRUE, 'childMenuChilds' => array(
                         array('link' => 'template-datatables/master_data/agama', 'title' => 'Home')
                     )),

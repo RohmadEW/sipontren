@@ -2,43 +2,56 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Agama extends CI_Controller {
-
-    var $controller = 'agama';
-    var $primary_key = "ID_AGAMA";
-    var $idEditable = true;
-    var $idInsertable = false;
+class Kecamatan extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'agama_model' => 'agama'
+            'kecamatan_model' => 'kecamatan'
         ));
 //        $this->auth->validation();
     }
 
     public function index() {
         $data = array(
-            'title' => 'Master Data Agama',
-            'subtitle' => 'Data semua agama',
-            'breadcrumb' => 'Master Data > Agama',
+            'title' => 'Master Data Kecamatan',
+            'subtitle' => 'Data semua kecamatan',
+            'breadcrumb' => 'Master Data > Kecamatan',
             'table' => array(
                 array(
-                    'field' => "ID_AGAMA",
+                    'field' => "ID_KEC",
                     'title' => "ID", 
-                    'sortable' => "ID_AGAMA", 
+                    'sortable' => "ID_KEC", 
                     'show' => true,
                     'filter' => array(
-                        'ID_AGAMA' => 'number'
+                        'ID_KEC' => 'number'
                     )
                 ),
                 array(
-                    'field' => "NAMA_AGAMA",
-                    'title' => "Nama Agama", 
-                    'sortable' => "NAMA_AGAMA", 
+                    'field' => "NAMA_KEC",
+                    'title' => "Nama Kecamatan", 
+                    'sortable' => "NAMA_KEC", 
                     'show' => true,
                     'filter' => array(
-                        'NAMA_AGAMA' => 'text'
+                        'NAMA_KEC' => 'text'
+                    )
+                ),
+                array(
+                    'field' => "NAMA_KAB",
+                    'title' => "Nama Kabupaten", 
+                    'sortable' => "NAMA_KAB", 
+                    'show' => true,
+                    'filter' => array(
+                        'NAMA_KAB' => 'text'
+                    )
+                ),
+                array(
+                    'field' => "NAMA_PROV",
+                    'title' => "Nama Provinsi", 
+                    'sortable' => "NAMA_PROV", 
+                    'show' => true,
+                    'filter' => array(
+                        'NAMA_PROV' => 'text'
                     )
                 ),
             )
@@ -47,10 +60,9 @@ class Agama extends CI_Controller {
     }
     
     public function datatable() {
-        $data = $this->agama->get_datatable();
+        $data = $this->kecamatan->get_datatable();
 
         $this->output_handler->output_JSON($data);
-        
     }
 
     public function data() {
