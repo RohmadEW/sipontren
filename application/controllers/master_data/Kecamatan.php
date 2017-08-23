@@ -9,7 +9,7 @@ class Kecamatan extends CI_Controller {
         $this->load->model(array(
             'kecamatan_model' => 'kecamatan'
         ));
-//        $this->auth->validation();
+        $this->auth->validation();
     }
 
     public function index() {

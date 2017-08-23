@@ -2,7 +2,7 @@
 (function () {
     "use strict";
 
-    angular.module('mainApp', ['ngMaterial', 'ngRoute', 'ngTable']);
+    angular.module('mainApp', ['ngMaterial', 'ngRoute', 'ngTable', 'ngMessages']);
 
     angular.module('mainApp').run(function ($rootScope) {
         $rootScope.$on('loading:progress', function () {
@@ -12,12 +12,16 @@
         $rootScope.$on('loading:finish', function () {
             $rootScope.ajaxRunning = false;
         });
+
+        $rootScope.showMenu = true;
     });
 
 // STATIC VARIABLES
     angular.module('mainApp').value('url_menu', 'template/menu');
     angular.module('mainApp').value('url_info', 'template/info');
     angular.module('mainApp').value('url_template', 'template/show/');
+    angular.module('mainApp').value('url_home', '/master_data-kecamatan/datatable/master_data/kecamatan');
+    angular.module('mainApp').value('url_login', '/user/login/user/login');
 
 // CONFIGURATION 
     angular.module('mainApp').config(
@@ -66,18 +70,39 @@
     );
 
 // SERVICES APP
-    angular.module('mainApp').service('generalService', function ($location, $route, $templateCache) {
+    angular.module('mainApp').service('notificationService', function ($location, $mdDialog, $mdToast, url_login) {
         this.errorCallback = function (error) {
             if (error.status == 403) {
-                $location.path("/user-login/login");
+                $location.path(url_login);
             }
 
-            swal({
-                title: 'Error Ajax Response (XHR Failed)',
-                text: 'Status: ' + error.status + ' - ' + error.statusText + ' <hr>Message:<br>' + error.data,
-                type: 'error',
-                html: true,
-            });
+            $mdDialog.show(
+                    $mdDialog.alert()
+                    .clickOutsideToClose(true)
+                    .title('Error Ajax Response (XHR Failed)')
+                    .textContent('Status: ' + error.status + ' - ' + error.statusText + ' \n Message:<br>' + error.data)
+                    .ariaLabel('Error')
+                    .ok('OK')
+                    );
+        };
+        this.toastSimple = function (text) {
+            $mdToast.show($mdToast.simple().textContent(text).position('top right').hideDelay(3000));
+        };
+    });
+    angular.module('mainApp').service("dataScopeShared", function () {
+        var dataList = {};
+
+        var addData = function (key, value) {
+            dataList[key] = value;
+        };
+
+        var getData = function (key) {
+            return dataList[key];
+        };
+
+        return {
+            addData: addData,
+            getData: getData
         };
     });
 })();
@@ -87,8 +112,8 @@
 (function () {
     "use strict";
 
-    angular.module('mainApp').controller('headerController', function ($scope, $http, url_menu, generalService, $location, url_template, $timeout, $mdBottomSheet, $mdToast) {
-        $http.get(url_menu).then(callbackMenu, generalService.errorCallback);
+    angular.module('mainApp').controller('headerController', function ($rootScope, $scope, $http, url_menu, url_login, notificationService, $location, url_template, $mdBottomSheet) {
+        $http.get(url_menu).then(callbackMenu, notificationService.errorCallback);
 
         function callbackMenu(response) {
             $scope.name_app = response.data.name_app;
@@ -104,11 +129,42 @@
                 templateUrl: url_template + 'template-info_dev.html',
             });
         };
+
+        $scope.logOut = function () {
+            $rootScope.showMenu = false;
+
+            $location.path(url_login);
+        };
     });
-    
+
+    angular.module('mainApp').controller('loginController', function ($rootScope, $scope, $http, notificationService, $routeParams, url_home, $location) {
+        $rootScope.showMenu = false;
+
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.form = {
+            'username': '',
+            'password': ''
+        };
+
+        $http.get($scope.mainURI + '/logout');
+        $scope.loginApp = function () {
+            $http.post($scope.mainURI + '/proccess', $scope.formData).then(successCallback, notificationService.errorCallback);
+        };
+
+        function successCallback(response) {
+            notificationService.toastSimple(response.data.notification.text);
+
+            if (response.data.status) {
+                $rootScope.showMenu = true;
+
+                $location.path(url_home);
+            }
+        }
+    });
+
     angular.module('mainApp').controller('DemoBasicCtrl', function () {});
 
-    angular.module('mainApp').controller('datatableController', function ($scope, $routeParams, $http, generalService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache) {
+    angular.module('mainApp').controller('datatableController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache) {
         $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
         $scope.mainTemplate = url_template + $routeParams.template;
         $scope.getData = getData();
@@ -118,7 +174,7 @@
         $scope.fabIsOpen = false;
         $scope.fabHover = false;
 
-        $http.get($scope.mainURI + '/index').then(callbackSuccess, generalService.errorCallback);
+        $http.get($scope.mainURI + '/index').then(callbackSuccess, notificationService.errorCallback);
 
         function callbackSuccess(response) {
             $scope.title = response.data.title;
@@ -131,7 +187,7 @@
         }
 
         function getData() {
-            $http.get($scope.mainURI + '/datatable').then(callbackDatatables, generalService.errorCallback);
+            $http.get($scope.mainURI + '/datatable').then(callbackDatatables, notificationService.errorCallback);
         }
 
         function callbackDatatables(response) {
@@ -174,26 +230,39 @@
                 reloadPage();
             } else if (item.id === 'request_doc') {
                 $mdSidenav('right').toggle();
-            } else {
-                $mdDialog.show({
-                    clickOutsideToClose: true,
-                    controller: function ($mdDialog) {
-                        this.item = item;
-
-                        this.close = function () {
-                            $mdDialog.cancel();
-                        };
-
-                        this.submit = function () {
-                            $mdDialog.hide();
-                        };
-                    },
-                    controllerAs: 'dialog',
-                    templateUrl: $scope.mainTemplate + '-form.html',
-                    targetEvent: $event
-                });
+            } else if (item.id === 'add_data') {
+                $mdDialog
+                        .show({
+                            clickOutsideToClose: true,
+                            controller: addData,
+                            templateUrl: $scope.mainTemplate + '-add.html',
+                            targetEvent: $event
+                        })
+                        .then(
+                                function (answer) {
+                                    $scope.status = 'You said the information was "' + answer + '".';
+                                    notificationService.toastSimple($scope.status);
+                                },
+                                function () {
+                                    $scope.status = 'You cancelled the dialog.';
+                                }
+                        );
             }
         };
+
+        function addData($scope, $mdDialog) {
+            $scope.hide = function () {
+                $mdDialog.hide();
+            };
+
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+
+            $scope.answer = function (answer) {
+                $mdDialog.hide(answer);
+            };
+        }
 
         function reloadPage() {
             var currentPageTemplate = $route.current.templateUrl;

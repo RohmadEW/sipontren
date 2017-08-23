@@ -8,30 +8,34 @@ class Template extends CI_Controller {
 //        $this->auth->log_out();
         $view = str_replace('-', '/', $view);
 
+        if (substr($view, -14) == 'datatable.html')
+            $view = 'template/datatable.html';
+
         $this->load->view($view);
     }
 
     public function menu() {
         $data = array();
-        $data['name_app'] = 'SIMAPES';
-//        if ($this->auth->check_validation())
-        $data['menus'] = array(
-            array('title' => 'Home', 'childMenus' => array(
-                    array('link' => 'template-content/index/user/home', 'title' => 'Home')
-                )),
-            array('title' => 'Master Data', 'childMenus' => array(
-                    array('link' => 'master_data-agama/index/master_data/agama', 'title' => 'Agama'),
-                    array('link' => '#', 'title' => 'Wilayah', 'haveChild' => TRUE, 'childMenuChilds' => array(
-                        array('link' => 'master_data-kecamatan/index/master_data/kecamatan', 'title' => 'Kecamatan')
+        $data['name_app'] = 'SIPONTREN';
+        
+        if ($this->auth->check_validation())
+            $data['menus'] = array(
+                array('title' => 'Home', 'childMenus' => array(
+                        array('link' => 'template-content/index/user/home', 'title' => 'Home')
                     )),
-                )),
-            array('title' => 'Data', 'childMenus' => array(
-                    array('link' => 'data-data_1/data/data_1', 'title' => 'Data 1', 'haveChild' => FALSE),
-                    array('link' => 'template-datatables/data_2', 'title' => 'Data 2', 'haveChild' => TRUE, 'childMenuChilds' => array(
-                        array('link' => 'template-datatables/master_data/agama', 'title' => 'Home')
+                array('title' => 'Master Data', 'childMenus' => array(
+                        array('link' => 'master_data-agama/datatable/master_data/agama', 'title' => 'Agama'),
+                        array('link' => '#', 'title' => 'Wilayah', 'haveChild' => TRUE, 'childMenuChilds' => array(
+                                array('link' => 'master_data-kecamatan/datatable/master_data/kecamatan', 'title' => 'Kecamatan')
+                            )),
                     )),
-                )),
-        );
+                array('title' => 'Data', 'childMenus' => array(
+                        array('link' => 'data-data_1/data/data_1', 'title' => 'Data 1', 'haveChild' => FALSE),
+                        array('link' => 'template-datatables/data_2', 'title' => 'Data 2', 'haveChild' => TRUE, 'childMenuChilds' => array(
+                                array('link' => 'template-datatables/master_data/agama', 'title' => 'Home')
+                            )),
+                    )),
+            );
 
         echo json_encode($data);
     }

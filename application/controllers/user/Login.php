@@ -13,7 +13,7 @@ class Login extends CI_Controller
     public function proccess()
     {
         $post = json_decode(file_get_contents('php://input'));
-
+        
         $result = $this->auth->proccess_login($post);
 
         $this->output_handler->output_JSON($result);

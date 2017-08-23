@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class User_model extends CI_Model {
 
     var $table = 'md_user';
-    var $column = array('ID_USER', 'NAME_USER', 'NAMA_PEG','STATUS_USER','LASTLOGIN_USER','ID_USER');
+    var $column = array('ID_USER', 'NAME_USER', 'NAMA_UST','STATUS_USER','LASTLOGIN_USER','ID_USER');
     var $primary_key = "ID_USER";
     var $order = array("ID_USER" => 'ASC');
 
@@ -15,7 +15,7 @@ class User_model extends CI_Model {
 
     private function _get_table() {
         $this->db->from($this->table);
-        $this->db->join('md_pegawai mp', $this->table.'.PEGAWAI_USER=mp.ID_PEG');
+        $this->db->join('md_ustadz mp', $this->table.'.USTADZ_USER=mp.ID_UST');
     }
 
     private function _get_datatables_query() {

@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <!--<meta http-equiv="Refresh" content="1">-->
-        <title>SIMAPES - Sistem Informasi Manajemen Pesantren</title>
+        <title>SIPONTREN - Sistem Informasi Pondok Pesantren</title>
 
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
@@ -21,7 +21,7 @@
 
     </head>
     <body ng-cloak class="kk-bg-dark">
-        <div layout="row" class="navbar md-whiteframe-3dp" ng-include="'template/show/template-nav_bar.html'" ng-controller="headerController" ng-cloak>
+        <div layout="row" ng-if="showMenu" class="navbar md-whiteframe-3dp" ng-include="'template/show/template-nav_bar.html'" ng-controller="headerController" ng-cloak>
         
         </div>
         <div class="ajax-bar">

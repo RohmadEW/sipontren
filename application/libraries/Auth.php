@@ -68,7 +68,7 @@ class Auth
                         $data = array(
                             'ID_USER' => $result_username->ID_USER,
                             'NAME_USER' => $result_username->NAME_USER,
-                            'FULLNAME_USER' => $result_username->NAMA_PEG,
+                            'FULLNAME_USER' => $result_username->NAMA_UST,
                         );
                         $this->CI->user->update(array('ID_USER' => $result_username->ID_USER), array('LASTLOGIN_USER' => date('Y-m-d H:i:s')));
 
