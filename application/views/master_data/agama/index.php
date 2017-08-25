@@ -1,3 +1,7 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+$this->auth->validation();
+?>
 <div layout="row" ng-controller="datatableController" ng-cloak class="kk-bg-dark panel-datatable">
     <div flex="80" flex-offset="10" ng-if="appReady" class="md-whiteframe-3dp kk-content animated fadeIn">
         <div layout-padding>

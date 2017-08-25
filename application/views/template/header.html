@@ -17,17 +17,7 @@
         <link rel="stylesheet" href="assets/angular-material/angular-material.min.css">
 
         <!--Custom CSS-->
-        <link rel="stylesheet" href="assets/custom/app.css">
-
-    </head>
-    <body ng-cloak class="kk-bg-dark">
-        <div layout="row" ng-if="showMenu" class="navbar md-whiteframe-3dp" ng-include="'template/show/template-nav_bar.html'" ng-controller="headerController" ng-cloak>
-        
-        </div>
-        <div class="ajax-bar">
-            <md-progress-linear class="kk-progress-linear" md-mode="indeterminate" ng-show="ajaxRunning"></md-progress-linear>
-        </div>
-        <ng-view></ng-view>
+        <link rel="stylesheet" href="assets/dist/app.css">
 
         <!-- Angular Material requires Angular.js Libraries -->
         <script src="assets/angular/angular.min.js"></script>
@@ -36,7 +26,6 @@
         <script src="assets/angular/angular-messages.min.js"></script>
         <script src="assets/angular/angular-route.min.js"></script>
 
-
         <!-- Angular Material Library -->
         <script src="assets/angular-material/angular-material.min.js"></script>
 
@@ -44,6 +33,17 @@
         <script src="assets/plugins/ng-table/ng-table.min.js"></script>
 
         <!-- Angular Controller -->
-        <script src="assets/custom/app.js"></script>
+        <script src="assets/dist/app.js"></script>
+        
+        <!--<div ng-include="'template/show/template-main_script.html'"></div>-->
+
+    </head>
+    <body ng-cloak class="kk-bg-dark">
+        <div layout="row" ng-if="showMenu" class="navbar md-whiteframe-3dp" ng-include="'template/show/template-nav_bar.html'" ng-controller="headerController" ng-cloak>  
+        </div>
+        <div class="ajax-bar">
+            <md-progress-linear class="kk-progress-linear" md-mode="indeterminate" ng-show="ajaxRunning"></md-progress-linear>
+        </div>
+        <ng-view></ng-view>
     </body>
 </html>

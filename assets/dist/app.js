@@ -72,7 +72,7 @@
 // SERVICES APP
     angular.module('mainApp').service('notificationService', function ($location, $mdDialog, $mdToast, url_login) {
         this.errorCallback = function (error) {
-            if (error.status == 403) {
+            if (error.status === 403) {
                 $location.path(url_login);
             }
 
@@ -89,6 +89,7 @@
             $mdToast.show($mdToast.simple().textContent(text).position('top right').hideDelay(3000));
         };
     });
+
     angular.module('mainApp').service("dataScopeShared", function () {
         var dataList = {};
 
@@ -105,6 +106,53 @@
             getData: getData
         };
     });
+
+    angular.module('mainApp').service("formHelper", function ($timeout, $q) {
+        this.autocomplete = function (scope) {
+            scope.noCache = false;
+            scope.selectedItem = null;
+            scope.searchText = null;
+            scope.dataAll = loadAll();
+
+            scope.querySearch = function (query) {
+                var results = query ? scope.dataAll.filter(createFilterFor(query)) : scope.dataAll;
+                var deferred = $q.defer();
+
+                $timeout(function () {
+                    deferred.resolve(results);
+                }, Math.random() * 1000, false);
+
+                return deferred.promise;
+            };
+
+            function loadAll() {
+                var data = scope.dataAutocomplete;
+
+                return data.map(function (detail) {
+                    return {
+                        key: detail.id,
+                        value: detail.label.toLowerCase(),
+                        display: detail.label
+                    };
+                });
+            }
+
+            function createFilterFor(query) {
+                var lowercaseQuery = angular.lowercase(query);
+
+                return function filterFn(detail) {
+                    return (detail.value.indexOf(lowercaseQuery) === 0);
+                };
+            }
+
+            scope.$watch('selectedItem', function (selectedItem) {
+                console.log(selectedItem);
+            });
+
+            return scope;
+        };
+    });
+
 })();
 
 // CONTROLLERS APP
@@ -234,40 +282,72 @@
                 $mdDialog
                         .show({
                             clickOutsideToClose: true,
-                            controller: addData,
                             templateUrl: $scope.mainTemplate + '-add.html',
                             targetEvent: $event
                         })
                         .then(
-                                function (answer) {
-                                    $scope.status = 'You said the information was "' + answer + '".';
-                                    notificationService.toastSimple($scope.status);
+                                function (text) {
+                                    notificationService.toastSimple(text);
+                                    getData();
                                 },
                                 function () {
-                                    $scope.status = 'You cancelled the dialog.';
+                                    // CANCEL DIALOG
                                 }
                         );
             }
         };
 
-        function addData($scope, $mdDialog) {
-            $scope.hide = function () {
-                $mdDialog.hide();
-            };
-
-            $scope.cancel = function () {
-                $mdDialog.cancel();
-            };
-
-            $scope.answer = function (answer) {
-                $mdDialog.hide(answer);
-            };
-        }
-
         function reloadPage() {
             var currentPageTemplate = $route.current.templateUrl;
             $templateCache.remove(currentPageTemplate);
             $route.reload();
+        }
+    });
+
+    angular.module('mainApp').controller('kecamatanController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.cancelSumbit = function () {
+            $mdDialog.cancel();
+        };
+        $scope.saveSubmit = function () {
+            if ($scope.form.ID_KAB.$valid && $scope.form.NAMA_KEC.$valid) {
+                $scope.ajaxRunning = true;
+                
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+        $scope.formData = {
+            KABUPATEN_KEC: null,
+            NAMA_KEC: null
+        };
+        $scope.$watch('ID_KAB.selectedItem', function (selectedItem){
+            $scope.formData.KABUPATEN_KEC = selectedItem.key;
+        });
+
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            $http.get(response.data.uri.kabupaten).then(callbackKabupaten, notificationService.errorCallback);
+        }
+
+        function callbackKabupaten(response) {
+            $scope.dataAutocomplete = response.data;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+
+            $scope.ID_KAB = formHelper.autocomplete($scope);
+        }
+        
+        function callbackSuccessSaving (response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification.text);
         }
     });
 

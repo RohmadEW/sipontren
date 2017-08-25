@@ -10,6 +10,8 @@ class Template extends CI_Controller {
 
         if (substr($view, -14) == 'datatable.html')
             $view = 'template/datatable.html';
+        
+       $view = str_replace('html', 'php', $view);
 
         $this->load->view($view);
     }
@@ -36,6 +38,8 @@ class Template extends CI_Controller {
                             )),
                     )),
             );
+        else
+            show_error('Anda tidak memiliki akses pada halaman ini', '403', 'Silahkan login terlebih dahulu.');
 
         echo json_encode($data);
     }

@@ -2,15 +2,12 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Kecamatan extends CI_Controller {
-    
-    var $idEditable = true;
-    var $primaryKey = 'ID_KEC';
+class Kabupaten extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'kecamatan_model' => 'kecamatan'
+            'kabupaten_model' => 'kabupaten'
         ));
         $this->auth->validation();
     }
@@ -18,7 +15,7 @@ class Kecamatan extends CI_Controller {
     public function index() {
         $data = array(
             'title' => 'Master Data Kecamatan',
-            'subtitle' => 'Data semua kecamatan',
+            'subtitle' => 'Data semua kabupaten',
             'breadcrumb' => 'Master Data > Kecamatan',
             'table' => array(
                 array(
@@ -63,7 +60,7 @@ class Kecamatan extends CI_Controller {
     }
     
     public function datatable() {
-        $data = $this->kecamatan->get_datatable();
+        $data = $this->kabupaten->get_datatable();
 
         $this->output_handler->output_JSON($data);
     }
@@ -78,8 +75,8 @@ class Kecamatan extends CI_Controller {
         $this->output_handler->output_JSON($data);
     }
 
-    public function data() {
-        $data = $this->kecamatan->get_datatables();
+    public function get_all() {
+        $data = $this->kabupaten->get_all();
 
         $this->output_handler->output_JSON($data);
     }
@@ -87,17 +84,17 @@ class Kecamatan extends CI_Controller {
     public function view() {
         $post = json_decode(file_get_contents('php://input'));
 
-        $data = $this->kecamatan->get_by_id($post->id, $this->idEditable);
+        $data = $this->kabupaten->get_by_id($post->id, $this->idEditable);
 
         $this->output_handler->output_JSON($data);
     }
 
     public function save() {
         $data = json_decode(file_get_contents('php://input'), true);
-        
-        $result = $this->kecamatan->save($data, $this->idEditable);
 
-        if (isset($data[$this->primaryKey]))
+        $result = $this->kabupaten->save($data, $this->idEditable);
+
+        if (isset($data[$this->primary_key]))
             $message = 'diubah';
         else
             $message = 'dibuat';
@@ -108,7 +105,7 @@ class Kecamatan extends CI_Controller {
     public function delete() {
         $post = json_decode(file_get_contents('php://input'));
 
-        $result = $this->kecamatan->delete($post->id);
+        $result = $this->kabupaten->delete($post->id);
         $message = 'dihapus';
 
         $this->output_handler->output_JSON($result, $message);

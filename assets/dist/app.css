@@ -444,3 +444,9 @@ md-toolbar .kk-toolbar-filler {
 .pagination > li > a {
     padding: unset;
 }
+.dialog-form {
+    width: 700px;
+}
+.kk-form-control {
+    margin-top: 5px;
+}
