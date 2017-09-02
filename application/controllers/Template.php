@@ -10,8 +10,8 @@ class Template extends CI_Controller {
 
         if (substr($view, -14) == 'datatable.html')
             $view = 'template/datatable.html';
-        
-       $view = str_replace('html', 'php', $view);
+
+        $view = str_replace('html', 'php', $view);
 
         $this->load->view($view);
     }
@@ -19,27 +19,46 @@ class Template extends CI_Controller {
     public function menu() {
         $data = array();
         $data['name_app'] = 'SIPONTREN';
-        
-        if ($this->auth->check_validation())
-            $data['menus'] = array(
-                array('title' => 'Home', 'childMenus' => array(
-                        array('link' => 'template-content/index/user/home', 'title' => 'Home')
-                    )),
-                array('title' => 'Master Data', 'childMenus' => array(
-                        array('link' => 'master_data-agama/datatable/master_data/agama', 'title' => 'Agama'),
-                        array('link' => '#', 'title' => 'Wilayah', 'haveChild' => TRUE, 'childMenuChilds' => array(
-                                array('link' => 'master_data-kecamatan/datatable/master_data/kecamatan', 'title' => 'Kecamatan')
-                            )),
-                    )),
-                array('title' => 'Data', 'childMenus' => array(
-                        array('link' => 'data-data_1/data/data_1', 'title' => 'Data 1', 'haveChild' => FALSE),
-                        array('link' => 'template-datatables/data_2', 'title' => 'Data 2', 'haveChild' => TRUE, 'childMenuChilds' => array(
-                                array('link' => 'template-datatables/master_data/agama', 'title' => 'Home')
-                            )),
-                    )),
-            );
-        else
+
+        if ($this->auth->check_validation()) {
+            $data['menus'] = array();
+            $menus = json_decode($this->session->userdata('MENU_USER'));
+            $temp_id_parent = array();
+            foreach ($menus as $menu) {
+                if ($menu->SHOW_MENU) {
+                    if ($menu->LEVEL_CHILD == 1) {
+                        $data['menus'][$menu->ID_MENU] = array(
+                            'title' => $menu->NAME_MENU,
+                            'childMenus' => array()
+                        );
+                    } elseif ($menu->LEVEL_CHILD == 2) {
+                        if ($menu->HAVE_CHILD) {
+                            $data['menus'][$temp_id_parent[1]]['childMenus'][$menu->ID_MENU] = array(
+                                'link' => '#',
+                                'title' => $menu->NAME_MENU,
+                                'haveChild' => TRUE,
+                                'childMenuChilds' => array()
+                            );
+                        } else {
+                            $data['menus'][$temp_id_parent[1]]['childMenus'][$menu->ID_MENU] = array(
+                                'link' => $menu->DIR_MENU . '-' . $menu->CONTROLLER_MENU . '/' . $menu->TEMPLATE_MENU . '/' . $menu->DIR_MENU . '/' . $menu->CONTROLLER_MENU,
+                                'title' => $menu->NAME_MENU
+                            );
+                        }
+                    } elseif ($menu->LEVEL_CHILD == 3) {
+                        $data['menus'][$temp_id_parent[1]]['childMenus'][$temp_id_parent[2]]['childMenuChilds'][$menu->ID_MENU] = array(
+                            'link' => $menu->DIR_MENU . '-' . $menu->CONTROLLER_MENU . '/' . $menu->TEMPLATE_MENU . '/' . $menu->DIR_MENU . '/' . $menu->CONTROLLER_MENU,
+                            'title' => $menu->NAME_MENU
+                        );
+                    }
+                }
+
+                if ($menu->HAVE_CHILD)
+                    $temp_id_parent[$menu->LEVEL_CHILD] = $menu->ID_MENU;
+            }
+        } else {
             show_error('Anda tidak memiliki akses pada halaman ini', '403', 'Silahkan login terlebih dahulu.');
+        }
 
         echo json_encode($data);
     }

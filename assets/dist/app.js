@@ -145,10 +145,6 @@
                 };
             }
 
-            scope.$watch('selectedItem', function (selectedItem) {
-                console.log(selectedItem);
-            });
-
             return scope;
         };
     });
@@ -212,7 +208,7 @@
 
     angular.module('mainApp').controller('DemoBasicCtrl', function () {});
 
-    angular.module('mainApp').controller('datatableController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache) {
+    angular.module('mainApp').controller('datatableController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache, dataScopeShared) {
         $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
         $scope.mainTemplate = url_template + $routeParams.template;
         $scope.getData = getData();
@@ -251,16 +247,6 @@
             $scope.fabHidden = false;
         }
 
-        $scope.$watch('demo.isOpen', function (isOpen) {
-            if (isOpen) {
-                $timeout(function () {
-                    $scope.tooltipVisible = $scope.isOpen;
-                }, 600);
-            } else {
-                $scope.tooltipVisible = $scope.isOpen;
-            }
-        });
-
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
@@ -279,21 +265,7 @@
             } else if (item.id === 'request_doc') {
                 $mdSidenav('right').toggle();
             } else if (item.id === 'add_data') {
-                $mdDialog
-                        .show({
-                            clickOutsideToClose: true,
-                            templateUrl: $scope.mainTemplate + '-add.html',
-                            targetEvent: $event
-                        })
-                        .then(
-                                function (text) {
-                                    notificationService.toastSimple(text);
-                                    getData();
-                                },
-                                function () {
-                                    // CANCEL DIALOG
-                                }
-                        );
+                createDialog($event, 'form');
             }
         };
 
@@ -302,30 +274,70 @@
             $templateCache.remove(currentPageTemplate);
             $route.reload();
         }
+
+        function createDialog(event, mode) {
+            $mdDialog
+                    .show({
+                        clickOutsideToClose: true,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (text) {
+                                notificationService.toastSimple(text);
+                                getData();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
+        }
+
+        $scope.actionRow = function ($event, action, data) {
+            if (action.update)
+                updateRow($event, data);
+            else if (action.delete)
+                deleteRow($event, data);
+        };
+
+        function updateRow(event, data) {
+            dataScopeShared.addData('DATA_UPDATE', data);
+            createDialog(event, 'form');
+        }
+
+        function deleteRow(event, data) {
+            var confirm = $mdDialog.confirm()
+                    .title('Apakah Anda yakin melanjutkan?')
+                    .textContent('Data yang telah dihapus tidak dapat dikembalikan.')
+                    .ariaLabel('Hapus data')
+                    .targetEvent(event)
+                    .ok('Ya')
+                    .cancel('Tidak');
+
+            $mdDialog.show(confirm).then(function () {
+                $http.post($scope.mainURI + '/delete', data).then(callbackSuccessDelete, notificationService.errorCallback);
+            }, function () {
+                // cancel
+            });
+        }
+
+        function callbackSuccessDelete(response) {
+            notificationService.toastSimple(response.data.notification.text);
+            getData();
+        }
     });
 
-    angular.module('mainApp').controller('kecamatanController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog) {
+    angular.module('mainApp').controller('kecamatanController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
         $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
         $scope.ajaxRunning = true;
-        $scope.cancelSumbit = function () {
-            $mdDialog.cancel();
-        };
-        $scope.saveSubmit = function () {
-            if ($scope.form.ID_KAB.$valid && $scope.form.NAMA_KEC.$valid) {
-                $scope.ajaxRunning = true;
-                
-                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
-            } else {
-                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
-            }
-        };
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        
         $scope.formData = {
+            OLD_ID: null,
+            ID_KEC: null,
             KABUPATEN_KEC: null,
             NAMA_KEC: null
         };
-        $scope.$watch('ID_KAB.selectedItem', function (selectedItem){
-            $scope.formData.KABUPATEN_KEC = selectedItem.key;
-        });
 
         $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
 
@@ -335,20 +347,64 @@
 
         function callbackKabupaten(response) {
             $scope.dataAutocomplete = response.data;
+            $scope.ID_KAB = formHelper.autocomplete($scope);
+
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            angular.forEach($scope.ID_KAB.dataAll, function (value, key) {
+                if (parseInt(response.data.ID_KAB) === parseInt(value.key)) {
+                    $scope.ID_KAB.selectedItem = value;
+                }
+            });
+
+            $scope.formData.OLD_ID = response.data.OLD_ID;
+            $scope.formData.ID_KEC = response.data.ID_KEC;
+            $scope.formData.NAMA_KEC = response.data.NAMA_KEC;
+            $scope.formData.KABUPATEN_KEC = response.data.KABUPATEN_KEC;
 
             formReady();
         }
 
         function formReady() {
             $scope.ajaxRunning = false;
-
-            $scope.ID_KAB = formHelper.autocomplete($scope);
         }
         
-        function callbackSuccessSaving (response) {
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+        
+        $scope.saveSubmit = function () {
+            if ($scope.form.ID_KAB.$valid && $scope.form.NAMA_KEC.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
             $mdDialog.hide(response.data.notification.text);
+            dataScopeShared.addData('DATA_UPDATE', null);
         }
+        
+        $scope.$watch('ID_KAB.selectedItem', function (selectedItem) {
+            if (typeof selectedItem === 'undefined' || selectedItem.key === null)
+                $scope.formData.KABUPATEN_KEC = null;
+            else
+                $scope.formData.KABUPATEN_KEC = selectedItem.key;
+        });
     });
 
     angular.module('mainApp').controller('docDatatableController', function ($scope, $timeout, $mdSidenav, $log) {

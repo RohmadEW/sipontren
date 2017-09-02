@@ -11,7 +11,8 @@ $this->auth->validation();
                     <h5>{{ breadcrumb}}</h5>
                 </div>
                 <div flex="30" layout layout-align="end center">
-                    <md-fab-speed-dial ng-hide="fabHidden" md-direction="left" md-open="fabIsOpen" class="md-scale md-fab-top-right" ng-class="{ 'md-hover-full': fabHover }" ng-mouseenter="fabIsOpen = true" ng-mouseleave="fabIsOpen = false">
+                    <md-fab-speed-dial ng-hide="fabHidden" md-direction="left" md-open="fabIsOpen" class="md-scale md-fab-top-right" ng-class="{
+                                'md-hover-full': fabHover }" ng-mouseenter="fabIsOpen = true" ng-mouseleave="fabIsOpen = false">
                         <md-fab-trigger>
                             <md-button aria-label="menu" class="md-fab md-primary">
                                 <md-tooltip md-direction="bottom">Menu</md-tooltip>
@@ -38,7 +39,21 @@ $this->auth->validation();
                 <div flex="100">
                     <table ng-table-dynamic="dataTables with table" class="table table-condensed table-bordered table-striped table-hover" show-filter="true">
                         <tr ng-repeat="row in $data">
-                            <td ng-repeat="col in $columns">{{row[col.field]}}</td>
+                            <td ng-repeat="col in $columns">
+                                <md-menu ng-if="col.field === 'ACTION'">
+                                    <md-button aria-label="Menu" class="md-icon-button" ng-click="$mdMenu.open()">
+                                        <md-icon class="material-icons md-24 kk-icon-title" aria-label="Menu">menu</md-icon>
+                                    </md-button>
+                                    <md-menu-content width="3" ng-mouseleave="$mdMenu.close()">
+                                        <md-menu-item ng-repeat="action in col.actions">
+                                            <md-button ng-click="actionRow($event, action, row)">
+                                                {{action.title}}
+                                            </md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                                {{row[col.field]}}
+                            </td>
                         </tr>
                     </table>
                 </div>

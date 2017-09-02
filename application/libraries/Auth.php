@@ -73,6 +73,8 @@ class Auth
                         $this->CI->user->update(array('ID_USER' => $result_username->ID_USER), array('LASTLOGIN_USER' => date('Y-m-d H:i:s')));
 
                         $this->CI->session->set_userdata($data);
+                        
+                        $this->registration_hakakses();
 
                         $this->CI->login->login_benar($data);
 
@@ -222,7 +224,7 @@ class Auth
         $this->CI->session->unset_userdata($data);
     }
 
-    public function registration_hakakses($ID_HAKAKSES)
+    public function registration_hakakses($ID_HAKAKSES = NULL)
     {
         $this->CI->load->model(array('hakakses_user_model' => 'hakakses_user', 'menu_model' => 'menu'));
         $result = $this->CI->hakakses_user->get_by_id($ID_HAKAKSES);
@@ -231,15 +233,8 @@ class Auth
             $data = array(
                 'ID_HAKAKSES' => $result->ID_HAKAKSES,
                 'NAME_HAKAKSES' => $result->NAME_HAKAKSES,
-                'MENU_USER' => json_encode($this->CI->menu->get_menu($ID_HAKAKSES, JSON_PRETTY_PRINT))
+                'MENU_USER' => json_encode($this->CI->menu->get_menu($result->ID_HAKAKSES, JSON_PRETTY_PRINT))
             );
-
-            if ($result->ID_HAKAKSES == 4) {
-                $keu = $this->CI->hakakses_user->get_keuangan_user();
-
-                if (count($keu) > 0)
-                    $data['TAGIHAN'] = json_encode($keu);
-            }
 
             $this->CI->session->set_userdata($data);
 

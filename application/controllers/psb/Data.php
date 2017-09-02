@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Kecamatan extends CI_Controller {
+class Data extends CI_Controller {
     
     var $idEditable = true;
     var $primaryKey = 'ID_KEC';

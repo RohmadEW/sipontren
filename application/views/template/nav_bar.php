@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $this->auth->validation();
 ?>
 
-    <div flex="60" flex-offset="5" ng-if="showMenu">
+    <div flex="70" flex-offset="5" ng-if="showMenu">
         <md-toolbar class="md-menu-toolbar">
             <div layout="row">
                 <md-toolbar-filler class="kk-toolbar-filler" layout layout-align="center center">
@@ -41,7 +41,7 @@ $this->auth->validation();
             </div>
         </md-toolbar>
     </div>
-    <div flex="30" layout="row" layout-align="end center" ng-if="showMenu">
+    <div flex="20" layout="row" layout-align="end center" ng-if="showMenu">
         <div>
             <md-button class="md-fab kk-button" aria-label="Cari Santri">
                 <md-tooltip md-direction="bottom">Cari Santri</md-tooltip>

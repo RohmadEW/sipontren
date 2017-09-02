@@ -50,6 +50,8 @@ class Kecamatan_model extends CI_Model {
             if (!$idEditable) unset($data[$this->primaryKey]);
             $result = $this->update($data, $where);
         } else {
+            unset($data[$this->primaryKey]);
+            unset($data['OLD_ID']);
             $result = $this->insert($data);
         }
         
