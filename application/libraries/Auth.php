@@ -2,17 +2,14 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Auth
-{
+class Auth {
 
-    public function __construct()
-    {
+    public function __construct() {
 
         $this->CI = &get_instance();
     }
 
-    public function validation($ID_HAKAKSES = '')
-    {
+    public function validation($ID_HAKAKSES = '') {
         if (!$this->CI->session->userdata('ID_USER'))
             show_error('Anda tidak memiliki akses pada halaman ini', '403', 'Silahkan login terlebih dahulu.');
         else {
@@ -28,16 +25,14 @@ class Auth
         }
     }
 
-    public function check_validation()
-    {
+    public function check_validation() {
         if ($this->CI->session->userdata('ID_USER'))
             return true;
         else
             return false;
     }
 
-    public function check_login()
-    {
+    public function check_login() {
         if ($this->CI->session->userdata('ID_USER'))
             return array(
                 'status' => true,
@@ -49,8 +44,7 @@ class Auth
             );
     }
 
-    public function proccess_login($data)
-    {
+    public function proccess_login($data) {
         $model = array(
             'user_model' => 'user',
             'login_model' => 'login'
@@ -73,7 +67,7 @@ class Auth
                         $this->CI->user->update(array('ID_USER' => $result_username->ID_USER), array('LASTLOGIN_USER' => date('Y-m-d H:i:s')));
 
                         $this->CI->session->set_userdata($data);
-                        
+
                         $this->registration_hakakses();
 
                         $this->CI->login->login_benar($data);
@@ -113,8 +107,7 @@ class Auth
         return $return;
     }
 
-    private function status_login($results, $data)
-    {
+    private function status_login($results, $data) {
         $results_ex = explode('#', $results);
         $result = $results_ex[0];
         $count = isset($results_ex[1]) ? $results_ex[1] : NULL;
@@ -206,15 +199,13 @@ class Auth
         return $data;
     }
 
-    private function clear_log()
-    {
+    private function clear_log() {
         $this->CI->load->model(array('log_query_model' => 'log_query'));
 
         $this->CI->log_query->clear_log();
     }
 
-    public function unregistration_hakakses()
-    {
+    public function unregistration_hakakses() {
         $data = array(
             'ID_HAKAKSES',
             'NAME_HAKAKSES',
@@ -224,8 +215,7 @@ class Auth
         $this->CI->session->unset_userdata($data);
     }
 
-    public function registration_hakakses($ID_HAKAKSES = NULL)
-    {
+    public function registration_hakakses($ID_HAKAKSES = NULL) {
         $this->CI->load->model(array('hakakses_user_model' => 'hakakses_user', 'menu_model' => 'menu'));
         $result = $this->CI->hakakses_user->get_by_id($ID_HAKAKSES);
 
@@ -245,8 +235,7 @@ class Auth
     }
 
     // $type = 'add', 'edit', 'delete', 'view', 'export'
-    public function crud_validation($type)
-    {
+    public function crud_validation($type) {
         $MENUS = json_decode($this->CI->session->userdata('MENU_USER'));
 
         $result = FALSE;
@@ -264,13 +253,11 @@ class Auth
         return $result;
     }
 
-    public function log_out()
-    {
+    public function log_out() {
         $this->CI->session->sess_destroy();
     }
 
-    public function generate_token()
-    {
+    public function generate_token() {
         $generate_token = $this->CI->crypt->randomString();
 
         $this->CI->session->unset_userdata('TOKEN');

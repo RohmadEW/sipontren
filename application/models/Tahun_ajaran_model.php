@@ -7,19 +7,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * and open the template in the editor.
  */
 
-class Kecamatan_model extends CI_Model {
+class Tahun_ajaran_model extends CI_Model {
 
-    var $table = 'md_kecamatan';
-    var $primaryKey = 'ID_KEC';
+    var $table = 'md_tahun_ajaran';
+    var $primaryKey = 'ID_TA';
 
     public function __construct() {
         parent::__construct();
     }
 
     private function _get_table() {
+        $this->db->select('*, IF(AKTIF_TA = 1, "YA", "TIDAK") AS STATUS_AKTIF_TA');
         $this->db->from($this->table);
-        $this->db->join('md_kabupaten', 'KABUPATEN_KEC=ID_KAB');
-        $this->db->join('md_provinsi', 'PROVINSI_KAB=ID_PROV');
     }
 
     public function get_datatable() {
@@ -42,7 +41,7 @@ class Kecamatan_model extends CI_Model {
     }
     
     public function get_all() {
-        $this->db->select('ID_KEC as id, CONCAT(NAMA_KEC, ", ", NAMA_KAB, ", ", NAMA_PROV) as label');
+        $this->db->select('ID_TA as id, NAMA_TA as label');
         $this->_get_table();
         $result = $this->db->get();
         

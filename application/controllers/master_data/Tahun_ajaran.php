@@ -2,89 +2,81 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Data extends CI_Controller {
-    
-    var $primaryKey = 'ID_SANTRI';
+class Tahun_ajaran extends CI_Controller {
+
+    var $primaryKey = 'ID_TA';
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'data_psb_model' => 'data_psb'
+            'tahun_ajaran_model' => 'tahun_ajaran'
         ));
-        $this->auth->validation(array(1, 2));
+        $this->auth->validation();
     }
 
     public function index() {
         $data = array(
-            'title' => 'Data PSB',
-            'breadcrumb' => 'PSB > Data',
+            'title' => 'Master Data Tahun Ajaran',
+            'breadcrumb' => 'Master Data > Tahun Ajaran',
             'table' => array(
                 array(
-                    'field' => "ID_SANTRI",
-                    'title' => "ID", 
-                    'sortable' => "ID_SANTRI", 
+                    'field' => "ID_TA",
+                    'title' => "ID",
+                    'sortable' => "ID_TA",
                     'show' => FALSE,
                     'filter' => array(
-                        'ID_SANTRI' => 'number'
+                        'ID_TA' => 'number'
                     )
                 ),
                 array(
-                    'field' => "NAMA_SANTRI",
-                    'title' => "Nama Santri", 
-                    'sortable' => "NAMA_SANTRI", 
+                    'field' => "NAMA_TA",
+                    'title' => "Nama Tahun Ajaran",
+                    'sortable' => "NAMA_TA",
                     'show' => true,
                     'filter' => array(
-                        'NAMA_SANTRI' => 'text'
+                        'NAMA_TA' => 'text'
                     )
                 ),
                 array(
-                    'field' => "TEMPAT_LAHIR_SANTRI",
-                    'title' => "Tempat Lahir", 
-                    'sortable' => "TEMPAT_LAHIR_SANTRI", 
+                    'field' => "TANGGAL_MULAI_TA",
+                    'title' => "Tanggal Mulai",
+                    'sortable' => "TANGGAL_MULAI_TA",
                     'show' => true,
                     'filter' => array(
-                        'TEMPAT_LAHIR_SANTRI' => 'text'
+                        'TANGGAL_MULAI_TA' => 'text'
                     )
                 ),
                 array(
-                    'field' => "TANGGAL_LAHIR_SANTRI",
-                    'title' => "Tanggal Lahir", 
-                    'sortable' => "TANGGAL_LAHIR_SANTRI", 
+                    'field' => "TANGGAL_AKHIR_TA",
+                    'title' => "Tanggal Akhir",
+                    'sortable' => "TANGGAL_AKHIR_TA",
                     'show' => true,
                     'filter' => array(
-                        'TANGGAL_LAHIR_SANTRI' => 'text'
+                        'TANGGAL_AKHIR_TA' => 'text'
                     )
                 ),
                 array(
-                    'field' => "ALAMAT_SANTRI",
-                    'title' => "Alamat", 
-                    'sortable' => "ALAMAT_SANTRI", 
+                    'field' => "STATUS_AKTIF_TA",
+                    'title' => "Status Aktif",
+                    'sortable' => "STATUS_AKTIF_TA",
                     'show' => true,
                     'filter' => array(
-                        'ALAMAT_SANTRI' => 'text'
-                    )
-                ),
-                array(
-                    'field' => "NOHP_SANTRI",
-                    'title' => "No HP", 
-                    'sortable' => "NOHP_SANTRI", 
-                    'show' => true,
-                    'filter' => array(
-                        'NOHP_SANTRI' => 'text'
-                    )
-                ),
-                array(
-                    'field' => "AYAH_NAMA_SANTRI",
-                    'title' => "Nama Ayah", 
-                    'sortable' => "AYAH_NAMA_SANTRI", 
-                    'show' => true,
-                    'filter' => array(
-                        'AYAH_NAMA_SANTRI' => 'text'
+                        'AKTIF_TA' => 'select'
+                    ),
+                    'filterData' => array(
+                        array(
+                            'id' => 1,
+                            'title' => 'YA'
+                        ),
+                        array(
+                            'id' => 0,
+                            'title' => 'TIDAK'
+                        )
                     )
                 ),
                 array(
                     'field' => "ACTION",
-                    'title' => "Aksi", 
+                    'title' => "Aksi",
                     'actions' => array(
                         array(
                             'title' => 'Ubah',
@@ -100,25 +92,26 @@ class Data extends CI_Controller {
         );
         $this->output_handler->output_JSON($data);
     }
-    
+
     public function datatable() {
-        $data = $this->data_psb->get_datatable();
+        $data = $this->tahun_ajaran->get_datatable();
 
         $this->output_handler->output_JSON($data);
     }
-    
+
     public function form() {
         $data = array(
-            'uri' => array(
-                'kecamatan' => site_url('master_data/kecamatan/get_all')
+            'dataAKTIF_TA' => array(
+                array('id' => 1, 'title' => 'YA'),
+                array('id' => 0, 'title' => 'TIDAK'),
             )
         );
-        
+
         $this->output_handler->output_JSON($data);
     }
 
     public function data() {
-        $data = $this->data_psb->get_datatables();
+        $data = $this->tahun_ajaran->get_datatables();
 
         $this->output_handler->output_JSON($data);
     }
@@ -126,15 +119,15 @@ class Data extends CI_Controller {
     public function view() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->data_psb->get_by_id($post[$this->primaryKey]);
+        $data = $this->tahun_ajaran->get_by_id($post[$this->primaryKey]);
 
         $this->output_handler->output_JSON($data);
     }
 
     public function save() {
         $data = json_decode(file_get_contents('php://input'), true);
-        
-        $result = $this->data_psb->save($data);
+
+        $result = $this->tahun_ajaran->save($data);
 
         if (isset($data[$this->primaryKey]))
             $message = 'diubah';
@@ -147,10 +140,16 @@ class Data extends CI_Controller {
     public function delete() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->data_psb->delete($post[$this->primaryKey]);
+        $result = $this->tahun_ajaran->delete($post[$this->primaryKey]);
         $message = 'dihapus';
 
         $this->output_handler->output_JSON($result, $message);
+    }
+
+    public function get_all() {
+        $data = $this->tahun_ajaran->get_all();
+
+        $this->output_handler->output_JSON($data);
     }
 
 }

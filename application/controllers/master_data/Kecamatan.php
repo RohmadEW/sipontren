@@ -4,7 +4,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Kecamatan extends CI_Controller {
     
-    var $idEditable = true;
     var $primaryKey = 'ID_KEC';
 
     public function __construct() {
@@ -18,7 +17,6 @@ class Kecamatan extends CI_Controller {
     public function index() {
         $data = array(
             'title' => 'Master Data Kecamatan',
-            'subtitle' => 'Data semua kecamatan',
             'breadcrumb' => 'Master Data > Kecamatan',
             'table' => array(
                 array(
@@ -101,7 +99,7 @@ class Kecamatan extends CI_Controller {
     public function view() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->kecamatan->get_by_id($post[$this->primaryKey], $this->idEditable);
+        $data = $this->kecamatan->get_by_id($post[$this->primaryKey]);
 
         $this->output_handler->output_JSON($data);
     }
@@ -109,7 +107,7 @@ class Kecamatan extends CI_Controller {
     public function save() {
         $data = json_decode(file_get_contents('php://input'), true);
         
-        $result = $this->kecamatan->save($data, $this->idEditable);
+        $result = $this->kecamatan->save($data);
 
         if (isset($data[$this->primaryKey]))
             $message = 'diubah';
@@ -126,6 +124,12 @@ class Kecamatan extends CI_Controller {
         $message = 'dihapus';
 
         $this->output_handler->output_JSON($result, $message);
+    }
+
+    public function get_all() {
+        $data = $this->kecamatan->get_all();
+
+        $this->output_handler->output_JSON($data);
     }
 
 }

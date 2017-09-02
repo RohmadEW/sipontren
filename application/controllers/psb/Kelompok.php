@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Data extends CI_Controller {
+class Kelompok extends CI_Controller {
     
     var $primaryKey = 'ID_SANTRI';
 
