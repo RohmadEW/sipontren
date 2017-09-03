@@ -11,7 +11,7 @@ class Tahun_ajaran extends CI_Controller {
         $this->load->model(array(
             'tahun_ajaran_model' => 'tahun_ajaran'
         ));
-        $this->auth->validation();
+        $this->auth->validation(1);
     }
 
     public function index() {
@@ -72,6 +72,15 @@ class Tahun_ajaran extends CI_Controller {
                             'id' => 0,
                             'title' => 'TIDAK'
                         )
+                    )
+                ),
+                array(
+                    'field' => "KETERANGAN_TA",
+                    'title' => "Keterangan",
+                    'sortable' => "KETERANGAN_TA",
+                    'show' => true,
+                    'filter' => array(
+                        'KETERANGAN_TA' => 'text'
                     )
                 ),
                 array(

@@ -7,9 +7,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * and open the template in the editor.
  */
 
-class Kabupaten_model extends CI_Model {
+class Jk_model extends CI_Model {
 
-    var $table = 'md_kabupaten';
+    var $table = 'md_jenis_kelamin';
+    var $primaryKey = 'ID_JK';
+    var $user = '';
 
     public function __construct() {
         parent::__construct();
@@ -17,8 +19,7 @@ class Kabupaten_model extends CI_Model {
 
     private function _get_table() {
         $this->db->from($this->table);
-        $this->db->join('md_provinsi', 'PROVINSI_KAB=ID_PROV');
-        $this->db->order_by('NAMA_KAB', 'ASC');
+        $this->db->order_by('NAMA_JK', 'ASC');
     }
 
     public function get_datatable() {
@@ -31,32 +32,31 @@ class Kabupaten_model extends CI_Model {
 
         return $result;
     }
+
+    public function get_by_id($id) {
+        $this->_get_table();
+        $this->db->where($this->primaryKey, $id);
+        $result = $this->db->get()->row_array();
+        
+        return $result;
+    }
     
     public function get_all() {
-        $this->db->select('ID_KAB as id, CONCAT(NAMA_KAB, ", ", NAMA_PROV) as title');
+        $this->db->select('ID_JK as id, NAMA_JK as title');
         $this->_get_table();
         $result = $this->db->get();
         
         return $result->result();
     }
-
-    public function get_by_id($id, $idEditable = FALSE) {
-        $this->_get_table();
-        $this->db->where($this->primary_key, $id);
-        $result = $this->db->get()->row_array();
-        
-        if($idEditable) $result['OLD_ID'] = $result[$this->primary_key];
-        
-        return $result;
-    }
     
-    public function save($data, $idEditable = FALSE) {
-        if (isset($data[$this->primary_key])) {
-            $where = array($this->primary_key => $data['OLD_ID']);
-            unset($data['OLD_ID']);
-            if (!$idEditable) unset($data[$this->primary_key]);
+    public function save($data) {
+        if($this->user != '') $data[$this->user] = $this->session->userdata('ID_USER');
+        if (isset($data[$this->primaryKey])) {
+            $where = array($this->primaryKey => $data[$this->primaryKey]);
+            unset($data[$this->primaryKey]);
             $result = $this->update($data, $where);
         } else {
+            unset($data[$this->primaryKey]);
             $result = $this->insert($data);
         }
         
@@ -76,7 +76,7 @@ class Kabupaten_model extends CI_Model {
     }
 
     public function delete($id) {
-        $where = array($this->primary_key => $id);
+        $where = array($this->primaryKey => $id);
         $this->db->delete($this->table, $where);
         
         return $this->db->affected_rows();

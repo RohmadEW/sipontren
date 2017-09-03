@@ -1,4 +1,5 @@
 <?php
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
@@ -19,12 +20,13 @@ class Tahun_ajaran_model extends CI_Model {
     private function _get_table() {
         $this->db->select('*, IF(AKTIF_TA = 1, "YA", "TIDAK") AS STATUS_AKTIF_TA');
         $this->db->from($this->table);
+        $this->db->order_by('NAMA_TA', 'ASC');
     }
 
     public function get_datatable() {
         $this->_get_table();
         $data = $this->db->get()->result();
-        
+
         $result = array(
             "data" => $data
         );
@@ -36,19 +38,22 @@ class Tahun_ajaran_model extends CI_Model {
         $this->_get_table();
         $this->db->where($this->primaryKey, $id);
         $result = $this->db->get()->row_array();
-        
+
         return $result;
     }
-    
+
     public function get_all() {
-        $this->db->select('ID_TA as id, NAMA_TA as label');
+        $this->db->select('ID_TA as id, NAMA_TA as title');
         $this->_get_table();
         $result = $this->db->get();
-        
+
         return $result->result();
     }
-    
+
     public function save($data) {
+        if ($data['AKTIF_TA'])
+            $this->reset_aktif();
+        
         if (isset($data[$this->primaryKey])) {
             $where = array($this->primaryKey => $data[$this->primaryKey]);
             unset($data[$this->primaryKey]);
@@ -61,6 +66,12 @@ class Tahun_ajaran_model extends CI_Model {
         return $result;
     }
 
+    private function reset_aktif() {
+        $data = array('AKTIF_TA' => 0);
+        $where = array('AKTIF_TA' => 1);
+        $this->update($data, $where);
+    }
+
     public function insert($data) {
         $this->db->insert($this->table, $data);
 
@@ -69,14 +80,14 @@ class Tahun_ajaran_model extends CI_Model {
 
     public function update($data, $where) {
         $this->db->update($this->table, $data, $where);
-        
+
         return $this->db->affected_rows();
     }
 
     public function delete($id) {
         $where = array($this->primaryKey => $id);
         $this->db->delete($this->table, $where);
-        
+
         return $this->db->affected_rows();
     }
 

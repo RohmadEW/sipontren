@@ -2,62 +2,72 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Kecamatan extends CI_Controller {
-    
-    var $primaryKey = 'ID_KEC';
+class Penanggalan_ajaran extends CI_Controller {
+
+    var $primaryKey = 'ID_CAWU';
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'kecamatan_model' => 'kecamatan'
+            'penanggalan_ajaran_model' => 'penanggalan_ajaran'
         ));
         $this->auth->validation(1);
     }
 
     public function index() {
         $data = array(
-            'title' => 'Master Data Kecamatan',
-            'breadcrumb' => 'Master Data > Kecamatan',
+            'title' => 'Master Data Penanggalan Ajaran',
+            'breadcrumb' => 'Master Data > Penanggalan Ajaran',
             'table' => array(
                 array(
-                    'field' => "ID_KEC",
-                    'title' => "ID", 
-                    'sortable' => "ID_KEC", 
-                    'show' => true,
+                    'field' => "ID_CAWU",
+                    'title' => "ID",
+                    'sortable' => "ID_CAWU",
+                    'show' => FALSE,
                     'filter' => array(
-                        'ID_KEC' => 'number'
+                        'ID_CAWU' => 'number'
                     )
                 ),
                 array(
-                    'field' => "NAMA_KEC",
-                    'title' => "Nama Kecamatan", 
-                    'sortable' => "NAMA_KEC", 
+                    'field' => "NAMA_CAWU",
+                    'title' => "Nama Penanggalan Ajaran",
+                    'sortable' => "NAMA_CAWU",
                     'show' => true,
                     'filter' => array(
-                        'NAMA_KEC' => 'text'
+                        'NAMA_CAWU' => 'text'
                     )
                 ),
                 array(
-                    'field' => "NAMA_KAB",
-                    'title' => "Nama Kabupaten", 
-                    'sortable' => "NAMA_KAB", 
+                    'field' => "STATUS_AKTIF_CAWU",
+                    'title' => "Status Aktif",
+                    'sortable' => "STATUS_AKTIF_CAWU",
                     'show' => true,
                     'filter' => array(
-                        'NAMA_KAB' => 'text'
+                        'AKTIF_CAWU' => 'select'
+                    ),
+                    'filterData' => array(
+                        array(
+                            'id' => 1,
+                            'title' => 'YA'
+                        ),
+                        array(
+                            'id' => 0,
+                            'title' => 'TIDAK'
+                        )
                     )
                 ),
                 array(
-                    'field' => "NAMA_PROV",
-                    'title' => "Nama Provinsi", 
-                    'sortable' => "NAMA_PROV", 
+                    'field' => "KETERANGAN_CAWU",
+                    'title' => "Keterangan",
+                    'sortable' => "KETERANGAN_CAWU",
                     'show' => true,
                     'filter' => array(
-                        'NAMA_PROV' => 'text'
+                        'KETERANGAN_CAWU' => 'text'
                     )
                 ),
                 array(
                     'field' => "ACTION",
-                    'title' => "Aksi", 
+                    'title' => "Aksi",
                     'actions' => array(
                         array(
                             'title' => 'Ubah',
@@ -73,25 +83,26 @@ class Kecamatan extends CI_Controller {
         );
         $this->output_handler->output_JSON($data);
     }
-    
+
     public function datatable() {
-        $data = $this->kecamatan->get_datatable();
+        $data = $this->penanggalan_ajaran->get_datatable();
 
         $this->output_handler->output_JSON($data);
     }
-    
+
     public function form() {
         $data = array(
-            'uri' => array(
-                'kabupaten' => site_url('master_data/kabupaten/get_all')
+            'dataAKTIF_CAWU' => array(
+                array('id' => 1, 'title' => 'YA'),
+                array('id' => 0, 'title' => 'TIDAK'),
             )
         );
-        
+
         $this->output_handler->output_JSON($data);
     }
 
     public function data() {
-        $data = $this->kecamatan->get_datatables();
+        $data = $this->penanggalan_ajaran->get_datatables();
 
         $this->output_handler->output_JSON($data);
     }
@@ -99,15 +110,15 @@ class Kecamatan extends CI_Controller {
     public function view() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->kecamatan->get_by_id($post[$this->primaryKey]);
+        $data = $this->penanggalan_ajaran->get_by_id($post[$this->primaryKey]);
 
         $this->output_handler->output_JSON($data);
     }
 
     public function save() {
         $data = json_decode(file_get_contents('php://input'), true);
-        
-        $result = $this->kecamatan->save($data);
+
+        $result = $this->penanggalan_ajaran->save($data);
 
         if (isset($data[$this->primaryKey]))
             $message = 'diubah';
@@ -120,14 +131,14 @@ class Kecamatan extends CI_Controller {
     public function delete() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->kecamatan->delete($post[$this->primaryKey]);
+        $result = $this->penanggalan_ajaran->delete($post[$this->primaryKey]);
         $message = 'dihapus';
 
         $this->output_handler->output_JSON($result, $message);
     }
 
     public function get_all() {
-        $data = $this->kecamatan->get_all();
+        $data = $this->penanggalan_ajaran->get_all();
 
         $this->output_handler->output_JSON($data);
     }

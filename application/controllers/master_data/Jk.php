@@ -2,62 +2,53 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Kecamatan extends CI_Controller {
-    
-    var $primaryKey = 'ID_KEC';
+class Jk extends CI_Controller {
+
+    var $primaryKey = 'ID_JK';
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'kecamatan_model' => 'kecamatan'
+            'jk_model' => 'jk'
         ));
         $this->auth->validation(1);
     }
 
     public function index() {
         $data = array(
-            'title' => 'Master Data Kecamatan',
-            'breadcrumb' => 'Master Data > Kecamatan',
+            'title' => 'Master Data Jenis Kelamin',
+            'breadcrumb' => 'Master Data > Jenis Kelamin',
             'table' => array(
                 array(
-                    'field' => "ID_KEC",
-                    'title' => "ID", 
-                    'sortable' => "ID_KEC", 
-                    'show' => true,
+                    'field' => "ID_JK",
+                    'title' => "ID",
+                    'sortable' => "ID_JK",
+                    'show' => FALSE,
                     'filter' => array(
-                        'ID_KEC' => 'number'
+                        'ID_JK' => 'number'
                     )
                 ),
                 array(
-                    'field' => "NAMA_KEC",
-                    'title' => "Nama Kecamatan", 
-                    'sortable' => "NAMA_KEC", 
+                    'field' => "NAMA_JK",
+                    'title' => "Nama Gedung",
+                    'sortable' => "NAMA_JK",
                     'show' => true,
                     'filter' => array(
-                        'NAMA_KEC' => 'text'
+                        'NAMA_JK' => 'text'
                     )
                 ),
                 array(
-                    'field' => "NAMA_KAB",
-                    'title' => "Nama Kabupaten", 
-                    'sortable' => "NAMA_KAB", 
+                    'field' => "KODE_EMIS_JK",
+                    'title' => "Kode EMIS",
+                    'sortable' => "KODE_EMIS_JK",
                     'show' => true,
                     'filter' => array(
-                        'NAMA_KAB' => 'text'
-                    )
-                ),
-                array(
-                    'field' => "NAMA_PROV",
-                    'title' => "Nama Provinsi", 
-                    'sortable' => "NAMA_PROV", 
-                    'show' => true,
-                    'filter' => array(
-                        'NAMA_PROV' => 'text'
+                        'KODE_EMIS_JK' => 'text'
                     )
                 ),
                 array(
                     'field' => "ACTION",
-                    'title' => "Aksi", 
+                    'title' => "Aksi",
                     'actions' => array(
                         array(
                             'title' => 'Ubah',
@@ -73,25 +64,23 @@ class Kecamatan extends CI_Controller {
         );
         $this->output_handler->output_JSON($data);
     }
-    
+
     public function datatable() {
-        $data = $this->kecamatan->get_datatable();
+        $data = $this->jk->get_datatable();
 
         $this->output_handler->output_JSON($data);
     }
-    
+
     public function form() {
         $data = array(
-            'uri' => array(
-                'kabupaten' => site_url('master_data/kabupaten/get_all')
-            )
+            
         );
-        
+
         $this->output_handler->output_JSON($data);
     }
 
     public function data() {
-        $data = $this->kecamatan->get_datatables();
+        $data = $this->jk->get_datatables();
 
         $this->output_handler->output_JSON($data);
     }
@@ -99,15 +88,15 @@ class Kecamatan extends CI_Controller {
     public function view() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->kecamatan->get_by_id($post[$this->primaryKey]);
+        $data = $this->jk->get_by_id($post[$this->primaryKey]);
 
         $this->output_handler->output_JSON($data);
     }
 
     public function save() {
         $data = json_decode(file_get_contents('php://input'), true);
-        
-        $result = $this->kecamatan->save($data);
+
+        $result = $this->jk->save($data);
 
         if (isset($data[$this->primaryKey]))
             $message = 'diubah';
@@ -120,14 +109,14 @@ class Kecamatan extends CI_Controller {
     public function delete() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->kecamatan->delete($post[$this->primaryKey]);
+        $result = $this->jk->delete($post[$this->primaryKey]);
         $message = 'dihapus';
 
         $this->output_handler->output_JSON($result, $message);
     }
 
     public function get_all() {
-        $data = $this->kecamatan->get_all();
+        $data = $this->jk->get_all();
 
         $this->output_handler->output_JSON($data);
     }

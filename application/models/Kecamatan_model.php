@@ -20,6 +20,7 @@ class Kecamatan_model extends CI_Model {
         $this->db->from($this->table);
         $this->db->join('md_kabupaten', 'KABUPATEN_KEC=ID_KAB');
         $this->db->join('md_provinsi', 'PROVINSI_KAB=ID_PROV');
+        $this->db->order_by('NAMA_KEC', 'ASC');
     }
 
     public function get_datatable() {
@@ -42,7 +43,7 @@ class Kecamatan_model extends CI_Model {
     }
     
     public function get_all() {
-        $this->db->select('ID_KEC as id, CONCAT(NAMA_KEC, ", ", NAMA_KAB, ", ", NAMA_PROV) as label');
+        $this->db->select('ID_KEC as id, CONCAT(NAMA_KEC, ", ", NAMA_KAB, ", ", NAMA_PROV) as title');
         $this->_get_table();
         $result = $this->db->get();
         

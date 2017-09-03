@@ -14,7 +14,7 @@ class Agama extends CI_Controller {
         $this->load->model(array(
             'agama_model' => 'agama'
         ));
-//        $this->auth->validation();
+        $this->auth->validation();
     }
 
     public function index() {
