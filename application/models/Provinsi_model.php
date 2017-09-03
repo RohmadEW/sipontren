@@ -7,10 +7,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * and open the template in the editor.
  */
 
-class Kabupaten_model extends CI_Model {
+class Provinsi_model extends CI_Model {
 
-    var $table = 'md_kabupaten';
-    var $primaryKey = 'ID_KAB';
+    var $table = 'md_provinsi';
+    var $primaryKey = 'ID_PROV';
+    var $user = '';
 
     public function __construct() {
         parent::__construct();
@@ -18,8 +19,7 @@ class Kabupaten_model extends CI_Model {
 
     private function _get_table() {
         $this->db->from($this->table);
-        $this->db->join('md_provinsi', 'PROVINSI_KAB=ID_PROV');
-        $this->db->order_by('NAMA_KAB', 'ASC');
+        $this->db->order_by('NAMA_PROV', 'ASC');
     }
 
     public function get_datatable() {
@@ -42,7 +42,7 @@ class Kabupaten_model extends CI_Model {
     }
     
     public function get_all() {
-        $this->db->select('ID_KAB as id, CONCAT(NAMA_KAB, ", ", NAMA_PROV) as title');
+        $this->db->select('ID_PROV as id, NAMA_PROV as title');
         $this->_get_table();
         $result = $this->db->get();
         
@@ -50,6 +50,7 @@ class Kabupaten_model extends CI_Model {
     }
     
     public function save($data) {
+        if($this->user != '') $data[$this->user] = $this->session->userdata('ID_USER');
         if (isset($data[$this->primaryKey])) {
             $where = array($this->primaryKey => $data[$this->primaryKey]);
             unset($data[$this->primaryKey]);

@@ -23,7 +23,7 @@ class Kecamatan extends CI_Controller {
                     'field' => "ID_KEC",
                     'title' => "ID", 
                     'sortable' => "ID_KEC", 
-                    'show' => true,
+                    'show' => false,
                     'filter' => array(
                         'ID_KEC' => 'number'
                     )

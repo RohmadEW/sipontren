@@ -1,24 +1,26 @@
 
-
-    angular.module('mainApp').controller('mdTempatTinggalController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+    angular.module('mainApp').controller('mdKabupatenController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
         $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
         $scope.ajaxRunning = true;
         $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
         $scope.addForm = true;
 
         $scope.formData = {
-            ID_TEMTING: null,
-            NAMA_TEMTING: null,
-            KODE_EMIS_TEMTING: null,
+            ID_KAB: null,
+            PROVINSI_KAB: null,
+            NAMA_KAB: null
         };
-        
+
         $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
 
         function callbackForm(response) {
-            callbackFormData(response);
+            $http.get(response.data.uri.kabupaten).then(callbackFormData, notificationService.errorCallback);
         }
 
         function callbackFormData(response) {
+            $scope.dataAutocomplete = response.data;
+            $scope.PROVINSI_KAB = formHelper.autocomplete($scope);
+
             if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
                 formReady();
             else
@@ -30,9 +32,15 @@
         }
 
         function callbackSuccessData(response) {
-            $scope.formData.ID_TEMTING = response.data.ID_TEMTING;
-            $scope.formData.NAMA_TEMTING = response.data.NAMA_TEMTING;
-            $scope.formData.KODE_EMIS_TEMTING = response.data.KODE_EMIS_TEMTING;
+            angular.forEach($scope.PROVINSI_KAB.dataAll, function (value, key) {
+                if (parseInt(response.data.PROVINSI_KAB) === parseInt(value.key)) {
+                    $scope.PROVINSI_KAB.selectedItem = value;
+                }
+            });
+
+            $scope.formData.ID_KAB = response.data.ID_KAB;
+            $scope.formData.NAMA_KAB = response.data.NAMA_KAB;
+            $scope.formData.PROVINSI_KAB = response.data.PROVINSI_KAB;
 
             $scope.addForm = false;
 
@@ -49,7 +57,7 @@
         };
 
         $scope.saveSubmit = function () {
-            if ($scope.form.$valid) {
+            if ($scope.form.PROVINSI_KAB.$valid && $scope.form.NAMA_KAB.$valid) {
                 $scope.ajaxRunning = true;
 
                 $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
@@ -63,4 +71,11 @@
             $mdDialog.hide(response.data.notification.text);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
+
+        $scope.$watch('PROVINSI_KAB.selectedItem', function (selectedItem) {
+            if (typeof selectedItem === 'undefined' || selectedItem.key === null)
+                $scope.formData.PROVINSI_KAB = null;
+            else
+                $scope.formData.PROVINSI_KAB = selectedItem.key;
+        });
     });
