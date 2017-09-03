@@ -1,15 +1,15 @@
 
 
-    angular.module('mainApp').controller('mdJkController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+    angular.module('mainApp').controller('mdTempatTinggalController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
         $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
         $scope.ajaxRunning = true;
         $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
         $scope.addForm = true;
 
         $scope.formData = {
-            ID_JK: null,
-            NAMA_JK: null,
-            KODE_EMIS_JK: null,
+            ID_TEMTING: null,
+            NAMA_TEMTING: null,
+            KODE_EMIS_TEMTING: null,
         };
         
         $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
@@ -30,9 +30,9 @@
         }
 
         function callbackSuccessData(response) {
-            $scope.formData.ID_JK = response.data.ID_JK;
-            $scope.formData.NAMA_JK = response.data.NAMA_JK;
-            $scope.formData.KODE_EMIS_JK = response.data.KODE_EMIS_JK;
+            $scope.formData.ID_TEMTING = response.data.ID_TEMTING;
+            $scope.formData.NAMA_TEMTING = response.data.NAMA_TEMTING;
+            $scope.formData.KODE_EMIS_TEMTING = response.data.KODE_EMIS_TEMTING;
 
             $scope.addForm = false;
 

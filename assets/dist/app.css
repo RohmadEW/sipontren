@@ -450,3 +450,10 @@ md-toolbar .kk-toolbar-filler {
 .kk-form-control {
     margin-top: 5px;
 }
+.md-sidenav-backdrop {
+    height: 100% !important;
+    position: fixed !important;
+}
+.md-sidenav-right {
+    position: fixed;
+}

@@ -959,6 +959,459 @@
         }
     });
 
+    angular.module('mainApp').controller('mdJenjangPendidikanController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+
+        $scope.formData = {
+            ID_JP: null,
+            NAMA_JP: null,
+            KODE_EMIS_JP: null,
+        };
+        
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData.ID_JP = response.data.ID_JP;
+            $scope.formData.NAMA_JP = response.data.NAMA_JP;
+            $scope.formData.KODE_EMIS_JP = response.data.KODE_EMIS_JP;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification.text);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
+    angular.module('mainApp').controller('mdAsalSantriController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+
+        $scope.formData = {
+            ID_ASSAN: null,
+            NAMA_ASSAN: null,
+            KODE_EMIS_ASSAN: null,
+        };
+        
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData.ID_ASSAN = response.data.ID_ASSAN;
+            $scope.formData.NAMA_ASSAN = response.data.NAMA_ASSAN;
+            $scope.formData.KODE_EMIS_ASSAN = response.data.KODE_EMIS_ASSAN;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification.text);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
+    angular.module('mainApp').controller('mdKondisiController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+
+        $scope.formData = {
+            ID_KONDISI: null,
+            NAMA_KONDISI: null,
+        };
+        
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData.ID_KONDISI = response.data.ID_KONDISI;
+            $scope.formData.NAMA_KONDISI = response.data.NAMA_KONDISI;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification.text);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
+    angular.module('mainApp').controller('mdStatusHidupController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+
+        $scope.formData = {
+            ID_SO: null,
+            NAMA_SO: null,
+            KODE_EMIS_SO: null,
+        };
+        
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData.ID_SO = response.data.ID_SO;
+            $scope.formData.NAMA_SO = response.data.NAMA_SO;
+            $scope.formData.KODE_EMIS_SO = response.data.KODE_EMIS_SO;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification.text);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
+    angular.module('mainApp').controller('mdPekerjaanController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+
+        $scope.formData = {
+            ID_JENPEK: null,
+            NAMA_JENPEK: null,
+            KODE_EMIS_JENPEK: null,
+        };
+        
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData.ID_JENPEK = response.data.ID_JENPEK;
+            $scope.formData.NAMA_JENPEK = response.data.NAMA_JENPEK;
+            $scope.formData.KODE_EMIS_JENPEK = response.data.KODE_EMIS_JENPEK;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification.text);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
+    angular.module('mainApp').controller('mdPenghasilanController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+
+        $scope.formData = {
+            ID_HASIL: null,
+            NAMA_HASIL: null,
+            KODE_EMIS_HASIL: null,
+        };
+        
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData.ID_HASIL = response.data.ID_HASIL;
+            $scope.formData.NAMA_HASIL = response.data.NAMA_HASIL;
+            $scope.formData.KODE_EMIS_HASIL = response.data.KODE_EMIS_HASIL;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification.text);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
+    angular.module('mainApp').controller('mdTempatTinggalController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+
+        $scope.formData = {
+            ID_TEMTING: null,
+            NAMA_TEMTING: null,
+            KODE_EMIS_TEMTING: null,
+        };
+        
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData.ID_TEMTING = response.data.ID_TEMTING;
+            $scope.formData.NAMA_TEMTING = response.data.NAMA_TEMTING;
+            $scope.formData.KODE_EMIS_TEMTING = response.data.KODE_EMIS_TEMTING;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification.text);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
     angular.module('mainApp').controller('dataPSBController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
         $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
         $scope.ajaxRunning = true;

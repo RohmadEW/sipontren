@@ -66,7 +66,7 @@ $this->auth->validation();
             <md-toolbar class="md-theme-light">
                 <h1 class="md-toolbar-tools">{{ title}}</h1>
             </md-toolbar>
-            <md-content layout-padding>
+            <md-content layout-padding flex>
                 {{ content}}
             </md-content>
         </div>
