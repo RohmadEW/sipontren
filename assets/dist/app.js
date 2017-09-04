@@ -111,12 +111,32 @@
 
     angular.module('mainApp').service("formHelper", function ($timeout, $q) {
         this.autocomplete = function (scope) {
-            scope.noCache = false;
-            scope.selectedItem = null;
-            scope.searchText = null;
+            var dataAC = scope.dataAutocomplete;
+            
+            scope = {
+                noCache: false,
+                selectedItem: null,
+                searchText: null,
+                dataAll: null,
+                querySearch: null,
+            };
+
             scope.dataAll = loadAll();
+                    
+            function loadAll() {
+                return dataAC.map(function (detail) {
+                    return {
+                        key: detail.id,
+                        value: detail.title.toLowerCase(),
+                        display: detail.title
+                    };
+                });
+            }
 
             scope.querySearch = function (query) {
+                if (typeof query === 'undefined')
+                    query = scope.searchText;
+                
                 var results = query ? scope.dataAll.filter(createFilterFor(query)) : scope.dataAll;
                 var deferred = $q.defer();
 
@@ -127,23 +147,11 @@
                 return deferred.promise;
             };
 
-            function loadAll() {
-                var data = scope.dataAutocomplete;
-
-                return data.map(function (detail) {
-                    return {
-                        key: detail.id,
-                        value: detail.title.toLowerCase(),
-                        display: detail.title
-                    };
-                });
-            }
-
             function createFilterFor(query) {
                 var lowercaseQuery = angular.lowercase(query);
-
+                
                 return function filterFn(detail) {
-                    return (detail.value.indexOf(lowercaseQuery) > 0);
+                    return (detail.value.indexOf(lowercaseQuery) >= 0);
                 };
             }
 
@@ -269,6 +277,19 @@
                 $mdSidenav('right').toggle();
             } else if (item.id === 'add_data') {
                 createDialog($event, 'form');
+            } else if (item.id === 'print_data') {
+                var mywindow = window.open('', 'PRINT', 'height=600,width=700');
+
+                mywindow.document.write('<html><head><title>' + document.title + '</title><style type="text/css">body{font-family: "Roboto",Arial,sans-serif;overflow:visible;}.ng-table-filters,.ng-table-counts{display: none;} tr {border-top: 1px solid #f2f6f9;} .data-table{overflow: visible;} table{overflow:visible;}body, h1, h2, h3, ol, ul, div {     width: auto;     border: 0;     margin: 0 5%;     padding: 0;     float: none;     position: static;     overflow: visible; }</style>');
+                mywindow.document.write('</head><body onload="window.print()">');
+                mywindow.document.write('<h1>' + document.title + '</h1>');
+                mywindow.document.write(document.getElementById('printable').innerHTML);
+                mywindow.document.write('</body></html>');
+
+                mywindow.document.close();
+                mywindow.focus();
+
+                return true;
             } else if (item.id === 'download_data') {
                 if ($scope.dataOriginal === null)
                     notificationService.toastSimple('Data tidak ditemukan');
@@ -1632,15 +1653,18 @@
         }
     });
 
-    angular.module('mainApp').controller('dataPSBController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+    angular.module('mainApp').controller('dataPSBController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared, $q) {
         $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
         $scope.ajaxRunning = true;
         $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
         $scope.addForm = true;
+        $scope.dataForm = [];
 
         $scope.formData = {
             ID_SANTRI: null,
+            PSB_KELOMPOK_SANTRI: null,
             NAMA_SANTRI: null,
+            JK_SANTRI: null,
             TEMPAT_LAHIR_SANTRI: null,
             TANGGAL_LAHIR_SANTRI: null,
             KECAMATAN_SANTRI: null,
@@ -1652,13 +1676,32 @@
         $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
 
         function callbackForm(response) {
-            $http.get(response.data.uri.kecamatan).then(callbackFormData, notificationService.errorCallback);
+            $scope.dataPSB_KELOMPOK_SANTRI = response.data.kelompok;
+            $scope.dataJK_SANTRI = response.data.jk;
+            
+            var urlGetDataForm = [];
+
+            urlGetDataForm.push($http.get(response.data.uri.kecamatan));
+
+            $q.all(urlGetDataForm)
+                    .then(
+                            function (result) {
+                                callbackFormData(result);
+                            },
+                            function (error) {
+                                $scope.cancelSumbit();
+                            }
+                    );
         }
 
         function callbackFormData(response) {
-            $scope.dataAutocomplete = response.data;
-            $scope.KECAMATAN_SANTRI = formHelper.autocomplete($scope);
+            console.log('RESPONSE', response);
 
+            $scope.KECAMATAN_SANTRI = {
+                dataAutocomplete: response[0].data
+            };
+            $scope.KECAMATAN_SANTRI = formHelper.autocomplete($scope.KECAMATAN_SANTRI);
+            
             if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
                 formReady();
             else
@@ -1676,8 +1719,10 @@
                 }
             });
 
+            $scope.formData.PSB_KELOMPOK_SANTRI = response.data.PSB_KELOMPOK_SANTRI;
             $scope.formData.ID_SANTRI = response.data.ID_SANTRI;
             $scope.formData.NAMA_SANTRI = response.data.NAMA_SANTRI;
+            $scope.formData.JK_SANTRI = response.data.JK_SANTRI;
             $scope.formData.TEMPAT_LAHIR_SANTRI = response.data.TEMPAT_LAHIR_SANTRI;
             $scope.formData.TANGGAL_LAHIR_SANTRI = response.data.TANGGAL_LAHIR_SANTRI;
             $scope.formData.KECAMATAN_SANTRI = response.data.KECAMATAN_SANTRI;
@@ -1701,7 +1746,9 @@
 
         $scope.saveSubmit = function () {
             if ($scope.form.KECAMATAN_SANTRI.$valid
+                    && $scope.form.PSB_KELOMPOK_SANTRI.$valid
                     && $scope.form.NAMA_SANTRI.$valid
+                    && $scope.form.JK_SANTRI.$valid
                     && $scope.form.TEMPAT_LAHIR_SANTRI.$valid
                     && $scope.form.TANGGAL_LAHIR_SANTRI.$valid
                     && $scope.form.NOHP_SANTRI.$valid
@@ -1728,6 +1775,72 @@
             else
                 $scope.formData.KECAMATAN_SANTRI = selectedItem.key;
         });
+    });
+
+    angular.module('mainApp').controller('psbKelompokController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+
+        $scope.formData = {
+            ID_PKK: null,
+            NAMA_PKK: null,
+            KETERANGAN_PKK: null,
+        };
+
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData.ID_PKK = response.data.ID_PKK;
+            $scope.formData.NAMA_PKK = response.data.NAMA_PKK;
+            $scope.formData.KETERANGAN_PKK = response.data.KETERANGAN_PKK;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            3
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification.text);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
     });
 
     angular.module('mainApp').controller('docDatatableController', function ($scope, $timeout, $mdSidenav, $log) {

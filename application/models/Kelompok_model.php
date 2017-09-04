@@ -7,10 +7,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * and open the template in the editor.
  */
 
-class Data_psb_model extends CI_Model {
+class Kelompok_model extends CI_Model {
 
-    var $table = 'md_santri';
-    var $primaryKey = 'ID_SANTRI';
+    var $table = 'psb_kelompok';
+    var $primaryKey = 'ID_PKK';
+    var $user = 'USER_PKK';
 
     public function __construct() {
         parent::__construct();
@@ -18,13 +19,7 @@ class Data_psb_model extends CI_Model {
 
     private function _get_table() {
         $this->db->from($this->table);
-        $this->db->join('psb_kelompok', 'ID_PKK=PSB_KELOMPOK_SANTRI');
-        $this->db->join('md_jenis_kelamin', 'ID_JK=JK_SANTRI');
-        $this->db->where(array(
-            'AKTIF_SANTRI' => 0,
-            'ALUMNI_SANTRI' => 0,
-            'STATUS_MUTASI_SANTRI' => NULL,
-        ));
+        $this->db->order_by('NAMA_PKK', 'ASC');
     }
 
     public function get_datatable() {
@@ -46,7 +41,16 @@ class Data_psb_model extends CI_Model {
         return $result;
     }
     
+    public function get_all() {
+        $this->db->select('ID_PKK as id, NAMA_PKK as title');
+        $this->_get_table();
+        $result = $this->db->get();
+        
+        return $result->result();
+    }
+    
     public function save($data) {
+        if($this->user != '') $data[$this->user] = $this->session->userdata('ID_USER');
         if (isset($data[$this->primaryKey])) {
             $where = array($this->primaryKey => $data[$this->primaryKey]);
             unset($data[$this->primaryKey]);

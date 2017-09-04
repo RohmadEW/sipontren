@@ -9,7 +9,9 @@ class Data extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'data_psb_model' => 'data_psb'
+            'data_psb_model' => 'data_psb',
+            'kelompok_model' => 'kelompok',
+            'jk_model' => 'jk',
         ));
         $this->auth->validation(array(1, 2));
     }
@@ -26,7 +28,17 @@ class Data extends CI_Controller {
                     'show' => FALSE,
                     'filter' => array(
                         'ID_SANTRI' => 'number'
-                    )
+                    ),
+                ),
+                array(
+                    'field' => "NAMA_PKK",
+                    'title' => "Nama Kelompok", 
+                    'sortable' => "NAMA_PKK", 
+                    'show' => true,
+                    'filter' => array(
+                        'NAMA_PKK' => 'text'
+                    ),
+                    'filterData' => $this->kelompok->get_all()
                 ),
                 array(
                     'field' => "NAMA_SANTRI",
@@ -36,6 +48,16 @@ class Data extends CI_Controller {
                     'filter' => array(
                         'NAMA_SANTRI' => 'text'
                     )
+                ),
+                array(
+                    'field' => "NAMA_JK",
+                    'title' => "JK", 
+                    'sortable' => "NAMA_JK", 
+                    'show' => true,
+                    'filter' => array(
+                        'JK_SANTRI' => 'text'
+                    ),
+                    'filterData' => $this->jk->get_all()
                 ),
                 array(
                     'field' => "TEMPAT_LAHIR_SANTRI",
@@ -110,8 +132,10 @@ class Data extends CI_Controller {
     public function form() {
         $data = array(
             'uri' => array(
-                'kecamatan' => site_url('master_data/kecamatan/get_all')
-            )
+                'kecamatan' => site_url('master_data/kecamatan/get_all'),
+            ),
+            'kelompok' => $this->kelompok->get_all(),
+            'jk' => $this->jk->get_all(),
         );
         
         $this->output_handler->output_JSON($data);

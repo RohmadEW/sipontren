@@ -6,9 +6,19 @@ $title = 'Calon Santri';
 $controller = 'dataPSB';
 $data = array(
     array(
+        'type' => 'select',
+        'field' => 'PSB_KELOMPOK_SANTRI',
+        'label' => 'Kelompok'
+    ),
+    array(
         'type' => 'text',
         'field' => 'NAMA_SANTRI',
         'label' => 'Nama Santri'
+    ),
+    array(
+        'type' => 'select',
+        'field' => 'JK_SANTRI',
+        'label' => 'Jenis Kelamin'
     ),
     array(
         'type' => 'text',
