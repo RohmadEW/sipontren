@@ -2,25 +2,26 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Data extends CI_Controller {
+class Penempatan_kamar extends CI_Controller {
     
     var $primaryKey = 'ID_SANTRI';
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'data_psb_model' => 'data_psb',
+            'penempatan_kamar_model' => 'penempatan_kamar',
             'kelompok_model' => 'kelompok',
             'jk_model' => 'jk',
+            'kamar_model' => 'kamar',
         ));
         $this->auth->validation(array(1, 2));
     }
 
     public function index() {
         $data = array(
-            'title' => 'Data PSB',
-            'breadcrumb' => 'PSB > Data',
-            'wide' => true,
+            'title' => 'Penempatan Santri di Kamar',
+            'breadcrumb' => 'Santri > Penempatan Kamar Santri',
+            'kamar' => $this->kamar->get_all(),
             'table' => array(
                 array(
                     'field' => "ID_SANTRI",
@@ -32,14 +33,13 @@ class Data extends CI_Controller {
                     ),
                 ),
                 array(
-                    'field' => "NAMA_PKK",
-                    'title' => "Nama Kelompok", 
-                    'sortable' => "NAMA_PKK", 
+                    'field' => "NIS_SANTRI",
+                    'title' => "NIS", 
+                    'sortable' => "NIS_SANTRI", 
                     'show' => true,
                     'filter' => array(
-                        'ID_PKK' => 'select'
+                        'NIS_SANTRI' => 'text'
                     ),
-                    'filterData' => $this->kelompok->get_all()
                 ),
                 array(
                     'field' => "NAMA_SANTRI",
@@ -61,21 +61,12 @@ class Data extends CI_Controller {
                     'filterData' => $this->jk->get_all()
                 ),
                 array(
-                    'field' => "TANGGAL_LAHIR_SANTRI_SHOW",
-                    'title' => "Tempat Lahir", 
-                    'sortable' => "TANGGAL_LAHIR_SANTRI_SHOW", 
+                    'field' => "TTL_SANTRI",
+                    'title' => "TTL", 
+                    'sortable' => "TTL_SANTRI", 
                     'show' => true,
                     'filter' => array(
-                        'TANGGAL_LAHIR_SANTRI_SHOW' => 'text'
-                    )
-                ),
-                array(
-                    'field' => "TANGGAL_LAHIR_SANTRI",
-                    'title' => "Tanggal Lahir", 
-                    'sortable' => "TANGGAL_LAHIR_SANTRI", 
-                    'show' => true,
-                    'filter' => array(
-                        'TANGGAL_LAHIR_SANTRI' => 'text'
+                        'TTL_SANTRI' => 'text'
                     )
                 ),
                 array(
@@ -88,15 +79,6 @@ class Data extends CI_Controller {
                     )
                 ),
                 array(
-                    'field' => "NOHP_SANTRI",
-                    'title' => "No HP", 
-                    'sortable' => "NOHP_SANTRI", 
-                    'show' => true,
-                    'filter' => array(
-                        'NOHP_SANTRI' => 'text'
-                    )
-                ),
-                array(
                     'field' => "AYAH_NAMA_SANTRI",
                     'title' => "Nama Ayah", 
                     'sortable' => "AYAH_NAMA_SANTRI", 
@@ -104,28 +86,22 @@ class Data extends CI_Controller {
                     'filter' => array(
                         'AYAH_NAMA_SANTRI' => 'text'
                     )
-                ),
-                array(
-                    'field' => "ACTION",
-                    'title' => "Aksi", 
-                    'actions' => array(
-                        array(
-                            'title' => 'Ubah',
-                            'update' => true
-                        ),
-                        array(
-                            'title' => 'Hapus',
-                            'delete' => true
-                        )
-                    )
-                ),
+                )
             )
         );
         $this->output_handler->output_JSON($data);
     }
     
-    public function datatable() {
-        $data = $this->data_psb->get_datatable();
+    public function datatable_santri_no_kamar() {
+        $data = $this->penempatan_kamar->get_datatable_santri_no_kamar();
+
+        $this->output_handler->output_JSON($data);
+    }
+    
+    public function datatable_santri_kamar() {
+        $post = json_decode(file_get_contents('php://input'), true);
+        
+        $data = $this->penempatan_kamar->get_datatable_santri_kamar($post['KAMAR_SK']);
 
         $this->output_handler->output_JSON($data);
     }
@@ -143,7 +119,7 @@ class Data extends CI_Controller {
     }
 
     public function data() {
-        $data = $this->data_psb->get_datatables();
+        $data = $this->penempatan_kamar->get_datatables();
 
         $this->output_handler->output_JSON($data);
     }
@@ -151,7 +127,7 @@ class Data extends CI_Controller {
     public function view() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->data_psb->get_by_id($post[$this->primaryKey]);
+        $data = $this->penempatan_kamar->get_by_id($post[$this->primaryKey]);
 
         $this->output_handler->output_JSON($data);
     }
@@ -159,7 +135,7 @@ class Data extends CI_Controller {
     public function save() {
         $data = json_decode(file_get_contents('php://input'), true);
         
-        $result = $this->data_psb->save($data);
+        $result = $this->penempatan_kamar->save($data);
 
         if (isset($data[$this->primaryKey]))
             $message = 'diubah';
@@ -172,7 +148,7 @@ class Data extends CI_Controller {
     public function delete() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->data_psb->delete($post[$this->primaryKey]);
+        $result = $this->penempatan_kamar->delete($post[$this->primaryKey]);
         $message = 'dihapus';
 
         $this->output_handler->output_JSON($result, $message);

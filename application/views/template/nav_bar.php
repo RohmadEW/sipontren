@@ -55,7 +55,7 @@ $this->auth->validation();
             </md-button>
         </div>
         <div>
-            <md-button class="md-fab kk-button" aria-label="Keluar Aplikasi" ng-click="logOut()">
+            <md-button class="md-fab kk-button" aria-label="Keluar Aplikasi" ng-click="logOut($event)">
                 <md-tooltip md-direction="bottom">Keluar Aplikasi</md-tooltip>
                 <md-icon class="material-icons md-36 kk-icon-nav-bar">exit_to_app</md-icon>
             </md-button>

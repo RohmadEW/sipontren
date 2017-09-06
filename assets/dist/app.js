@@ -112,7 +112,7 @@
     angular.module('mainApp').service("formHelper", function ($timeout, $q) {
         this.autocomplete = function (scope) {
             var dataAC = scope.dataAutocomplete;
-            
+
             scope = {
                 noCache: false,
                 selectedItem: null,
@@ -122,7 +122,7 @@
             };
 
             scope.dataAll = loadAll();
-                    
+
             function loadAll() {
                 return dataAC.map(function (detail) {
                     return {
@@ -136,7 +136,7 @@
             scope.querySearch = function (query) {
                 if (typeof query === 'undefined')
                     query = scope.searchText;
-                
+
                 var results = query ? scope.dataAll.filter(createFilterFor(query)) : scope.dataAll;
                 var deferred = $q.defer();
 
@@ -149,7 +149,7 @@
 
             function createFilterFor(query) {
                 var lowercaseQuery = angular.lowercase(query);
-                
+
                 return function filterFn(detail) {
                     return (detail.value.indexOf(lowercaseQuery) >= 0);
                 };
@@ -166,7 +166,7 @@
 (function () {
     "use strict";
 
-    angular.module('mainApp').controller('headerController', function ($rootScope, $scope, $http, url_menu, url_login, notificationService, $location, url_template, $mdBottomSheet) {
+    angular.module('mainApp').controller('headerController', function ($rootScope, $scope, $http, url_menu, url_login, notificationService, $location, url_template, $mdBottomSheet, $mdDialog) {
         $http.get(url_menu).then(callbackMenu, notificationService.errorCallback);
 
         function callbackMenu(response) {
@@ -184,10 +184,20 @@
             });
         };
 
-        $scope.logOut = function () {
-            $rootScope.showMenu = false;
+        $scope.logOut = function (ev) {
+            var confirm = $mdDialog.confirm()
+                    .title('Apakah Anda yakin keluar aplikasi?')
+                    .targetEvent(ev)
+                    .ok('YA')
+                    .cancel('TIDAK');
 
-            $location.path(url_login);
+            $mdDialog.show(confirm).then(function () {
+                $rootScope.showMenu = false;
+
+                $location.path(url_login);
+            }, function () {
+
+            });
         };
     });
 
@@ -222,6 +232,8 @@
         $scope.getData = getData();
         $scope.appReady = false;
         $scope.dataOriginal = null;
+        $scope.flex = 80;
+        $scope.flexOffset = 10;
 
         $scope.fabHidden = true;
         $scope.fabIsOpen = false;
@@ -233,6 +245,11 @@
             $scope.title = response.data.title;
             $scope.breadcrumb = response.data.breadcrumb;
             $scope.table = response.data.table;
+
+            if (response.data.wide) {
+                $scope.flex = 90;
+                $scope.flexOffset = 5;
+            }
 
             getData();
 
@@ -307,6 +324,7 @@
         function createDialog(event, mode) {
             $mdDialog
                     .show({
+                        controller: DialogController,
                         clickOutsideToClose: false,
                         templateUrl: $scope.mainTemplate + '-' + mode + '.html',
                         targetEvent: event
@@ -320,6 +338,13 @@
                                 // CANCEL DIALOG
                             }
                     );
+        }
+
+        function DialogController($scope, $mdDialog) {
+            $scope.cancelSumbit = function () {
+                dataScopeShared.addData('DATA_UPDATE', null);
+                $mdDialog.cancel();
+            };
         }
 
         $scope.actionRow = function ($event, action, data) {
@@ -575,7 +600,6 @@
         };
 
         $scope.saveSubmit = function () {
-            3
             if ($scope.form.$valid) {
                 $scope.ajaxRunning = true;
 
@@ -645,7 +669,6 @@
         };
 
         $scope.saveSubmit = function () {
-            3
             if ($scope.form.$valid) {
                 $scope.ajaxRunning = true;
 
@@ -784,7 +807,6 @@
         };
 
         $scope.saveSubmit = function () {
-            3
             if ($scope.form.$valid) {
                 $scope.ajaxRunning = true;
 
@@ -850,7 +872,6 @@
         };
 
         $scope.saveSubmit = function () {
-            3
             if ($scope.form.$valid) {
                 $scope.ajaxRunning = true;
 
@@ -992,7 +1013,6 @@
         };
 
         $scope.saveSubmit = function () {
-            3
             if ($scope.form.$valid) {
                 $scope.ajaxRunning = true;
 
@@ -1678,7 +1698,7 @@
         function callbackForm(response) {
             $scope.dataPSB_KELOMPOK_SANTRI = response.data.kelompok;
             $scope.dataJK_SANTRI = response.data.jk;
-            
+
             var urlGetDataForm = [];
 
             urlGetDataForm.push($http.get(response.data.uri.kecamatan));
@@ -1701,7 +1721,7 @@
                 dataAutocomplete: response[0].data
             };
             $scope.KECAMATAN_SANTRI = formHelper.autocomplete($scope.KECAMATAN_SANTRI);
-            
+
             if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
                 formReady();
             else
@@ -1826,7 +1846,6 @@
         };
 
         $scope.saveSubmit = function () {
-            3
             if ($scope.form.$valid) {
                 $scope.ajaxRunning = true;
 
@@ -1846,6 +1865,219 @@
     angular.module('mainApp').controller('docDatatableController', function ($scope, $timeout, $mdSidenav, $log) {
         $scope.title = 'Dokumentasi';
         $scope.content = 'Isi Dokumentasi';
+    });
+
+    angular.module('mainApp').controller('santriKamarController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+
+        $scope.formData = {
+            ID_KAMAR: null,
+            GEDUNG_KAMAR: null,
+            NAMA_KAMAR: null,
+            KETERANGAN_KAMAR: null,
+        };
+
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            $scope.dataGEDUNG_KAMAR = response.data.dataGEDUNG_KAMAR;
+
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData.ID_KAMAR = response.data.ID_KAMAR;
+            $scope.formData.GEDUNG_KAMAR = response.data.GEDUNG_KAMAR;
+            $scope.formData.NAMA_KAMAR = response.data.NAMA_KAMAR;
+            $scope.formData.KETERANGAN_KAMAR = response.data.KETERANGAN_KAMAR;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification.text);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
+    angular.module('mainApp').controller('penempatanKamarController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.mainTemplate = url_template + $routeParams.template;
+        $scope.getData = getDataSantri();
+        $scope.appReady = false;
+        $scope.dataOriginal = null;
+
+        $scope.fabHidden = true;
+        $scope.fabIsOpen = false;
+        $scope.fabHover = false;
+
+        $scope.formData = {
+            KAMAR_SK: null
+        };
+
+        $http.get($scope.mainURI + '/index').then(callbackSuccess, notificationService.errorCallback);
+
+        function callbackSuccess(response) {
+            $scope.title = response.data.title;
+            $scope.breadcrumb = response.data.breadcrumb;
+            $scope.table = response.data.table;
+            $scope.dataKAMAR_SK = response.data.kamar;
+
+            getDataSantri();
+
+            $scope.appReady = true;
+        }
+
+        function getDataSantri() {
+            $http.get($scope.mainURI + '/datatable_santri_no_kamar').then(callbackDatatablesSantri, notificationService.errorCallback);
+        }
+
+        function callbackDatatablesSantri(response) {
+            $scope.dataOriginal = response.data.data;
+
+            var initialParams = {
+                count: 15
+            };
+            var initialSettings = {
+                counts: [],
+                dataset: response.data.data
+            };
+
+            $scope.dataTablesSantri = new NgTableParams(initialParams, initialSettings);
+            $scope.fabHidden = false;
+        }
+
+        $scope.$watch('formData.KAMAR_SK', function (KAMAR_SK) {
+            if (KAMAR_SK !== null)
+                getDataSantriKamar();
+        });
+
+        function getDataSantriKamar() {
+            $http.post($scope.mainURI + '/datatable_santri_kamar', $scope.formData).then(callbackDatatablesSantriKamar, notificationService.errorCallback);
+        }
+
+        function callbackDatatablesSantriKamar(response) {
+            $scope.dataOriginal = response.data.data;
+
+            var initialParams = {
+                count: 15
+            };
+            var initialSettings = {
+                counts: [],
+                dataset: response.data.data
+            };
+
+            $scope.dataTablesKamar = new NgTableParams(initialParams, initialSettings);
+            $scope.fabHidden = false;
+        }
+
+        $scope.menuItems = [
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
+        ];
+
+        $scope.openDialog = function ($event, item) {
+            if (item.id === 'reload_data') {
+                $scope.fabHidden = true;
+                getDataSantri();
+            } else if (item.id === 'reload_page') {
+                reloadPage();
+            } else if (item.id === 'request_doc') {
+                $mdSidenav('right').toggle();
+            } else if (item.id === 'add_data') {
+                createDialog($event, 'form');
+            } else if (item.id === 'print_data') {
+                var mywindow = window.open('', 'PRINT', 'height=600,width=700');
+
+                mywindow.document.write('<html><head><title>' + document.title + '</title><style type="text/css">body{font-family: "Roboto",Arial,sans-serif;overflow:visible;}.ng-table-filters,.ng-table-counts{display: none;} tr {border-top: 1px solid #f2f6f9;} .data-table{overflow: visible;} table{overflow:visible;}body, h1, h2, h3, ol, ul, div {     width: auto;     border: 0;     margin: 0 5%;     padding: 0;     float: none;     position: static;     overflow: visible; }</style>');
+                mywindow.document.write('</head><body onload="window.print()">');
+                mywindow.document.write('<h1>' + document.title + '</h1>');
+                mywindow.document.write(document.getElementById('printable').innerHTML);
+                mywindow.document.write('</body></html>');
+
+                mywindow.document.close();
+                mywindow.focus();
+
+                return true;
+            } else if (item.id === 'download_data') {
+                if ($scope.dataOriginal === null)
+                    notificationService.toastSimple('Data tidak ditemukan');
+                else
+                    alasql('SELECT * INTO XLSX("data_download.xlsx",{headers:true}) FROM ?', [$scope.dataOriginal]);
+            }
+        };
+
+        function reloadPage() {
+            var currentPageTemplate = $route.current.templateUrl;
+            $templateCache.remove(currentPageTemplate);
+            $route.reload();
+        }
+
+        function createDialog(event, mode) {
+            $mdDialog
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (text) {
+                                notificationService.toastSimple(text);
+                                getData();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
+        }
+
+        function DialogController($scope, $mdDialog) {
+            $scope.cancelSumbit = function () {
+                dataScopeShared.addData('DATA_UPDATE', null);
+                $mdDialog.cancel();
+            };
+        }
     });
 
 })();

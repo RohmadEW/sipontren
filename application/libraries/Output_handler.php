@@ -53,6 +53,37 @@ class Output_handler {
         exit();
     }
 
+    public function dialog_info($title, $message) {
+        echo '
+        <md-dialog aria-label="Info ' . $title . '" class="dialog-form">
+            <form ng-cloak name="form" ng-submit="saveSubmit();" novalidate>
+                <md-toolbar>
+                    <div class="md-toolbar-tools">
+                        <h2>Info ' . $title . '</h2>
+                        <span flex></span>
+                        <md-button class="md-icon-button" ng-click="cancelSumbit()">
+                            <md-icon class="material-icons md-24">close</md-icon>
+                        </md-button>
+                    </div>
+                </md-toolbar>
+                <md-dialog-content>
+                    <div class="md-dialog-content">
+                        <div>
+                            <h2>'.$message.'</h2>
+                        </div>
+                    </div>
+                </md-dialog-content>
+                <md-dialog-actions layout="row">
+                    <span flex></span>
+                    <md-button ng-click="cancelSumbit()">
+                        Tutup
+                    </md-button>
+                </md-dialog-actions>
+            </form>
+        </md-dialog>
+        ';
+    }
+    
     public function dialog_form($title, $controller, $data) {
         echo '
         <md-dialog aria-label="{{ addForm ? \'Tambah\' : \'Ubah\' }} ' . $title . '" class="dialog-form" ng-controller="' . $controller . 'Controller">
@@ -71,7 +102,7 @@ class Output_handler {
                     <div class="md-dialog-content">
                         <div>
                 ';
-
+        
         foreach ($data as $detail) {
             if ($detail['type'] == 'autocomplete')
                 $this->form_autocomplete($detail);
@@ -158,7 +189,7 @@ class Output_handler {
             ';
     }
 
-    private function form_select($data) {
+    public function form_select($data) {
         if (!isset($data['required']))
             $data['required'] = true;
         echo '

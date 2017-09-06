@@ -64,6 +64,7 @@ table {
 }
 table {
     background-color: transparent;
+    font-size: 14px;
 }
 caption {
     padding-top: 8px;
@@ -456,4 +457,11 @@ md-toolbar .kk-toolbar-filler {
 }
 .md-sidenav-right {
     position: fixed;
+}
+hr {
+    border: 0;
+    border-top: 1px solid #eee;
+}
+.hr {
+    padding: unset;
 }

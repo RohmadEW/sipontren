@@ -1,15 +1,16 @@
 
 
-    angular.module('mainApp').controller('psbKelompokController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+    angular.module('mainApp').controller('akadKamarController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
         $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
         $scope.ajaxRunning = true;
         $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
         $scope.addForm = true;
 
         $scope.formData = {
-            ID_PKK: null,
-            NAMA_PKK: null,
-            KETERANGAN_PKK: null,
+            ID_KAMAR: null,
+            GEDUNG_KAMAR: null,
+            NAMA_KAMAR: null,
+            KETERANGAN_KAMAR: null,
         };
 
         $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
@@ -19,6 +20,8 @@
         }
 
         function callbackFormData(response) {
+            $scope.dataGEDUNG_KAMAR = response.data.dataGEDUNG_KAMAR;
+
             if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
                 formReady();
             else
@@ -30,9 +33,10 @@
         }
 
         function callbackSuccessData(response) {
-            $scope.formData.ID_PKK = response.data.ID_PKK;
-            $scope.formData.NAMA_PKK = response.data.NAMA_PKK;
-            $scope.formData.KETERANGAN_PKK = response.data.KETERANGAN_PKK;
+            $scope.formData.ID_KAMAR = response.data.ID_KAMAR;
+            $scope.formData.GEDUNG_KAMAR = response.data.GEDUNG_KAMAR;
+            $scope.formData.NAMA_KAMAR = response.data.NAMA_KAMAR;
+            $scope.formData.KETERANGAN_KAMAR = response.data.KETERANGAN_KAMAR;
 
             $scope.addForm = false;
 
@@ -49,7 +53,6 @@
         };
 
         $scope.saveSubmit = function () {
-            3
             if ($scope.form.$valid) {
                 $scope.ajaxRunning = true;
 
