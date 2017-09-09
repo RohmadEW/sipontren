@@ -465,3 +465,8 @@ hr {
 .hr {
     padding: unset;
 }
+md-toast.md-success-toast-theme {
+    .md-toast-content {
+        background-color: green;
+    }
+}

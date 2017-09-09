@@ -10,10 +10,11 @@ class Data extends CI_Controller {
         parent::__construct();
         $this->load->model(array(
             'data_santri_model' => 'data_santri',
-            'kelompok_model' => 'kelompok',
             'jk_model' => 'jk',
+            'kondisi_model' => 'kondisi',
+            'masterdata_model' => 'masterdata',
         ));
-        $this->auth->validation(array(1, 2));
+        $this->auth->validation(array(1, 3));
     }
 
     public function index() {
@@ -58,6 +59,15 @@ class Data extends CI_Controller {
                         'JK_SANTRI' => 'text'
                     ),
                     'filterData' => $this->jk->get_all()
+                ),
+                array(
+                    'field' => "ANGKATAN_SANTRI",
+                    'title' => "Angkatan", 
+                    'sortable' => "ANGKATAN_SANTRI", 
+                    'show' => true,
+                    'filter' => array(
+                        'ANGKATAN_SANTRI' => 'text'
+                    )
                 ),
                 array(
                     'field' => "TTL_SANTRI",
@@ -109,8 +119,12 @@ class Data extends CI_Controller {
                     'title' => "Aksi", 
                     'actions' => array(
                         array(
-                            'title' => 'Ubah',
+                            'title' => 'Ubah info diri',
                             'update' => true
+                        ),
+                        array(
+                            'title' => 'Ubah data ayah',
+                            'form' => 'form_ayah'
                         ),
                         array(
                             'title' => 'Hapus',
@@ -134,8 +148,11 @@ class Data extends CI_Controller {
             'uri' => array(
                 'kecamatan' => site_url('master_data/kecamatan/get_all'),
             ),
-            'kelompok' => $this->kelompok->get_all(),
-            'jk' => $this->jk->get_all(),
+            'JK' => $this->jk->get_all(),
+            'AGAMA' => $this->masterdata->get_agama(),
+            'SUKU' => $this->masterdata->get_suku(),
+            'KONDISI' => $this->kondisi->get_all(),
+            'GOL_DARAH' => $this->masterdata->get_gol_darah(),
         );
         
         $this->output_handler->output_JSON($data);

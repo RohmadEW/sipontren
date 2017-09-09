@@ -87,8 +87,19 @@
                     .ok('OK')
                     );
         };
-        this.toastSimple = function (text) {
-            $mdToast.show($mdToast.simple().textContent(text).position('top right').hideDelay(3000));
+        this.toastSimple = function (notification) {
+            var text = '';
+            var type = '';
+            
+            if (typeof notification === 'string') {
+                text = notification;
+                type = 'info';
+            } else {
+                text = notification.text;
+                type = notification.type;
+            }
+
+            $mdToast.show($mdToast.simple().textContent(text).position('top right').hideDelay(3000).theme(type + "-toast"));
         };
     });
 
@@ -216,7 +227,7 @@
         };
 
         function successCallback(response) {
-            notificationService.toastSimple(response.data.notification.text);
+            notificationService.toastSimple(response.data.notification);
 
             if (response.data.status) {
                 $rootScope.showMenu = true;
@@ -330,8 +341,8 @@
                         targetEvent: event
                     })
                     .then(
-                            function (text) {
-                                notificationService.toastSimple(text);
+                            function (notification) {
+                                notificationService.toastSimple(notification);
                                 getData();
                             },
                             function () {
@@ -352,7 +363,14 @@
                 updateRow($event, data);
             else if (action.delete)
                 deleteRow($event, data);
+            else if(action.form)
+                formRow($event, data, action.form);
         };
+
+        function formRow(event, data, form) {
+            dataScopeShared.addData('DATA_UPDATE', data);
+            createDialog(event, form);
+        }
 
         function updateRow(event, data) {
             dataScopeShared.addData('DATA_UPDATE', data);
@@ -376,7 +394,7 @@
         }
 
         function callbackSuccessDelete(response) {
-            notificationService.toastSimple(response.data.notification.text);
+            notificationService.toastSimple(response.data.notification);
             getData();
         }
     });
@@ -450,7 +468,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
 
@@ -531,7 +549,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
 
@@ -611,7 +629,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -680,7 +698,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -751,7 +769,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -818,7 +836,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -883,7 +901,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -952,7 +970,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -1024,7 +1042,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -1089,7 +1107,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -1154,7 +1172,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -1219,7 +1237,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -1282,7 +1300,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -1347,7 +1365,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -1412,7 +1430,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -1477,7 +1495,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -1542,7 +1560,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -1605,7 +1623,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -1668,7 +1686,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -1785,7 +1803,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
 
@@ -1857,7 +1875,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -1931,7 +1949,7 @@
 
         function callbackSuccessSaving(response) {
             $scope.ajaxRunning = false;
-            $mdDialog.hide(response.data.notification.text);
+            $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
@@ -2078,6 +2096,184 @@
                 $mdDialog.cancel();
             };
         }
+
+        $scope.prosesSantri = function (row, action) {
+            if ($scope.formData.KAMAR_SK === null) {
+                notificationService.toastSimple('Silahkan pilih kamar terlebih dahulu');
+            } else {
+                var dataSantri = {
+                    ACTION: action,
+                    ID_SANTRI: row.ID_SANTRI,
+                    KAMAR_SANTRI: $scope.formData.KAMAR_SK,
+                };
+                $http.post($scope.mainURI + '/prosesSantri', dataSantri).then(callbackSuccessProsesSantri, notificationService.errorCallback);
+            }
+        }
+
+        function callbackSuccessProsesSantri(response) {
+            notificationService.toastSimple(response.data.notification);
+
+            if (response.data.status) {
+                getDataSantri();
+                getDataSantriKamar();
+            }
+        }
+    });
+    ;
+
+    angular.module('mainApp').controller('dataSantriController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared, $q) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+        $scope.dataForm = [];
+
+        $scope.formData = {
+            ID_SANTRI: null,
+            NIS_SANTRI: null,
+            NIK_SANTRI: null,
+            NAMA_SANTRI: null,
+            PANGGILAN_SANTRI: null,
+            ANGKATAN_SANTRI: null,
+            JK_SANTRI: null,
+            TEMPAT_LAHIR_SANTRI: null,
+            TANGGAL_LAHIR_SANTRI: null,
+            KECAMATAN_SANTRI: null,
+            ALAMAT_SANTRI: null,
+            NOHP_SANTRI: null,
+            EMAIL_SANTRI: null,
+            SUKU_SANTRI: null,
+            AGAMA_SANTRI: null,
+            ANAK_KE_SANTRI: null,
+            KONDISI_SANTRI: null,
+            BERAT_SANTRI: null,
+            JUMLAH_SDR_SANTRI: null,
+            TINGGI_SANTRI: null,
+            GOL_DARAH_SANTRI: null,
+            RIWAYAT_KESEHATAN_SANTRI: null,
+            NO_IJASAH_SANTRI: null,
+            TANGGAL_IJASAH_SANTRI: null,
+        };
+
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            $scope.dataJK_SANTRI = response.data.JK;
+            $scope.dataSUKU_SANTRI = response.data.SUKU;
+            $scope.dataKONDISI_SANTRI = response.data.KONDISI;
+            $scope.dataAGAMA_SANTRI = response.data.AGAMA;
+            $scope.dataGOL_DARAH_SANTRI = response.data.GOL_DARAH;
+
+            var urlGetDataForm = [];
+
+            urlGetDataForm.push($http.get(response.data.uri.kecamatan));
+
+            $q.all(urlGetDataForm)
+                    .then(
+                            function (result) {
+                                callbackFormData(result);
+                            },
+                            function (error) {
+                                $scope.cancelSumbit();
+                            }
+                    );
+        }
+
+        function callbackFormData(response) {
+            console.log('RESPONSE', response);
+
+            $scope.KECAMATAN_SANTRI = {
+                dataAutocomplete: response[0].data
+            };
+            $scope.KECAMATAN_SANTRI = formHelper.autocomplete($scope.KECAMATAN_SANTRI);
+
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            angular.forEach($scope.KECAMATAN_SANTRI.dataAll, function (value, key) {
+                if (parseInt(response.data.KECAMATAN_SANTRI) === parseInt(value.key)) {
+                    $scope.KECAMATAN_SANTRI.selectedItem = value;
+                }
+            });
+
+            $scope.formData.ID_SANTRI = response.data.ID_SANTRI;
+            $scope.formData.NIS_SANTRI = response.data.NIS_SANTRI;
+            $scope.formData.NIK_SANTRI = response.data.NIK_SANTRI;
+            $scope.formData.NAMA_SANTRI = response.data.NAMA_SANTRI;
+            $scope.formData.PANGGILAN_SANTRI = response.data.PANGGILAN_SANTRI;
+            $scope.formData.ANGKATAN_SANTRI = response.data.ANGKATAN_SANTRI;
+            $scope.formData.JK_SANTRI = response.data.JK_SANTRI;
+            $scope.formData.TEMPAT_LAHIR_SANTRI = response.data.TEMPAT_LAHIR_SANTRI;
+            $scope.formData.TANGGAL_LAHIR_SANTRI = response.data.TANGGAL_LAHIR_SANTRI;
+            $scope.formData.KECAMATAN_SANTRI = response.data.KECAMATAN_SANTRI;
+            $scope.formData.ALAMAT_SANTRI = response.data.ALAMAT_SANTRI;
+            $scope.formData.NOHP_SANTRI = response.data.NOHP_SANTRI;
+            $scope.formData.SUKU_SANTRI = response.data.SUKU_SANTRI;
+            $scope.formData.AGAMA_SANTRI = response.data.AGAMA_SANTRI;
+            $scope.formData.JUMLAH_SDR_SANTRI = response.data.JUMLAH_SDR_SANTRI;
+            $scope.formData.ANAK_KE_SANTRI = response.data.ANAK_KE_SANTRI;
+            $scope.formData.KONDISI_SANTRI = response.data.KONDISI_SANTRI;
+            $scope.formData.BERAT_SANTRI = response.data.BERAT_SANTRI;
+            $scope.formData.TINGGI_SANTRI = response.data.TINGGI_SANTRI;
+            $scope.formData.GOL_DARAH_SANTRI = response.data.GOL_DARAH_SANTRI;
+            $scope.formData.RIWAYAT_KESEHATAN_SANTRI = response.data.RIWAYAT_KESEHATAN_SANTRI;
+            $scope.formData.NO_IJASAH_SANTRI = response.data.NO_IJASAH_SANTRI;
+            $scope.formData.TANGGAL_IJASAH_SANTRI = response.data.TANGGAL_IJASAH_SANTRI;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.KECAMATAN_SANTRI.$valid
+                    && $scope.form.NIS_SANTRI.$valid
+                    && $scope.form.NIK_SANTRI.$valid
+                    && $scope.form.NAMA_SANTRI.$valid
+                    && $scope.form.ANGKATAN_SANTRI.$valid
+                    && $scope.form.JK_SANTRI.$valid
+                    && $scope.form.TEMPAT_LAHIR_SANTRI.$valid
+                    && $scope.form.TANGGAL_LAHIR_SANTRI.$valid
+                    && $scope.form.ALAMAT_SANTRI.$valid
+                    && $scope.form.NOHP_SANTRI.$valid
+                    ) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+
+        $scope.$watch('KECAMATAN_SANTRI.selectedItem', function (selectedItem) {
+            if (typeof selectedItem === 'undefined' || selectedItem.key === null)
+                $scope.formData.KECAMATAN_SANTRI = null;
+            else
+                $scope.formData.KECAMATAN_SANTRI = selectedItem.key;
+        });
     });
 
 })();

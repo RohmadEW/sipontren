@@ -57,6 +57,7 @@ class Data_psb_model extends CI_Model {
             $result = $this->update($data, $where);
         } else {
             unset($data[$this->primaryKey]);
+            $data['ANGKATAN_SANTRI'] = date('Y');
             $result = $this->insert($data);
         }
         

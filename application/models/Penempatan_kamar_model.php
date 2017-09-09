@@ -1,4 +1,5 @@
 <?php
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
@@ -23,7 +24,6 @@ class Penempatan_kamar_model extends CI_Model {
         $this->db->join('md_kecamatan', 'ID_KEC=KECAMATAN_SANTRI');
         $this->db->join('md_kabupaten', 'ID_KAB=KABUPATEN_KEC');
         $this->db->join('md_provinsi', 'ID_PROV=PROVINSI_KAB');
-        $this->db->join('santri_kamar', 'SANTRI_SK=ID_SANTRI AND STATUS_SK=1', 'LEFT');
     }
 
     public function get_datatable_santri_no_kamar() {
@@ -31,26 +31,26 @@ class Penempatan_kamar_model extends CI_Model {
         $this->db->where(array(
             'ALUMNI_SANTRI' => 0,
             'STATUS_MUTASI_SANTRI' => NULL,
-            'SANTRI_SK' => NULL,
+            'KAMAR_SANTRI' => NULL,
         ));
         $data = $this->db->get()->result();
-        
+
         $result = array(
             "data" => $data
         );
 
         return $result;
     }
-    
+
     public function get_datatable_santri_kamar($KAMAR_SK) {
         $this->_get_table();
         $this->db->where(array(
             'ALUMNI_SANTRI' => 0,
             'STATUS_MUTASI_SANTRI' => NULL,
-            'KAMAR_SK' => $KAMAR_SK,
+            'KAMAR_SANTRI' => $KAMAR_SK,
         ));
         $data = $this->db->get()->result();
-        
+
         $result = array(
             "data" => $data
         );
@@ -62,10 +62,10 @@ class Penempatan_kamar_model extends CI_Model {
         $this->_get_table();
         $this->db->where($this->primaryKey, $id);
         $result = $this->db->get()->row_array();
-        
+
         return $result;
     }
-    
+
     public function save($data) {
         if (isset($data[$this->primaryKey])) {
             $where = array($this->primaryKey => $data[$this->primaryKey]);
@@ -75,7 +75,7 @@ class Penempatan_kamar_model extends CI_Model {
             unset($data[$this->primaryKey]);
             $result = $this->insert($data);
         }
-        
+
         return $result;
     }
 
@@ -85,16 +85,34 @@ class Penempatan_kamar_model extends CI_Model {
         return $this->db->insert_id();
     }
 
+    public function prosesSantri($data) {
+        if ($data['ACTION'] == 'set') {
+            $kamar = $data['KAMAR_SANTRI'];
+        } elseif ($data['ACTION'] == 'remove') {
+            $kamar = NULL;
+        }
+        
+        $data_update = array(
+            'KAMAR_SANTRI' => $kamar
+        );
+        $where_update = array(
+            'ID_SANTRI' => $data['ID_SANTRI']
+        );
+        $this->update($data_update, $where_update);
+
+        return $this->db->affected_rows();
+    }
+
     public function update($data, $where) {
         $this->db->update($this->table, $data, $where);
-        
+
         return $this->db->affected_rows();
     }
 
     public function delete($id) {
         $where = array($this->primaryKey => $id);
         $this->db->delete($this->table, $where);
-        
+
         return $this->db->affected_rows();
     }
 

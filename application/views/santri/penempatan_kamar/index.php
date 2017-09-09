@@ -42,18 +42,12 @@ $this->auth->validation();
                     <table ng-table-dynamic="dataTablesSantri with table" class="table table-condensed table-bordered table-striped table-hover" show-filter="true">
                         <tr ng-repeat="row in $data">
                             <td ng-repeat="col in $columns">
-                        <md-menu ng-if="col.field === 'ACTION'">
-                            <md-button aria-label="Menu" class="md-icon-button" ng-click="$mdMenu.open()">
-                                <md-icon class="material-icons md-24 kk-icon-title" aria-label="Menu">menu</md-icon>
-                            </md-button>
-                            <md-menu-content width="3" ng-mouseleave="$mdMenu.close()">
-                                <md-menu-item ng-repeat="action in col.actions">
-                                    <md-button ng-click="actionRow($event, action, row)">
-                                        {{action.title}}
-                                    </md-button>
-                                </md-menu-item>
-                            </md-menu-content>
-                        </md-menu>
+                        <md-button ng-if="col.field === 'ACTION'" aria-label="Menu" class="md-icon-button" ng-click="prosesSantri(row, 'set')">
+                            <md-tooltip md-direction="bottom">
+                                Klik untuk memasukan santri ke kamar
+                            </md-tooltip>
+                            <md-icon class="material-icons md-24 kk-icon-title" aria-label="Pindahkan">navigate_next</md-icon>
+                        </md-button>
                         {{row[col.field]}}
                         </td>
                         </tr>
@@ -71,22 +65,19 @@ $this->auth->validation();
                                     'label' => 'Pilih kamar terlebih dahulu'
                         ));
                         ?>
+                        <md-tooltip md-direction="bottom">
+                                Klik untuk memilih kamar
+                            </md-tooltip>
                     </div>
                     <table ng-table-dynamic="dataTablesKamar with table" class="table table-condensed table-bordered table-striped table-hover" show-filter="true">
                         <tr ng-repeat="row in $data">
                             <td ng-repeat="col in $columns">
-                        <md-menu ng-if="col.field === 'ACTION'">
-                            <md-button aria-label="Menu" class="md-icon-button" ng-click="$mdMenu.open()">
-                                <md-icon class="material-icons md-24 kk-icon-title" aria-label="Menu">menu</md-icon>
-                            </md-button>
-                            <md-menu-content width="3" ng-mouseleave="$mdMenu.close()">
-                                <md-menu-item ng-repeat="action in col.actions">
-                                    <md-button ng-click="actionRow($event, action, row)">
-                                        {{action.title}}
-                                    </md-button>
-                                </md-menu-item>
-                            </md-menu-content>
-                        </md-menu>
+                        <md-button ng-if="col.field === 'ACTION'" aria-label="Menu" class="md-icon-button" ng-click="prosesSantri(row, 'remove')">
+                            <md-tooltip md-direction="bottom">
+                                Klik untuk menghapus santri dari kamar
+                            </md-tooltip>
+                            <md-icon class="material-icons md-24 kk-icon-title" aria-label="Hapus santri">clear</md-icon>
+                        </md-button>
                         {{row[col.field]}}
                         </td>
                         </tr>

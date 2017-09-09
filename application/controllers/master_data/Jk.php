@@ -11,7 +11,7 @@ class Jk extends CI_Controller {
         $this->load->model(array(
             'jk_model' => 'jk'
         ));
-        $this->auth->validation(1);
+        $this->auth->validation(array(1, 2, 3));
     }
 
     public function index() {

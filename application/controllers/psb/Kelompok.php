@@ -11,7 +11,7 @@ class Kelompok extends CI_Controller {
         $this->load->model(array(
             'kelompok_model' => 'kelompok'
         ));
-        $this->auth->validation(1);
+        $this->auth->validation(array(1, 2));
     }
 
     public function index() {

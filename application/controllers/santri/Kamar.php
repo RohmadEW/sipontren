@@ -12,7 +12,7 @@ class Kamar extends CI_Controller {
             'kamar_model' => 'kamar',
             'gedung_model' => 'gedung',
         ));
-        $this->auth->validation(1);
+        $this->auth->validation(array(1, 3));
     }
 
     public function index() {

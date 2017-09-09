@@ -40,16 +40,19 @@
         <!-- Angular Controller -->
         <script src="assets/dist/local.js"></script>
         <script src="assets/dist/app.js"></script>
-        
+
         <!--<div ng-include="'template/show/template-main_script.html'"></div>-->
 
     </head>
     <body ng-cloak class="kk-bg-dark">
-        <div layout="row" ng-if="showMenu" class="navbar md-whiteframe-3dp" ng-include="'template/show/template-nav_bar.html'" ng-controller="headerController" ng-cloak>  
-        </div>
-        <div class="ajax-bar">
-            <md-progress-linear class="kk-progress-linear" md-mode="indeterminate" ng-show="ajaxRunning"></md-progress-linear>
-        </div>
-        <ng-view></ng-view>
+        <md-content flex="100" class="kk-bg-dark">
+            <!--<div id="toaster"></div>-->
+            <div layout="row" ng-if="showMenu" class="navbar md-whiteframe-3dp" ng-include="'template/show/template-nav_bar.html'" ng-controller="headerController" ng-cloak>  
+            </div>
+            <div class="ajax-bar">
+                <md-progress-linear class="kk-progress-linear" md-mode="indeterminate" ng-show="ajaxRunning"></md-progress-linear>
+            </div>
+            <ng-view></ng-view>
+        </md-content>
     </body>
 </html>
