@@ -8,7 +8,8 @@ $data = array(
     array(
         'type' => 'number',
         'field' => 'AYAH_NIK_SANTRI',
-        'label' => 'NIK Ayah'
+        'label' => 'NIK Ayah',
+        'required' => FALSE
     ),
     array(
         'type' => 'text',
@@ -18,27 +19,32 @@ $data = array(
     array(
         'type' => 'select',
         'field' => 'AYAH_HIDUP_SANTRI',
-        'label' => 'Status Ayah'
+        'label' => 'Status Ayah',
+        'required' => FALSE
     ),
     array(
         'type' => 'text',
         'field' => 'AYAH_TEMPAT_LAHIR_SANTRI',
-        'label' => 'Tempat Lahir Ayah'
+        'label' => 'Tempat Lahir Ayah',
+        'required' => FALSE
     ),
     array(
         'type' => 'date',
         'field' => 'AYAH_TANGGAL_LAHIR_SANTRI',
-        'label' => 'Tanggal Lahir Ayah'
+        'label' => 'Tanggal Lahir Ayah',
+        'required' => FALSE
     ),
     array(
         'type' => 'select',
         'field' => 'AYAH_PENDIDIKAN_SANTRI',
-        'label' => 'Pendidikan Ayah'
+        'label' => 'Pendidikan Ayah',
+        'required' => FALSE
     ),
     array(
         'type' => 'select',
         'field' => 'AYAH_PEKERJAAN_SANTRI',
-        'label' => 'Pekerjaan Ayah'
+        'label' => 'Pekerjaan Ayah',
+        'required' => FALSE
     ),
 );
 

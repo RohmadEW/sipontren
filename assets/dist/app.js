@@ -90,7 +90,7 @@
         this.toastSimple = function (notification) {
             var text = '';
             var type = '';
-            
+
             if (typeof notification === 'string') {
                 text = notification;
                 type = 'info';
@@ -363,7 +363,7 @@
                 updateRow($event, data);
             else if (action.delete)
                 deleteRow($event, data);
-            else if(action.form)
+            else if (action.form)
                 formRow($event, data, action.form);
         };
 
@@ -1733,8 +1733,6 @@
         }
 
         function callbackFormData(response) {
-            console.log('RESPONSE', response);
-
             $scope.KECAMATAN_SANTRI = {
                 dataAutocomplete: response[0].data
             };
@@ -2153,6 +2151,25 @@
             RIWAYAT_KESEHATAN_SANTRI: null,
             NO_IJASAH_SANTRI: null,
             TANGGAL_IJASAH_SANTRI: null,
+            AYAH_NIK_SANTRI: null,
+            AYAH_NAMA_SANTRI: null,
+            AYAH_HIDUP_SANTRI: null,
+            AYAH_TEMPAT_LAHIR_SANTRI: null,
+            AYAH_TANGGAL_LAHIR_SANTRI: null,
+            AYAH_PENDIDIKAN_SANTRI: null,
+            AYAH_PEKERJAAN_SANTRI: null,
+            IBU_NIK_SANTRI: null,
+            IBU_NAMA_SANTRI: null,
+            IBU_HIDUP_SANTRI: null,
+            IBU_TEMPAT_LAHIR_SANTRI: null,
+            IBU_TANGGAL_LAHIR_SANTRI: null,
+            IBU_PENDIDIKAN_SANTRI: null,
+            IBU_PEKERJAAN_SANTRI: null,
+            WALI_NIK_SANTRI: null,
+            WALI_NAMA_SANTRI: null,
+            WALI_HUBUNGAN_SANTRI: null,
+            WALI_PENDIDIKAN_SANTRI: null,
+            WALI_PEKERJAAN_SANTRI: null,
         };
 
         $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
@@ -2163,6 +2180,15 @@
             $scope.dataKONDISI_SANTRI = response.data.KONDISI;
             $scope.dataAGAMA_SANTRI = response.data.AGAMA;
             $scope.dataGOL_DARAH_SANTRI = response.data.GOL_DARAH;
+            $scope.dataAYAH_HIDUP_SANTRI = response.data.HIDUP_SANTRI;
+            $scope.dataAYAH_PENDIDIKAN_SANTRI = response.data.PENDIDIKAN_SANTRI;
+            $scope.dataAYAH_PEKERJAAN_SANTRI = response.data.PEKERJAAN_SANTRI;
+            $scope.dataIBU_HIDUP_SANTRI = response.data.HIDUP_SANTRI;
+            $scope.dataIBU_PENDIDIKAN_SANTRI = response.data.PENDIDIKAN_SANTRI;
+            $scope.dataIBU_PEKERJAAN_SANTRI = response.data.PEKERJAAN_SANTRI;
+            $scope.dataWALI_HUBUNGAN_SANTRI = response.data.HUBUNGAN_SANTRI;
+            $scope.dataWALI_PENDIDIKAN_SANTRI = response.data.PENDIDIKAN_SANTRI;
+            $scope.dataWALI_PEKERJAAN_SANTRI = response.data.PEKERJAAN_SANTRI;
 
             var urlGetDataForm = [];
 
@@ -2180,8 +2206,6 @@
         }
 
         function callbackFormData(response) {
-            console.log('RESPONSE', response);
-
             $scope.KECAMATAN_SANTRI = {
                 dataAutocomplete: response[0].data
             };
@@ -2203,30 +2227,8 @@
                     $scope.KECAMATAN_SANTRI.selectedItem = value;
                 }
             });
-
-            $scope.formData.ID_SANTRI = response.data.ID_SANTRI;
-            $scope.formData.NIS_SANTRI = response.data.NIS_SANTRI;
-            $scope.formData.NIK_SANTRI = response.data.NIK_SANTRI;
-            $scope.formData.NAMA_SANTRI = response.data.NAMA_SANTRI;
-            $scope.formData.PANGGILAN_SANTRI = response.data.PANGGILAN_SANTRI;
-            $scope.formData.ANGKATAN_SANTRI = response.data.ANGKATAN_SANTRI;
-            $scope.formData.JK_SANTRI = response.data.JK_SANTRI;
-            $scope.formData.TEMPAT_LAHIR_SANTRI = response.data.TEMPAT_LAHIR_SANTRI;
-            $scope.formData.TANGGAL_LAHIR_SANTRI = response.data.TANGGAL_LAHIR_SANTRI;
-            $scope.formData.KECAMATAN_SANTRI = response.data.KECAMATAN_SANTRI;
-            $scope.formData.ALAMAT_SANTRI = response.data.ALAMAT_SANTRI;
-            $scope.formData.NOHP_SANTRI = response.data.NOHP_SANTRI;
-            $scope.formData.SUKU_SANTRI = response.data.SUKU_SANTRI;
-            $scope.formData.AGAMA_SANTRI = response.data.AGAMA_SANTRI;
-            $scope.formData.JUMLAH_SDR_SANTRI = response.data.JUMLAH_SDR_SANTRI;
-            $scope.formData.ANAK_KE_SANTRI = response.data.ANAK_KE_SANTRI;
-            $scope.formData.KONDISI_SANTRI = response.data.KONDISI_SANTRI;
-            $scope.formData.BERAT_SANTRI = response.data.BERAT_SANTRI;
-            $scope.formData.TINGGI_SANTRI = response.data.TINGGI_SANTRI;
-            $scope.formData.GOL_DARAH_SANTRI = response.data.GOL_DARAH_SANTRI;
-            $scope.formData.RIWAYAT_KESEHATAN_SANTRI = response.data.RIWAYAT_KESEHATAN_SANTRI;
-            $scope.formData.NO_IJASAH_SANTRI = response.data.NO_IJASAH_SANTRI;
-            $scope.formData.TANGGAL_IJASAH_SANTRI = response.data.TANGGAL_IJASAH_SANTRI;
+            
+            $scope.formData = response.data;
 
             $scope.addForm = false;
 
@@ -2243,17 +2245,31 @@
         };
 
         $scope.saveSubmit = function () {
-            if ($scope.form.KECAMATAN_SANTRI.$valid
-                    && $scope.form.NIS_SANTRI.$valid
-                    && $scope.form.NIK_SANTRI.$valid
-                    && $scope.form.NAMA_SANTRI.$valid
-                    && $scope.form.ANGKATAN_SANTRI.$valid
-                    && $scope.form.JK_SANTRI.$valid
-                    && $scope.form.TEMPAT_LAHIR_SANTRI.$valid
-                    && $scope.form.TANGGAL_LAHIR_SANTRI.$valid
-                    && $scope.form.ALAMAT_SANTRI.$valid
-                    && $scope.form.NOHP_SANTRI.$valid
-                    ) {
+            if (
+                    ((typeof $scope.form.KECAMATAN_SANTRI === 'object') && (
+                            $scope.form.KECAMATAN_SANTRI.$valid
+                            && $scope.form.NIS_SANTRI.$valid
+                            && $scope.form.NIK_SANTRI.$valid
+                            && $scope.form.NAMA_SANTRI.$valid
+                            && $scope.form.ANGKATAN_SANTRI.$valid
+                            && $scope.form.JK_SANTRI.$valid
+                            && $scope.form.TEMPAT_LAHIR_SANTRI.$valid
+                            && $scope.form.TANGGAL_LAHIR_SANTRI.$valid
+                            && $scope.form.ALAMAT_SANTRI.$valid
+                            && $scope.form.NOHP_SANTRI.$valid
+                            ))
+                    ||
+                    ((typeof $scope.form.AYAH_NAMA_SANTRI === 'object')
+                            && $scope.form.AYAH_NAMA_SANTRI.$valid
+                            )
+                    ||
+                    ((typeof $scope.form.IBU_NAMA_SANTRI === 'object')
+                            && $scope.form.IBU_NAMA_SANTRI.$valid
+                            )
+                    ||
+                    ((typeof $scope.form.WALI_NAMA_SANTRI === 'object')
+                            && $scope.form.WALI_NAMA_SANTRI.$valid
+                            )) {
                 $scope.ajaxRunning = true;
 
                 $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);

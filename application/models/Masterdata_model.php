@@ -36,4 +36,12 @@ class Masterdata_model extends CI_Model {
         
         return $result->result();
     }
+    
+    public function get_hubungan() {
+        $this->db->select('ID_HUB as id, NAMA_HUB as title');
+        $this->db->from('md_hubungan');
+        $result = $this->db->get();
+        
+        return $result->result();
+    }
 }

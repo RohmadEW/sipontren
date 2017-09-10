@@ -93,7 +93,8 @@ class Penempatan_kamar_model extends CI_Model {
         }
         
         $data_update = array(
-            'KAMAR_SANTRI' => $kamar
+            'KAMAR_SANTRI' => $kamar,
+            'AKTIF_SANTRI' => 1
         );
         $where_update = array(
             'ID_SANTRI' => $data['ID_SANTRI']

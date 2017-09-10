@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $this->auth->validation();
 
-$title = 'Santri';
+$title = 'Data Diri Santri';
 $controller = 'dataSantri';
 $data = array(
     array(

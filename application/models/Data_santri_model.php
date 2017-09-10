@@ -27,6 +27,7 @@ class Data_santri_model extends CI_Model {
         $this->db->join('md_gedung', 'GEDUNG_KAMAR=ID_GEDUNG', 'LEFT');
         $this->db->where(array(
             'ALUMNI_SANTRI' => 0,
+            'AKTIF_SANTRI' => 1,
             'STATUS_MUTASI_SANTRI' => NULL,
         ));
     }
@@ -44,6 +45,14 @@ class Data_santri_model extends CI_Model {
 
     public function get_by_id($id) {
         $this->_get_table();
+        $this->db->where($this->primaryKey, $id);
+        $result = $this->db->get()->row_array();
+        
+        return $result;
+    }
+
+    public function get_data_form($id) {
+        $this->db->from($this->table);
         $this->db->where($this->primaryKey, $id);
         $result = $this->db->get()->row_array();
         

@@ -12,7 +12,10 @@ class Data extends CI_Controller {
             'data_santri_model' => 'data_santri',
             'jk_model' => 'jk',
             'kondisi_model' => 'kondisi',
+            'pekerjaan_model' => 'pekerjaan',
             'masterdata_model' => 'masterdata',
+            'status_hidup_model' => 'hidup',
+            'jenjang_pendidikan_model' => 'pendidikan',
         ));
         $this->auth->validation(array(1, 3));
     }
@@ -119,17 +122,21 @@ class Data extends CI_Controller {
                     'title' => "Aksi", 
                     'actions' => array(
                         array(
-                            'title' => 'Ubah info diri',
+                            'title' => 'Ubah Data Diri',
                             'update' => true
                         ),
                         array(
-                            'title' => 'Ubah data ayah',
+                            'title' => 'Ubah Data Ayah',
                             'form' => 'form_ayah'
                         ),
                         array(
-                            'title' => 'Hapus',
-                            'delete' => true
-                        )
+                            'title' => 'Ubah Data Ibu',
+                            'form' => 'form_ibu'
+                        ),
+                        array(
+                            'title' => 'Ubah Data Wali',
+                            'form' => 'form_wali'
+                        ),
                     )
                 ),
             )
@@ -153,6 +160,10 @@ class Data extends CI_Controller {
             'SUKU' => $this->masterdata->get_suku(),
             'KONDISI' => $this->kondisi->get_all(),
             'GOL_DARAH' => $this->masterdata->get_gol_darah(),
+            'HIDUP_SANTRI' => $this->hidup->get_all(),
+            'PENDIDIKAN_SANTRI' => $this->pendidikan->get_all(),
+            'PEKERJAAN_SANTRI' => $this->pekerjaan->get_all(),
+            'HUBUNGAN_SANTRI' => $this->masterdata->get_hubungan(),
         );
         
         $this->output_handler->output_JSON($data);
@@ -167,7 +178,7 @@ class Data extends CI_Controller {
     public function view() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->data_santri->get_by_id($post[$this->primaryKey]);
+        $data = $this->data_santri->get_data_form($post[$this->primaryKey]);
 
         $this->output_handler->output_JSON($data);
     }
@@ -181,15 +192,6 @@ class Data extends CI_Controller {
             $message = 'diubah';
         else
             $message = 'dibuat';
-
-        $this->output_handler->output_JSON($result, $message);
-    }
-
-    public function delete() {
-        $post = json_decode(file_get_contents('php://input'), true);
-
-        $result = $this->data_santri->delete($post[$this->primaryKey]);
-        $message = 'dihapus';
 
         $this->output_handler->output_JSON($result, $message);
     }
