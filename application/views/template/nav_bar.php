@@ -6,7 +6,8 @@ $this->auth->validation();
     <div flex="70" flex-offset="5" ng-if="showMenu">
         <md-toolbar class="md-menu-toolbar">
             <div layout="row">
-                <md-toolbar-filler class="kk-toolbar-filler" layout layout-align="center center">
+                <md-toolbar-filler class="kk-toolbar-filler" layout layout-align="center center" ng-click="routeToHome()" style="cursor: pointer">
+                    <md-tooltip md-direction="bottom">Klik untuk menuju ke halaman utama</md-tooltip>
                     <md-icon class="material-icons md-48 kk-icon-title">home</md-icon>
                 </md-toolbar-filler>
                 <div>

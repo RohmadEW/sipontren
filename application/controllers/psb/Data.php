@@ -12,6 +12,8 @@ class Data extends CI_Controller {
             'data_psb_model' => 'data_psb',
             'kelompok_model' => 'kelompok',
             'jk_model' => 'jk',
+            'kelas_model' => 'kelas',
+            'akad_santri_model' => 'akad_santri',
         ));
         $this->auth->validation(array(1, 2));
     }
@@ -137,6 +139,7 @@ class Data extends CI_Controller {
             ),
             'kelompok' => $this->kelompok->get_all(),
             'jk' => $this->jk->get_all(),
+            'kelas' => $this->kelas->get_all(),
         );
         
         $this->output_handler->output_JSON($data);
@@ -151,7 +154,20 @@ class Data extends CI_Controller {
     public function view() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->data_psb->get_by_id($post[$this->primaryKey]);
+        $result = $this->data_psb->get_by_id($post[$this->primaryKey]);
+        $data = (array) $result;
+        
+        $where = array(
+            'TA_AS' => $this->session->userdata('ID_TA'),
+            'SANTRI_AS' => $post[$this->primaryKey]
+        );
+        $data_akad = $this->akad_santri->get_rows_simple($where);
+        
+        $result = array();
+        foreach ($data_akad as $detail) {
+            $result[] = $detail->KELAS_AS;
+        }
+        $data['KEGIATAN_SANTRI'] = $result;
 
         $this->output_handler->output_JSON($data);
     }

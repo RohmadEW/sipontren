@@ -161,4 +161,22 @@ class Tahun_ajaran extends CI_Controller {
         $this->output_handler->output_JSON($data);
     }
 
+    public function get_ta_active() {
+        $data = $this->tahun_ajaran->get_ta_active();
+        
+        $this->session->set_userdata('ID_TA', $data['ID_TA']);
+        $this->session->set_userdata('NAMA_TA', $data['NAMA_TA']);
+
+        $this->output_handler->output_JSON($data);
+    }
+    
+    public function change_ta_session() {
+        $post = json_decode(file_get_contents('php://input'), true);
+        
+        $this->session->set_userdata('ID_TA', $post['id']);
+        $this->session->set_userdata('NAMA_TA', $post['title']);
+        
+        $this->output_handler->output_JSON($post);
+    }
+
 }

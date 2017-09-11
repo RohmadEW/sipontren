@@ -69,7 +69,7 @@ class Output_handler {
                 <md-dialog-content>
                     <div class="md-dialog-content">
                         <div>
-                            <h2>'.$message.'</h2>
+                            <h2>' . $message . '</h2>
                         </div>
                     </div>
                 </md-dialog-content>
@@ -83,7 +83,7 @@ class Output_handler {
         </md-dialog>
         ';
     }
-    
+
     public function dialog_form($title, $controller, $data) {
         echo '
         <md-dialog aria-label="{{ addForm ? \'Tambah\' : \'Ubah\' }} ' . $title . '" class="dialog-form" ng-controller="' . $controller . 'Controller">
@@ -102,7 +102,7 @@ class Output_handler {
                     <div class="md-dialog-content">
                         <div>
                 ';
-        
+
         foreach ($data as $detail) {
             if ($detail['type'] == 'autocomplete')
                 $this->form_autocomplete($detail);
@@ -110,6 +110,10 @@ class Output_handler {
                 $this->form_date($detail);
             elseif ($detail['type'] == 'select')
                 $this->form_select($detail);
+            elseif ($detail['type'] == 'switch')
+                $this->form_switch($detail);
+            elseif ($detail['type'] == 'checkbox')
+                $this->form_checkbox($detail);
             else
                 $this->form_input($detail);
         }
@@ -187,6 +191,34 @@ class Output_handler {
                 ' : '') . '
             </md-input-container>
             ';
+    }
+
+    private function form_switch($data) {
+        if (!isset($data['required']))
+            $data['required'] = true;
+        echo '
+            <md-input-container class="md-block kk-form-control" flex-gt-sm>
+                <label>' . $data['label'] . '</label>
+                <md-switch ng-model="formData.' . $data['field'] . '" ' . ($data['required'] ? 'required' : '') . ' name="' . $data['field'] . '" ng-disabled="ajaxRunning"></md-switch>
+                ' . ($data['required'] ? '<div ng-messages="form.' . $data['field'] . '.$error">
+                    <div ng-message="required">Wajid diisi</div>
+                </div>
+                ' : '') . '
+            </md-input-container>
+            ';
+    }
+
+    private function form_checkbox($data) {
+        echo '<fieldset class="standard" >
+            <legend>' . $data['label'] . '</legend>
+            <div layout="row" layout-wrap flex>
+                <div flex="50" ng-repeat="item in data' . $data['field'] . '">
+                    <md-checkbox ng-click="toggle' . $data['field'] . '(item.id)"  ng-checked="exists' . $data['field'] . '(item.id)" class="md-primary">
+                      {{ item.title }}
+                    </md-checkbox>
+                </div>
+            </div>
+        </fieldset>';
     }
 
     public function form_select($data) {

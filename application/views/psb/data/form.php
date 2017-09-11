@@ -50,6 +50,11 @@ $data = array(
         'field' => 'AYAH_NAMA_SANTRI',
         'label' => 'Nama Ayah'
     ),
+    array(
+        'type' => 'checkbox',
+        'field' => 'KEGIATAN_SANTRI',
+        'label' => 'Kegiatan Santri',
+    ),
 );
 
 $this->output_handler->dialog_form($title, $controller, $data);

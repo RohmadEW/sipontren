@@ -1,5 +1,4 @@
 <?php
-
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
@@ -8,25 +7,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * and open the template in the editor.
  */
 
-class Tahun_ajaran_model extends CI_Model {
+class Akad_santri_model extends CI_Model {
 
-    var $table = 'md_tahun_ajaran';
-    var $primaryKey = 'ID_TA';
+    var $table = 'akad_santri';
+    var $primaryKey = 'ID_AS';
+    var $user = 'USER_AS';
 
     public function __construct() {
         parent::__construct();
     }
 
     private function _get_table() {
-        $this->db->select('*, IF(AKTIF_TA = 1, "YA", "TIDAK") AS STATUS_AKTIF_TA');
         $this->db->from($this->table);
-        $this->db->order_by('NAMA_TA', 'ASC');
+        $this->db->join('md_tahun_ajaran', 'ID_TA=TA_AS');
+        $this->db->join('md_kelas', 'ID_KELAS=KELAS_AS');
+        $this->db->join('md_santri', 'ID_SANTRI=SANTRI_AS');
+        $this->db->join('md_rombel', 'ID_ROMBEL=ROMBEL_AS', 'LEFT');
     }
 
     public function get_datatable() {
         $this->_get_table();
         $data = $this->db->get()->result();
-
+        
         $result = array(
             "data" => $data
         );
@@ -38,32 +40,44 @@ class Tahun_ajaran_model extends CI_Model {
         $this->_get_table();
         $this->db->where($this->primaryKey, $id);
         $result = $this->db->get()->row_array();
-
-        return $result;
-    }
-
-    public function get_ta_active() {
-        $this->db->from($this->table);
-        $this->db->where(array(
-            'AKTIF_TA' => 1
-        ));
-        $result = $this->db->get()->row_array();
-
-        return $result;
-    }
-
-    public function get_all() {
-        $this->db->select('ID_TA as id, CONCAT("Tahun ", NAMA_TA) as title');
-        $this->db->from($this->table);
-        $result = $this->db->get();
-
-        return $result->result();
-    }
-
-    public function save($data) {
-        if ($data['AKTIF_TA'])
-            $this->reset_aktif();
         
+        return $result;
+    }
+
+    public function get_row_simple($where) {
+        $this->db->from($this->table);
+        $this->db->where($where);
+        $result = $this->db->get()->row();
+        
+        return $result;
+    }
+
+    public function get_rows_simple($where) {
+        $this->db->from($this->table);
+        $this->db->where($where);
+        $result = $this->db->get()->result();
+        
+        return $result;
+    }
+
+    public function get_row($where) {
+        $this->_get_table();
+        $this->db->where($where);
+        $result = $this->db->get()->row();
+        
+        return $result;
+    }
+
+    public function get_rows($where) {
+        $this->_get_table();
+        $this->db->where($where);
+        $result = $this->db->get()->result();
+        
+        return $result;
+    }
+    
+    public function save($data) {
+        if($this->user != '') $data[$this->user] = $this->session->userdata('ID_USER');
         if (isset($data[$this->primaryKey])) {
             $where = array($this->primaryKey => $data[$this->primaryKey]);
             unset($data[$this->primaryKey]);
@@ -76,12 +90,6 @@ class Tahun_ajaran_model extends CI_Model {
         return $result;
     }
 
-    private function reset_aktif() {
-        $data = array('AKTIF_TA' => 0);
-        $where = array('AKTIF_TA' => 1);
-        $this->update($data, $where);
-    }
-
     public function insert($data) {
         $this->db->insert($this->table, $data);
 
@@ -90,14 +98,14 @@ class Tahun_ajaran_model extends CI_Model {
 
     public function update($data, $where) {
         $this->db->update($this->table, $data, $where);
-
+        
         return $this->db->affected_rows();
     }
 
     public function delete($id) {
         $where = array($this->primaryKey => $id);
         $this->db->delete($this->table, $where);
-
+        
         return $this->db->affected_rows();
     }
 

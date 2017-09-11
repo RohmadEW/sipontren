@@ -1,4 +1,5 @@
 <?php
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
@@ -34,7 +35,7 @@ class Data_psb_model extends CI_Model {
     public function get_datatable() {
         $this->_get_table();
         $data = $this->db->get()->result();
-        
+
         $result = array(
             "data" => $data
         );
@@ -46,12 +47,19 @@ class Data_psb_model extends CI_Model {
         $this->_get_table();
         $this->db->where($this->primaryKey, $id);
         $result = $this->db->get()->row_array();
-        
+
         return $result;
     }
-    
+
     public function save($data) {
+        $ID_TA = $data['ID_TA'];
+        $KEGIATAN = $data['KEGIATAN_SANTRI'];
+        unset($data['ID_TA']);
+        unset($data['KEGIATAN_SANTRI']);
+
+        $updated = FALSE;
         if (isset($data[$this->primaryKey])) {
+            $updated = TRUE;
             $where = array($this->primaryKey => $data[$this->primaryKey]);
             unset($data[$this->primaryKey]);
             $result = $this->update($data, $where);
@@ -60,8 +68,36 @@ class Data_psb_model extends CI_Model {
             $data['ANGKATAN_SANTRI'] = date('Y');
             $result = $this->insert($data);
         }
-        
+
+        if ($result || $updated) {
+            $data_akad = array();
+            $where_akad = array(
+                'TA_AS' => $ID_TA,
+                'SANTRI_AS' => $updated ? $where[$this->primaryKey] : $result
+            );
+
+            foreach ($KEGIATAN as $KELAS_AS) {
+                $data_akad[] = array(
+                    'TA_AS' => $ID_TA,
+                    'KELAS_AS' => $KELAS_AS,
+                    'SANTRI_AS' => $updated ? $where[$this->primaryKey] : $result,
+                    'USER_AS' => $this->session->userdata('ID_USER'),
+                );
+            }
+
+            $result = $this->add_kegiatan($data_akad, $where_akad);
+        }
+
         return $result;
+    }
+
+    public function add_kegiatan($data, $where) {
+        $this->db->delete('akad_santri', $where);
+        foreach ($data as $detail) {
+            $this->db->insert('akad_santri', $detail);
+        }
+
+        return $this->db->insert_id();
     }
 
     public function insert($data) {
@@ -72,14 +108,14 @@ class Data_psb_model extends CI_Model {
 
     public function update($data, $where) {
         $this->db->update($this->table, $data, $where);
-        
+
         return $this->db->affected_rows();
     }
 
     public function delete($id) {
         $where = array($this->primaryKey => $id);
         $this->db->delete($this->table, $where);
-        
+
         return $this->db->affected_rows();
     }
 

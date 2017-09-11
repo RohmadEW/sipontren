@@ -1,8 +1,1 @@
-
-            WALI_NIK_SANTRI: null,
-            WALI_NAMA_SANTRI: null,
-            WALI_HIDUP_SANTRI: null,
-            WALI_TEMPAT_LAHIR_SANTRI: null,
-            WALI_TANGGAL_LAHIR_SANTRI: null,
-            WALI_PENDIDIKAN_SANTRI: null,
-            WALI_PEKERJAAN_SANTRI: null,
+INSERT `md_menu` SET `ID_MENU` = '200200000', `NAME_MENU` = 'KAMAR', `TEMPLATE_MENU` = 'index', `CONTROLLER_MENU` = 'kegiatan_santri' WHERE `md_menu`.`ID_MENU` = '200200000'; INSERT`md_menu` SET `ID_MENU` = '200200001', `NAME_MENU` = 'KAMAR – ADD', `TEMPLATE_MENU` = 'index', `CONTROLLER_MENU` = 'kegiatan_santri' WHERE `md_menu`.`ID_MENU` = '200200001'; INSERT`md_menu` SET `ID_MENU` = '200200002', `NAME_MENU` = 'KAMAR – EDIT', `TEMPLATE_MENU` = 'index', `CONTROLLER_MENU` = 'kegiatan_santri' WHERE `md_menu`.`ID_MENU` = '200200002'; INSERT `md_menu` SET `ID_MENU` = '200200003', `NAME_MENU` = 'KAMAR – DELETE', `TEMPLATE_MENU` = 'index', `CONTROLLER_MENU` = 'kegiatan_santri' WHERE `md_menu`.`ID_MENU` = '200200003';

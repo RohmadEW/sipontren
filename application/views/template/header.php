@@ -38,10 +38,10 @@
         <script src="assets/plugins/exportXLS/alasql.min.js"></script>
 
         <!-- Angular Controller -->
-        <script src="assets/dist/local.js"></script>
+        <script src="assets/dist/locale.js"></script>
         <script src="assets/dist/app.js"></script>
-
-        <!--<div ng-include="'template/show/template-main_script.html'"></div>-->
+        <script src="assets/dist/login.js"></script>
+        <?php if($this->session->userdata('ID_USER')) echo '<script src="assets/dist/controllers.js"></script>'; ?>
 
     </head>
     <body ng-cloak class="kk-bg-dark">
