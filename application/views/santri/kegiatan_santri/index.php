@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $this->auth->validation();
 
-$this->output_handler->start_content('penempatanKamarController');
+$this->output_handler->start_content('kegiatanSantriController');
 ?>
 <hr class="hr">
 <div layout="row">

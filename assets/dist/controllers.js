@@ -1778,6 +1778,8 @@
         $scope.getData = getDataSantri();
         $scope.appReady = false;
         $scope.dataOriginal = null;
+        $scope.flex = 90;
+        $scope.flexOffset = 5;
 
         $scope.fabHidden = true;
         $scope.fabIsOpen = false;
