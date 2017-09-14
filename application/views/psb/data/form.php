@@ -53,7 +53,7 @@ $data = array(
     array(
         'type' => 'checkbox',
         'field' => 'KEGIATAN_SANTRI',
-        'label' => 'Kegiatan Santri',
+        'label' => 'Kelas Santri',
     ),
 );
 

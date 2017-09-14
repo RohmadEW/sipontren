@@ -2,15 +2,15 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Kegiatan_santri extends CI_Controller {
+class Rombel extends CI_Controller {
 
     var $primaryKey = 'ID_SANTRI';
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'kegiatan_santri_model' => 'kegiatan_santri',
-            'kelas_model' => 'kelas',
+            'rombel_santri_model' => 'rombel_santri',
+            'rombel_model' => 'rombel',
             'jk_model' => 'jk',
             'kamar_model' => 'kamar',
         ));
@@ -19,9 +19,9 @@ class Kegiatan_santri extends CI_Controller {
 
     public function index() {
         $data = array(
-            'title' => 'Penentuan Kegiatan Santri',
-            'breadcrumb' => 'Santri > Penentuan Kegiatan Santri',
-            'kelas' => $this->kelas->get_all(),
+            'title' => 'Penentuan Rombel Santri',
+            'breadcrumb' => 'Santri > Penentuan Rombel Santri',
+            'rombel' => $this->rombel->get_all(),
             'table' => array(
                 array(
                     'field' => "ID_SANTRI",
@@ -96,24 +96,24 @@ class Kegiatan_santri extends CI_Controller {
         $this->output_handler->output_JSON($data);
     }
 
-    public function datatable_santri_no_kegiatan() {
+    public function datatable_santri_no_rombel() {
         $post = json_decode(file_get_contents('php://input'), true);
         
-        $data = $this->kegiatan_santri->get_datatable_santri_no_kegiatan($post['KELAS_AS']);
+        $data = $this->rombel_santri->get_datatable_santri_no_rombel($post['ROMBEL_AS']);
 
         $this->output_handler->output_JSON($data);
     }
 
-    public function datatable_santri_kegiatan() {
+    public function datatable_santri_rombel() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->kegiatan_santri->get_datatable_santri_kegiatan($post['KELAS_AS']);
+        $data = $this->rombel_santri->get_datatable_santri_rombel($post['ROMBEL_AS']);
 
         $this->output_handler->output_JSON($data);
     }
 
     public function data() {
-        $data = $this->kegiatan_santri->get_datatables();
+        $data = $this->rombel_santri->get_datatables();
 
         $this->output_handler->output_JSON($data);
     }
@@ -121,7 +121,7 @@ class Kegiatan_santri extends CI_Controller {
     public function view() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->kegiatan_santri->get_by_id($post[$this->primaryKey]);
+        $data = $this->rombel_santri->get_by_id($post[$this->primaryKey]);
 
         $this->output_handler->output_JSON($data);
     }
@@ -129,11 +129,13 @@ class Kegiatan_santri extends CI_Controller {
     public function prosesSantri() {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->kegiatan_santri->prosesSantri($data);
+        $data['DATA_ROMBEL'] = $this->rombel->get_by_id($data['ROMBEL_AS']);
+        
+        $result = $this->rombel_santri->prosesSantri($data);
         if ($data['ACTION'] == 'set')
-            $message = 'ditempatkan di kelas';
+            $message = 'ditempatkan di rombel';
         elseif ($data['ACTION'] == 'remove')
-            $message = 'dihapus dari kelas';
+            $message = 'dihapus dari rombel';
 
         $this->output_handler->output_JSON($result, $message);
     }
@@ -141,7 +143,7 @@ class Kegiatan_santri extends CI_Controller {
     public function save() {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->kegiatan_santri->save($data);
+        $result = $this->rombel_santri->save($data);
 
         if (isset($data[$this->primaryKey]))
             $message = 'diubah';
@@ -154,7 +156,7 @@ class Kegiatan_santri extends CI_Controller {
     public function delete() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->kegiatan_santri->delete($post[$this->primaryKey]);
+        $result = $this->rombel_santri->delete($post[$this->primaryKey]);
         $message = 'dihapus';
 
         $this->output_handler->output_JSON($result, $message);

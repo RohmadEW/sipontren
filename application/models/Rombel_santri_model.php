@@ -8,7 +8,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * and open the template in the editor.
  */
 
-class Kegiatan_santri_model extends CI_Model {
+class Rombel_santri_model extends CI_Model {
 
     var $table = 'md_santri';
     var $primaryKey = 'ID_SANTRI';
@@ -24,18 +24,20 @@ class Kegiatan_santri_model extends CI_Model {
         $this->db->join('md_kecamatan', 'ID_KEC=KECAMATAN_SANTRI');
         $this->db->join('md_kabupaten', 'ID_KAB=KABUPATEN_KEC');
         $this->db->join('md_provinsi', 'ID_PROV=PROVINSI_KAB');
+        $this->db->join('akad_santri', 'SANTRI_AS=ID_SANTRI');
     }
 
-    public function get_datatable_santri_no_kegiatan($KELAS_AS) {
+    public function get_datatable_santri_no_rombel($ROMBEL_AS) {
         $this->_get_table();
-        $this->db->join('(SELECT * FROM akad_santri WHERE KELAS_AS = '.$KELAS_AS.' GROUP BY SANTRI_AS) akad_santri', 'SANTRI_AS=ID_SANTRI', 'LEFT');
+        $this->db->join('(SELECT * FROM md_rombel WHERE ID_ROMBEL = ' . $ROMBEL_AS . ') md_kelas', 'KELAS_AS=KELAS_ROMBEL', 'LEFT');
         $this->db->where(array(
             'ALUMNI_SANTRI' => 0,
             'STATUS_MUTASI_SANTRI' => NULL,
-            'SANTRI_AS' => NULL
+            'ID_ROMBEL <> ' => NULL,
+            'ROMBEL_AS' => NULL,
         ));
         $data = $this->db->get();
-        
+
         $result = array(
             "data" => $data->result()
         );
@@ -43,13 +45,13 @@ class Kegiatan_santri_model extends CI_Model {
         return $result;
     }
 
-    public function get_datatable_santri_kegiatan($KELAS_AS) {
+    public function get_datatable_santri_rombel($ROMBEL_AS) {
         $this->_get_table();
-        $this->db->join('akad_santri', 'SANTRI_AS=ID_SANTRI');
+        $this->db->join('md_rombel', 'ROMBEL_AS=ID_ROMBEL');
         $this->db->where(array(
             'ALUMNI_SANTRI' => 0,
             'STATUS_MUTASI_SANTRI' => NULL,
-            'KELAS_AS' => $KELAS_AS,
+            'ROMBEL_AS' => $ROMBEL_AS,
         ));
         $data = $this->db->get()->result();
 
@@ -88,17 +90,29 @@ class Kegiatan_santri_model extends CI_Model {
     }
 
     public function prosesSantri($data) {
-        $data['USER_AS'] = $this->session->userdata('ID_USER');
         $data['TA_AS'] = $this->session->userdata('ID_TA');
-        
-        if ($data['ACTION'] == 'set') {
-            unset($data['ACTION']);
-            $this->db->insert('akad_santri', $data);
-        } elseif ($data['ACTION'] == 'remove') {
-            unset($data['ACTION']);
-            $this->db->delete('akad_santri', $data);
-        }
 
+        $data['KELAS_AS'] = $data['DATA_ROMBEL']['KELAS_ROMBEL'];
+        unset($data['DATA_ROMBEL']);
+        
+        $where_update = $data;
+
+        if ($data['ACTION'] == 'set') {
+            $data_update = array(
+                'ROMBEL_AS' => $data['ROMBEL_AS']
+            );
+        } elseif ($data['ACTION'] == 'remove') {
+            $data_update = array(
+                'ROMBEL_AS' => NULL
+            );
+        }
+        
+        unset($where_update['ACTION']);
+        unset($where_update['ROMBEL_AS']);
+        $data_update['USER_AS'] = $this->session->userdata('ID_USER');
+        
+        $this->db->update('akad_santri', $data_update, $where_update);
+        
         return $this->db->affected_rows();
     }
 
