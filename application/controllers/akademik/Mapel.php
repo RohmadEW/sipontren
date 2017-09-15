@@ -2,67 +2,59 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Penanggalan_ajaran extends CI_Controller {
+class Mapel extends CI_Controller {
 
-    var $primaryKey = 'ID_CAWU';
+    var $primaryKey = 'ID_MAPEL';
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'penanggalan_ajaran_model' => 'penanggalan_ajaran'
+            'mapel_model' => 'mapel',
+            'kelas_model' => 'kelas',
         ));
-        $this->auth->validation(1);
+        $this->auth->validation(array(1, 4));
     }
 
     public function index() {
         $data = array(
-            'title' => 'Master Data Penanggalan Ajaran',
-            'breadcrumb' => 'Master Data > Penanggalan Ajaran',
+            'title' => 'Data Mapel',
+            'breadcrumb' => 'Akademik > Mapel',
             'table' => array(
                 array(
-                    'field' => "ID_CAWU",
+                    'field' => "ID_MAPEL",
                     'title' => "ID",
-                    'sortable' => "ID_CAWU",
+                    'sortable' => "ID_MAPEL",
                     'show' => FALSE,
                     'filter' => array(
-                        'ID_CAWU' => 'number'
+                        'ID_MAPEL' => 'number'
                     )
                 ),
                 array(
-                    'field' => "NAMA_CAWU",
-                    'title' => "Nama Penanggalan Ajaran",
-                    'sortable' => "NAMA_CAWU",
+                    'field' => "NAMA_KELAS",
+                    'title' => "Nama Gedung",
+                    'sortable' => "NAMA_KELAS",
                     'show' => true,
                     'filter' => array(
-                        'NAMA_CAWU' => 'text'
-                    )
-                ),
-                array(
-                    'field' => "STATUS_AKTIF_CAWU",
-                    'title' => "Status Aktif",
-                    'sortable' => "STATUS_AKTIF_CAWU",
-                    'show' => true,
-                    'filter' => array(
-                        'AKTIF_CAWU' => 'select'
+                        'ID_KELAS' => 'select'
                     ),
-                    'filterData' => array(
-                        array(
-                            'id' => 1,
-                            'title' => 'YA'
-                        ),
-                        array(
-                            'id' => 0,
-                            'title' => 'TIDAK'
-                        )
+                    'filterData' => $this->kelas->get_all()
+                ),
+                array(
+                    'field' => "NAMA_MAPEL",
+                    'title' => "Nama Mapel",
+                    'sortable' => "NAMA_MAPEL",
+                    'show' => true,
+                    'filter' => array(
+                        'NAMA_MAPEL' => 'text'
                     )
                 ),
                 array(
-                    'field' => "KETERANGAN_CAWU",
+                    'field' => "KETERANGAN_MAPEL",
                     'title' => "Keterangan",
-                    'sortable' => "KETERANGAN_CAWU",
+                    'sortable' => "KETERANGAN_MAPEL",
                     'show' => true,
                     'filter' => array(
-                        'KETERANGAN_CAWU' => 'text'
+                        'KETERANGAN_MAPEL' => 'text'
                     )
                 ),
                 array(
@@ -85,24 +77,21 @@ class Penanggalan_ajaran extends CI_Controller {
     }
 
     public function datatable() {
-        $data = $this->penanggalan_ajaran->get_datatable();
+        $data = $this->mapel->get_datatable();
 
         $this->output_handler->output_JSON($data);
     }
 
     public function form() {
         $data = array(
-            'dataAKTIF_CAWU' => array(
-                array('id' => 1, 'title' => 'YA'),
-                array('id' => 0, 'title' => 'TIDAK'),
-            )
+            'dataKELAS_MAPEL' => $this->kelas->get_all()
         );
 
         $this->output_handler->output_JSON($data);
     }
 
     public function data() {
-        $data = $this->penanggalan_ajaran->get_datatables();
+        $data = $this->mapel->get_datatables();
 
         $this->output_handler->output_JSON($data);
     }
@@ -110,7 +99,7 @@ class Penanggalan_ajaran extends CI_Controller {
     public function view() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->penanggalan_ajaran->get_by_id($post[$this->primaryKey]);
+        $data = $this->mapel->get_by_id($post[$this->primaryKey]);
 
         $this->output_handler->output_JSON($data);
     }
@@ -118,7 +107,7 @@ class Penanggalan_ajaran extends CI_Controller {
     public function save() {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->penanggalan_ajaran->save($data);
+        $result = $this->mapel->save($data);
 
         if (isset($data[$this->primaryKey]))
             $message = 'diubah';
@@ -131,25 +120,16 @@ class Penanggalan_ajaran extends CI_Controller {
     public function delete() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->penanggalan_ajaran->delete($post[$this->primaryKey]);
+        $result = $this->mapel->delete($post[$this->primaryKey]);
         $message = 'dihapus';
 
         $this->output_handler->output_JSON($result, $message);
     }
 
     public function get_all() {
-        $data = $this->penanggalan_ajaran->get_all();
+        $data = $this->mapel->get_all();
 
         $this->output_handler->output_JSON($data);
-    }
-    
-    public function change_session() {
-        $post = json_decode(file_get_contents('php://input'), true);
-        
-        $this->session->set_userdata('ID_CAWU', $post['id']);
-        $this->session->set_userdata('NAMA_CAWU', $post['title']);
-        
-        $this->output_handler->output_JSON($post);
     }
 
 }

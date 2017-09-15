@@ -8,20 +8,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * and open the template in the editor.
  */
 
-class Penanggalan_ajaran_model extends CI_Model {
+class Ustadz_model extends CI_Model {
 
-    var $table = 'md_cawu';
-    var $primaryKey = 'ID_CAWU';
+    var $table = 'md_ustadz';
+    var $primaryKey = 'ID_UST';
 
     public function __construct() {
         parent::__construct();
     }
 
-    private function _get_table($select = true) {
-        if ($select)
-            $this->db->select('*, IF(AKTIF_CAWU = 1, "YA", "TIDAK") AS STATUS_AKTIF_CAWU');
+    private function _get_table() {
+        $this->db->select('*, CONCAT(ALAMAT_UST, ", ", NAMA_KEC, ", ", NAMA_KAB, ", ", NAMA_PROV) AS ALAMAT_LENGKAP_UST, DATE_FORMAT(TANGGAL_LAHIR_UST, "%d-%m-%Y") AS TANGGAL_LAHIR_UST_SHOW');
         $this->db->from($this->table);
-        $this->db->order_by('NAMA_CAWU', 'ASC');
+        $this->db->join('md_jenis_kelamin', 'ID_JK=JK_UST');
+        $this->db->join('md_kecamatan', 'ID_KEC=KECAMATAN_UST');
+        $this->db->join('md_kabupaten', 'ID_KAB=KABUPATEN_KEC');
+        $this->db->join('md_provinsi', 'ID_PROV=PROVINSI_KAB');
     }
 
     public function get_datatable() {
@@ -35,16 +37,6 @@ class Penanggalan_ajaran_model extends CI_Model {
         return $result;
     }
 
-    public function get_active() {
-        $this->db->from($this->table);
-        $this->db->where(array(
-            'AKTIF_CAWU' => 1
-        ));
-        $result = $this->db->get()->row_array();
-
-        return $result;
-    }
-
     public function get_by_id($id) {
         $this->_get_table();
         $this->db->where($this->primaryKey, $id);
@@ -53,18 +45,15 @@ class Penanggalan_ajaran_model extends CI_Model {
         return $result;
     }
 
-    public function get_all() {
-        $this->db->select('ID_CAWU as id, NAMA_CAWU as title');
-        $this->_get_table(FALSE);
-        $result = $this->db->get();
-
-        return $result->result();
+    public function get_data_form($id) {
+        $this->db->from($this->table);
+        $this->db->where($this->primaryKey, $id);
+        $result = $this->db->get()->row_array();
+        
+        return $result;
     }
 
     public function save($data) {
-        if ($data['AKTIF_CAWU'])
-            $this->reset_aktif();
-
         if (isset($data[$this->primaryKey])) {
             $where = array($this->primaryKey => $data[$this->primaryKey]);
             unset($data[$this->primaryKey]);
@@ -75,12 +64,6 @@ class Penanggalan_ajaran_model extends CI_Model {
         }
 
         return $result;
-    }
-
-    private function reset_aktif() {
-        $data = array('AKTIF_CAWU' => 0);
-        $where = array('AKTIF_CAWU' => 1);
-        $this->update($data, $where);
     }
 
     public function insert($data) {

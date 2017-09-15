@@ -1,167 +1,116 @@
 
-    angular.module('mainApp').controller('rombelSantriController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache, dataScopeShared) {
-        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
-        $scope.mainTemplate = url_template + $routeParams.template;
-        $scope.appReady = false;
-        $scope.dataOriginal = null;
-        $scope.flex = 90;
-        $scope.flexOffset = 5;
 
-        $scope.fabHidden = true;
-        $scope.fabIsOpen = false;
-        $scope.fabHover = false;
+    angular.module('mainApp').controller('dataUstadzController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared, $q) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+        $scope.dataForm = [];
 
         $scope.formData = {
-            ROMBEL_AS: null
+            ID_UST: null,
+            NIP_UST: null,
+            NIK_UST: null,
+            NAMA_UST: null,
+            GELAR_AWAL_UST: null,
+            GELAR_AKHIR_UST: null,
+            JK_UST: null,
+            TEMPAT_LAHIR_UST: null,
+            TANGGAL_LAHIR_UST: null,
+            ALAMAT_UST: null,
+            KECAMATAN_UST: null,
+            NOHP_UST: null,
+            EMAIL_UST: null,
         };
 
-        $http.get($scope.mainURI + '/index').then(callbackSuccess, notificationService.errorCallback);
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
 
-        function callbackSuccess(response) {
-            $scope.title = response.data.title;
-            $scope.breadcrumb = response.data.breadcrumb;
-            $scope.table = response.data.table;
-            $scope.dataROMBEL_AS = response.data.kelas;
+        function callbackForm(response) {
+            $scope.dataPSB_KELOMPOK_UST = response.data.kelompok;
+            $scope.dataJK_UST = response.data.jk;
+            $scope.dataKEGIATAN_UST = response.data.kelas;
 
-            $scope.appReady = true;
-        }
-        
-        function getDataSantri() {
-            $http.post($scope.mainURI + '/datatable_santri_no_rombel', $scope.formData).then(callbackDatatablesSantri, notificationService.errorCallback);
-        }
+            var urlGetDataForm = [];
 
-        function callbackDatatablesSantri(response) {
-            $scope.dataOriginal = response.data.data;
+            urlGetDataForm.push($http.get(response.data.uri.kecamatan));
 
-            var initialParams = {
-                count: 15
-            };
-            var initialSettings = {
-                counts: [],
-                dataset: response.data.data
-            };
-
-            $scope.dataTablesSantri = new NgTableParams(initialParams, initialSettings);
-            $scope.fabHidden = false;
-        }
-
-        $scope.$watch('formData.ROMBEL_AS', function (ROMBEL_AS) {
-            if (ROMBEL_AS !== null) {
-                getDataSantri();
-                getDataSantriRombel();
-            }
-        });
-
-        function getDataSantriRombel() {
-            $http.post($scope.mainURI + '/datatable_santri_rombel', $scope.formData).then(callbackDatatablesSantriKamar, notificationService.errorCallback);
-        }
-
-        function callbackDatatablesSantriKamar(response) {
-            $scope.dataOriginal = response.data.data;
-
-            var initialParams = {
-                count: 15
-            };
-            var initialSettings = {
-                counts: [],
-                dataset: response.data.data
-            };
-
-            $scope.dataTablesRombel = new NgTableParams(initialParams, initialSettings);
-            $scope.fabHidden = false;
-        }
-
-        $scope.menuItems = [
-            {id: "add_data", name: "Tambah Data", icon: "add"},
-            {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
-            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
-            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
-            {id: "request_doc", name: "Dokumentasi", icon: "help"},
-        ];
-
-        $scope.openDialog = function ($event, item) {
-            if (item.id === 'reload_data') {
-                $scope.fabHidden = true;
-                getDataSantri();
-            } else if (item.id === 'reload_page') {
-                reloadPage();
-            } else if (item.id === 'request_doc') {
-                $mdSidenav('right').toggle();
-            } else if (item.id === 'add_data') {
-                createDialog($event, 'form');
-            } else if (item.id === 'print_data') {
-                var mywindow = window.open('', 'PRINT', 'height=600,width=700');
-
-                mywindow.document.write('<html><head><title>' + document.title + '</title><style type="text/css">body{font-family: "Roboto",Arial,sans-serif;overflow:visible;}.ng-table-filters,.ng-table-counts{display: none;} tr {border-top: 1px solid #f2f6f9;} .data-table{overflow: visible;} table{overflow:visible;}body, h1, h2, h3, ol, ul, div {     width: auto;     border: 0;     margin: 0 5%;     padding: 0;     float: none;     position: static;     overflow: visible; }</style>');
-                mywindow.document.write('</head><body onload="window.print()">');
-                mywindow.document.write('<h1>' + document.title + '</h1>');
-                mywindow.document.write(document.getElementById('printable').innerHTML);
-                mywindow.document.write('</body></html>');
-
-                mywindow.document.close();
-                mywindow.focus();
-
-                return true;
-            } else if (item.id === 'download_data') {
-                if ($scope.dataOriginal === null)
-                    notificationService.toastSimple('Data tidak ditemukan');
-                else
-                    alasql('SELECT * INTO XLSX("data_download.xlsx",{headers:true}) FROM ?', [$scope.dataOriginal]);
-            }
-        };
-
-        function reloadPage() {
-            var currentPageTemplate = $route.current.templateUrl;
-            $templateCache.remove(currentPageTemplate);
-            $route.reload();
-        }
-
-        function createDialog(event, mode) {
-            $mdDialog
-                    .show({
-                        controller: DialogController,
-                        clickOutsideToClose: false,
-                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
-                        targetEvent: event
-                    })
+            $q.all(urlGetDataForm)
                     .then(
-                            function (text) {
-                                notificationService.toastSimple(text);
-                                getDataSantri();
+                            function (result) {
+                                callbackFormData(result);
                             },
-                            function () {
-                                // CANCEL DIALOG
+                            function (error) {
+                                $scope.cancelSumbit();
                             }
                     );
         }
 
-        function DialogController($scope, $mdDialog) {
-            $scope.cancelSumbit = function () {
-                dataScopeShared.addData('DATA_UPDATE', null);
-                $mdDialog.cancel();
+        function callbackFormData(response) {
+            $scope.KECAMATAN_UST = {
+                dataAutocomplete: response[0].data
             };
+            $scope.KECAMATAN_UST = formHelper.autocomplete($scope.KECAMATAN_UST);
+
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
         }
 
-        $scope.prosesSantri = function (row, action) {
-            if ($scope.formData.ROMBEL_AS === null) {
-                notificationService.toastSimple('Silahkan pilih kamar terlebih dahulu');
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            angular.forEach($scope.KECAMATAN_UST.dataAll, function (value, key) {
+                if (parseInt(response.data.KECAMATAN_UST) === parseInt(value.key)) {
+                    $scope.KECAMATAN_UST.selectedItem = value;
+                }
+            });
+
+            $scope.formData = response.data;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.KECAMATAN_UST.$valid
+                    && $scope.form.NIP_UST.$valid
+                    && $scope.form.NAMA_UST.$valid
+                    && $scope.form.JK_UST.$valid
+                    && $scope.form.TEMPAT_LAHIR_UST.$valid
+                    && $scope.form.TANGGAL_LAHIR_UST.$valid
+                    && $scope.form.ALAMAT_UST.$valid
+                    ) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
             } else {
-                var dataSantri = {
-                    ACTION: action,
-                    SANTRI_AS: row.ID_SANTRI,
-                    ROMBEL_AS: $scope.formData.ROMBEL_AS,
-                };
-                $http.post($scope.mainURI + '/prosesSantri', dataSantri).then(callbackSuccessProsesSantri, notificationService.errorCallback);
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
             }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification);
+            dataScopeShared.addData('DATA_UPDATE', null);
         }
 
-        function callbackSuccessProsesSantri(response) {
-            notificationService.toastSimple(response.data.notification);
-
-            if (response.data.status) {
-                getDataSantri();
-                getDataSantriRombel();
-            }
-        }
+        $scope.$watch('KECAMATAN_UST.selectedItem', function (selectedItem) {
+            if (typeof selectedItem === 'undefined' || selectedItem.key === null)
+                $scope.formData.KECAMATAN_UST = null;
+            else
+                $scope.formData.KECAMATAN_UST = selectedItem.key;
+        });
     });

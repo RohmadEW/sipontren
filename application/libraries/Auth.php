@@ -49,6 +49,7 @@ class Auth {
             'user_model' => 'user',
             'login_model' => 'login',
             'tahun_ajaran_model' => 'ta',
+            'penanggalan_ajaran_model' => 'penanggalan_ajaran',
         );
         $this->CI->load->model($model);
 
@@ -61,12 +62,15 @@ class Auth {
                 if ($result_username->STATUS_USER == 'ACTIVE') {
                     if ($result_username->PASSWORD_USER == $this->CI->crypt->encryptPassword($data->password)) {
                         $data_ta = $this->CI->ta->get_ta_active();
+                        $data_cawu = $this->CI->penanggalan_ajaran->get_active();
                         $data = array(
                             'ID_USER' => $result_username->ID_USER,
                             'NAME_USER' => $result_username->NAME_USER,
                             'FULLNAME_USER' => $result_username->NAMA_UST,
                             'ID_TA' => $data_ta['ID_TA'],
                             'NAMA_TA' => $data_ta['NAMA_TA'],
+                            'ID_CAWU' => $data_cawu['ID_CAWU'],
+                            'NAMA_CAWU' => $data_cawu['NAMA_CAWU'],
                         );
                         $this->CI->user->update(array('ID_USER' => $result_username->ID_USER), array('LASTLOGIN_USER' => date('Y-m-d H:i:s')));
 

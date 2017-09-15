@@ -37,13 +37,14 @@
             });
         };
 
-        $http.get('master_data/tahun_ajaran/get_ta_active').then(callbackTA, notificationService.errorCallback);
+        $http.get('master_data/tahun_ajaran/get_ajaran_active').then(callbackTA, notificationService.errorCallback);
 
         function callbackTA(response) {
             if (typeof response.data === 'object') {
-                dataScopeShared.addData('TA_ACTIVE', response.data.ID_TA);
+                dataScopeShared.addData('TA_ACTIVE', response.data.ta.ID_TA);
+                dataScopeShared.addData('CAWU_ACTIVE', response.data.cawu.ID_CAWU);
                 
-                notificationService.toastSimple('Tahun Ajaran aktif adalah Tahun ' + response.data.NAMA_TA);
+                notificationService.toastSimple('Ajaran aktif adalah Tahun ' + response.data.ta.NAMA_TA + ' dan ' + response.data.cawu.NAMA_CAWU);
             } else {
                 notificationService.toastSimple('Tahun Ajaran belum diatur. Silahkan diatur terlebih dahulu');
                 

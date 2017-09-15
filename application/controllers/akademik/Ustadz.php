@@ -2,54 +2,50 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Data extends CI_Controller {
+class Ustadz extends CI_Controller {
     
-    var $primaryKey = 'ID_SANTRI';
+    var $primaryKey = 'ID_UST';
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'data_psb_model' => 'data_psb',
-            'kelompok_model' => 'kelompok',
+            'ustadz_model' => 'data_ustadz',
             'jk_model' => 'jk',
-            'kelas_model' => 'kelas',
-            'akad_santri_model' => 'akad_santri',
         ));
         $this->auth->validation(array(1, 2));
     }
 
     public function index() {
         $data = array(
-            'title' => 'Data PSB',
-            'breadcrumb' => 'PSB > Data',
+            'title' => 'Data Ustadz',
+            'breadcrumb' => 'Akademik > Ustadz',
             'wide' => true,
             'table' => array(
                 array(
-                    'field' => "ID_SANTRI",
+                    'field' => "ID_UST",
                     'title' => "ID", 
-                    'sortable' => "ID_SANTRI", 
+                    'sortable' => "ID_UST", 
                     'show' => FALSE,
                     'filter' => array(
-                        'ID_SANTRI' => 'number'
+                        'ID_UST' => 'number'
                     ),
                 ),
                 array(
-                    'field' => "NAMA_PKK",
-                    'title' => "Nama Kelompok", 
-                    'sortable' => "NAMA_PKK", 
+                    'field' => "NIP_UST",
+                    'title' => "NIP", 
+                    'sortable' => "NIP_UST", 
                     'show' => true,
                     'filter' => array(
-                        'ID_PKK' => 'select'
-                    ),
-                    'filterData' => $this->kelompok->get_all()
+                        'NIP_UST' => 'text'
+                    )
                 ),
                 array(
-                    'field' => "NAMA_SANTRI",
-                    'title' => "Nama Santri", 
-                    'sortable' => "NAMA_SANTRI", 
+                    'field' => "NAMA_UST",
+                    'title' => "Nama", 
+                    'sortable' => "NAMA_UST", 
                     'show' => true,
                     'filter' => array(
-                        'NAMA_SANTRI' => 'text'
+                        'NAMA_UST' => 'text'
                     )
                 ),
                 array(
@@ -58,53 +54,44 @@ class Data extends CI_Controller {
                     'sortable' => "NAMA_JK", 
                     'show' => true,
                     'filter' => array(
-                        'JK_SANTRI' => 'text'
+                        'JK_UST' => 'text'
                     ),
                     'filterData' => $this->jk->get_all()
                 ),
                 array(
-                    'field' => "TEMPAT_LAHIR_SANTRI",
+                    'field' => "TANGGAL_LAHIR_UST_SHOW",
                     'title' => "Tempat Lahir", 
-                    'sortable' => "TEMPAT_LAHIR_SANTRI", 
+                    'sortable' => "TANGGAL_LAHIR_UST_SHOW", 
                     'show' => true,
                     'filter' => array(
-                        'TEMPAT_LAHIR_SANTRI' => 'text'
+                        'TANGGAL_LAHIR_UST_SHOW' => 'text'
                     )
                 ),
                 array(
-                    'field' => "TANGGAL_LAHIR_SANTRI_SHOW",
+                    'field' => "TANGGAL_LAHIR_UST_SHOW",
                     'title' => "Tanggal Lahir", 
-                    'sortable' => "TANGGAL_LAHIR_SANTRI_SHOW", 
+                    'sortable' => "TANGGAL_LAHIR_UST_SHOW", 
                     'show' => true,
                     'filter' => array(
-                        'TANGGAL_LAHIR_SANTRI_SHOW' => 'text'
+                        'TANGGAL_LAHIR_UST_SHOW' => 'text'
                     )
                 ),
                 array(
-                    'field' => "ALAMAT_LENGKAP_SANTRI",
+                    'field' => "ALAMAT_LENGKAP_UST",
                     'title' => "Alamat", 
-                    'sortable' => "ALAMAT_LENGKAP_SANTRI", 
+                    'sortable' => "ALAMAT_LENGKAP_UST", 
                     'show' => true,
                     'filter' => array(
-                        'ALAMAT_LENGKAP_SANTRI' => 'text'
+                        'ALAMAT_LENGKAP_UST' => 'text'
                     )
                 ),
                 array(
-                    'field' => "NOHP_SANTRI",
+                    'field' => "NOHP_UST",
                     'title' => "No HP", 
-                    'sortable' => "NOHP_SANTRI", 
+                    'sortable' => "NOHP_UST", 
                     'show' => true,
                     'filter' => array(
-                        'NOHP_SANTRI' => 'text'
-                    )
-                ),
-                array(
-                    'field' => "AYAH_NAMA_SANTRI",
-                    'title' => "Nama Ayah", 
-                    'sortable' => "AYAH_NAMA_SANTRI", 
-                    'show' => true,
-                    'filter' => array(
-                        'AYAH_NAMA_SANTRI' => 'text'
+                        'NOHP_UST' => 'text'
                     )
                 ),
                 array(
@@ -127,7 +114,7 @@ class Data extends CI_Controller {
     }
     
     public function datatable() {
-        $data = $this->data_psb->get_datatable();
+        $data = $this->data_ustadz->get_datatable();
 
         $this->output_handler->output_JSON($data);
     }
@@ -137,37 +124,22 @@ class Data extends CI_Controller {
             'uri' => array(
                 'kecamatan' => site_url('master_data/kecamatan/get_all'),
             ),
-            'kelompok' => $this->kelompok->get_all(),
             'jk' => $this->jk->get_all(),
-            'kelas' => $this->kelas->get_all(),
         );
         
         $this->output_handler->output_JSON($data);
     }
 
     public function data() {
-        $data = $this->data_psb->get_datatables();
+        $data = $this->data_ustadz->get_datatables();
 
         $this->output_handler->output_JSON($data);
     }
 
     public function view() {
         $post = json_decode(file_get_contents('php://input'), true);
-
-        $result = $this->data_psb->get_by_id($post[$this->primaryKey]);
-        $data = (array) $result;
         
-        $where = array(
-            'TA_AS' => $this->session->userdata('ID_TA'),
-            'SANTRI_AS' => $post[$this->primaryKey]
-        );
-        $data_akad = $this->akad_santri->get_rows_simple($where);
-        
-        $result = array();
-        foreach ($data_akad as $detail) {
-            $result[] = $detail->KELAS_AS;
-        }
-        $data['KEGIATAN_SANTRI'] = $result;
+        $data = $this->data_ustadz->get_data_form($post[$this->primaryKey]);
 
         $this->output_handler->output_JSON($data);
     }
@@ -175,7 +147,7 @@ class Data extends CI_Controller {
     public function save() {
         $data = json_decode(file_get_contents('php://input'), true);
         
-        $result = $this->data_psb->save($data);
+        $result = $this->data_ustadz->save($data);
 
         if (isset($data[$this->primaryKey]))
             $message = 'diubah';
@@ -188,7 +160,7 @@ class Data extends CI_Controller {
     public function delete() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->data_psb->delete($post[$this->primaryKey]);
+        $result = $this->data_ustadz->delete($post[$this->primaryKey]);
         $message = 'dihapus';
 
         $this->output_handler->output_JSON($result, $message);

@@ -178,7 +178,7 @@ class Output_handler {
             ';
     }
 
-    private function form_date($data) {
+    public function form_date($data) {
         if (!isset($data['required']))
             $data['required'] = true;
         echo '

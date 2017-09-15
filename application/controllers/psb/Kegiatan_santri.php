@@ -19,8 +19,8 @@ class Kegiatan_santri extends CI_Controller {
 
     public function index() {
         $data = array(
-            'title' => 'Penentuan Kegiatan Santri',
-            'breadcrumb' => 'Santri > Penentuan Kegiatan Santri',
+            'title' => 'Penentuan Kelas Santri',
+            'breadcrumb' => 'Santri > Penentuan Kelas Santri',
             'kelas' => $this->kelas->get_all(),
             'table' => array(
                 array(

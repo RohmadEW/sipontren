@@ -9,7 +9,8 @@ class Tahun_ajaran extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'tahun_ajaran_model' => 'tahun_ajaran'
+            'tahun_ajaran_model' => 'tahun_ajaran',
+            'Penanggalan_ajaran_model' => 'penanggalan_ajaran'
         ));
         $this->auth->validation(1);
     }
@@ -161,13 +162,16 @@ class Tahun_ajaran extends CI_Controller {
         $this->output_handler->output_JSON($data);
     }
 
-    public function get_ta_active() {
-        $data = $this->tahun_ajaran->get_ta_active();
+    public function get_ajaran_active() {
+        $data_ta = $this->tahun_ajaran->get_ta_active();
+        $data_cawu = $this->penanggalan_ajaran->get_active();
         
-        $this->session->set_userdata('ID_TA', $data['ID_TA']);
-        $this->session->set_userdata('NAMA_TA', $data['NAMA_TA']);
+        $this->session->set_userdata('ID_TA', $data_ta['ID_TA']);
+        $this->session->set_userdata('NAMA_TA', $data_ta['NAMA_TA']);
+        $this->session->set_userdata('ID_CAWU', $data_cawu['ID_CAWU']);
+        $this->session->set_userdata('NAMA_CAWU', $data_cawu['NAMA_CAWU']);
 
-        $this->output_handler->output_JSON($data);
+        $this->output_handler->output_JSON(array('ta' => $data_ta, 'cawu' => $data_cawu));
     }
     
     public function change_ta_session() {

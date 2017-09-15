@@ -25,6 +25,7 @@ class Rombel_santri_model extends CI_Model {
         $this->db->join('md_kabupaten', 'ID_KAB=KABUPATEN_KEC');
         $this->db->join('md_provinsi', 'ID_PROV=PROVINSI_KAB');
         $this->db->join('akad_santri', 'SANTRI_AS=ID_SANTRI');
+        $this->db->where('TA_AS', $this->session->userdata('ID_TA'));
     }
 
     public function get_datatable_santri_no_rombel($ROMBEL_AS) {

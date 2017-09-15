@@ -17,4 +17,18 @@ $this->auth->validation();
             Klik untuk memilih tahun ajaran
         </md-tooltip>
     </div>
+    <div style="margin: 30px;">
+        <?php
+        $this->output_handler->form_select(
+                array(
+                    'required' => false,
+                    'type' => 'select',
+                    'field' => 'ID_CAWU',
+                    'label' => 'Penanggalan Ajaran Aktif'
+        ));
+        ?>
+        <md-tooltip md-direction="bottom">
+            Klik untuk memilih tahun ajaran
+        </md-tooltip>
+    </div>
 </div>
