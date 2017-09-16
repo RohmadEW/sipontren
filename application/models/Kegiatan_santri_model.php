@@ -28,7 +28,7 @@ class Kegiatan_santri_model extends CI_Model {
 
     public function get_datatable_santri_no_kegiatan($KELAS_AS) {
         $this->_get_table();
-        $this->db->join('(SELECT * FROM akad_santri WHERE KELAS_AS = '.$KELAS_AS.' GROUP BY SANTRI_AS) akad_santri', 'SANTRI_AS=ID_SANTRI', 'LEFT');
+        $this->db->join('(SELECT * FROM akad_santri WHERE KELAS_AS = '.$KELAS_AS.' AND TA_AS='. $this->session->userdata('ID_TA') .' GROUP BY SANTRI_AS) akad_santri', 'SANTRI_AS=ID_SANTRI', 'LEFT');
         $this->db->where(array(
             'ALUMNI_SANTRI' => 0,
             'STATUS_MUTASI_SANTRI' => NULL,
@@ -50,6 +50,7 @@ class Kegiatan_santri_model extends CI_Model {
             'ALUMNI_SANTRI' => 0,
             'STATUS_MUTASI_SANTRI' => NULL,
             'KELAS_AS' => $KELAS_AS,
+            'TA_AS' => $this->session->userdata('ID_TA'),
         ));
         $data = $this->db->get()->result();
 

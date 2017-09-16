@@ -1,4 +1,5 @@
 <?php
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
@@ -7,27 +8,32 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * and open the template in the editor.
  */
 
-class Mapel_model extends CI_Model {
+class Jadwal_model extends CI_Model {
 
-    var $table = 'md_mapel';
-    var $primaryKey = 'ID_MAPEL';
-    var $user = 'USER_MAPEL';
+    var $table = 'akad_jadwal';
+    var $primaryKey = 'ID_AJ';
+    var $user = 'USER_AJ';
 
     public function __construct() {
         parent::__construct();
     }
 
-    private function _get_table() {
+    private function _get_table($select = true) {
+        if ($select)
+            $this->db->select('*, CONCAT(IF(GELAR_AWAL_UST IS NOT NULL, IF(GELAR_AWAL_UST = "", CONCAT(GELAR_AWAL_UST, ". "), ""), ""), NAMA_UST, IF(GELAR_AKHIR_UST IS NOT NULL, IF(GELAR_AKHIR_UST = "", CONCAT(". ", GELAR_AKHIR_UST), ""), "")) AS NAMA_UST_SHOW, CONCAT(NAMA_KELAS, " - ", NAMA_KEGIATAN) AS NAMA_KELAS_SHOW');
         $this->db->from($this->table);
-        $this->db->join('md_kelas', 'ID_KELAS=KELAS_MAPEL');
+        $this->db->join('md_mapel', 'ID_MAPEL=MAPEL_AJ');
+        $this->db->join('md_kelas', 'KELAS_MAPEL=ID_KELAS');
         $this->db->join('md_kegiatan', 'KEGIATAN_KELAS=ID_KEGIATAN');
-        $this->db->order_by('NAMA_MAPEL', 'ASC');
+        $this->db->join('md_ustadz', 'ID_UST=USTADZ_AJ');
+        $this->db->where('TA_AJ', $this->session->userdata('ID_TA'));
+        $this->db->where('AKTIF_UST', 1);
     }
 
     public function get_datatable() {
         $this->_get_table();
         $data = $this->db->get()->result();
-        
+
         $result = array(
             "data" => $data
         );
@@ -39,21 +45,32 @@ class Mapel_model extends CI_Model {
         $this->_get_table();
         $this->db->where($this->primaryKey, $id);
         $result = $this->db->get()->row_array();
-        
+
         return $result;
     }
-    
+
+    public function get_data_form($id) {
+        $this->db->from($this->table);
+        $this->db->where($this->primaryKey, $id);
+        $result = $this->db->get()->row_array();
+
+        return $result;
+    }
+
     public function get_all() {
-        $this->db->select('ID_MAPEL as id, CONCAT(KODE_MAPEL, " - ", NAMA_MAPEL, " - ", NAMA_KELAS, " - ", NAMA_KEGIATAN) as title');
+        $this->db->select('ID_AJ as id, CONCAT(NAMA_AJ, " - ", NAMA_GEDUNG) as title');
         $this->_get_table();
-        $this->db->order_by('NAMA_KEGIATAN, NAMA_KELAS, KODE_MAPEL', 'ASC');
         $result = $this->db->get();
-        
+
         return $result->result();
     }
-    
+
     public function save($data) {
-        if($this->user != '') $data[$this->user] = $this->session->userdata('ID_USER');
+        $data['TA_AJ'] = $this->session->userdata('ID_TA');
+
+        if ($this->user != '')
+            $data[$this->user] = $this->session->userdata('ID_USER');
+
         if (isset($data[$this->primaryKey])) {
             $where = array($this->primaryKey => $data[$this->primaryKey]);
             unset($data[$this->primaryKey]);
@@ -62,7 +79,7 @@ class Mapel_model extends CI_Model {
             unset($data[$this->primaryKey]);
             $result = $this->insert($data);
         }
-        
+
         return $result;
     }
 
@@ -74,14 +91,14 @@ class Mapel_model extends CI_Model {
 
     public function update($data, $where) {
         $this->db->update($this->table, $data, $where);
-        
+
         return $this->db->affected_rows();
     }
 
     public function delete($id) {
         $where = array($this->primaryKey => $id);
         $this->db->delete($this->table, $where);
-        
+
         return $this->db->affected_rows();
     }
 

@@ -2986,4 +2986,70 @@
         });
     });
 
+    angular.module('mainApp').controller('akadJadwalController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+
+        $scope.formData = {
+            ID_AJ: null,
+            MAPEL_AJ: null,
+            USTADZ_AJ: null,
+        };
+
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            $scope.dataMAPEL_AJ = response.data.mapel;
+            $scope.dataUSTADZ_AJ = response.data.ustadz;
+
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData = response.data;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
 })();

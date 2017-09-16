@@ -17,8 +17,9 @@ class Ustadz_model extends CI_Model {
         parent::__construct();
     }
 
-    private function _get_table() {
-        $this->db->select('*, CONCAT(ALAMAT_UST, ", ", NAMA_KEC, ", ", NAMA_KAB, ", ", NAMA_PROV) AS ALAMAT_LENGKAP_UST, DATE_FORMAT(TANGGAL_LAHIR_UST, "%d-%m-%Y") AS TANGGAL_LAHIR_UST_SHOW');
+    private function _get_table($select = true) {
+        if ($select)
+            $this->db->select('*, CONCAT(ALAMAT_UST, ", ", NAMA_KEC, ", ", NAMA_KAB, ", ", NAMA_PROV) AS ALAMAT_LENGKAP_UST, DATE_FORMAT(TANGGAL_LAHIR_UST, "%d-%m-%Y") AS TANGGAL_LAHIR_UST_SHOW');
         $this->db->from($this->table);
         $this->db->join('md_jenis_kelamin', 'ID_JK=JK_UST');
         $this->db->join('md_kecamatan', 'ID_KEC=KECAMATAN_UST');
@@ -44,12 +45,21 @@ class Ustadz_model extends CI_Model {
 
         return $result;
     }
+    
+    public function get_all() {
+        $this->db->select('ID_UST as id, CONCAT(IF(GELAR_AWAL_UST IS NOT NULL, IF(GELAR_AWAL_UST = "", CONCAT(GELAR_AWAL_UST, ". "), ""), ""), NAMA_UST, IF(GELAR_AKHIR_UST IS NOT NULL, IF(GELAR_AKHIR_UST = "", CONCAT(". ", GELAR_AKHIR_UST), ""), "")) as title');
+        $this->_get_table(FALSE);
+        $this->db->where('AKTIF_UST', 1);
+        $result = $this->db->get();
+        
+        return $result->result();
+    }
 
     public function get_data_form($id) {
         $this->db->from($this->table);
         $this->db->where($this->primaryKey, $id);
         $result = $this->db->get()->row_array();
-        
+
         return $result;
     }
 

@@ -8,7 +8,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * and open the template in the editor.
  */
 
-class Presensi_model extends CI_Model {
+class Nilai_model extends CI_Model {
 
     var $table = 'akad_santri';
     var $primaryKey = 'ID_AS';

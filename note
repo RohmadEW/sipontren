@@ -1,55 +1,26 @@
 
 
-    angular.module('mainApp').controller('dataUstadzController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared, $q) {
+    angular.module('mainApp').controller('akadJadwalController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
         $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
         $scope.ajaxRunning = true;
         $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
         $scope.addForm = true;
-        $scope.dataForm = [];
 
         $scope.formData = {
-            ID_UST: null,
-            NIP_UST: null,
-            NIK_UST: null,
-            NAMA_UST: null,
-            GELAR_AWAL_UST: null,
-            GELAR_AKHIR_UST: null,
-            JK_UST: null,
-            TEMPAT_LAHIR_UST: null,
-            TANGGAL_LAHIR_UST: null,
-            ALAMAT_UST: null,
-            KECAMATAN_UST: null,
-            NOHP_UST: null,
-            EMAIL_UST: null,
+            ID_AJ: null,
+            MAPEL_AJ: null,
+            USTADZ_AJ: null,
         };
 
         $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
 
         function callbackForm(response) {
-            $scope.dataPSB_KELOMPOK_UST = response.data.kelompok;
-            $scope.dataJK_UST = response.data.jk;
-            $scope.dataKEGIATAN_UST = response.data.kelas;
-
-            var urlGetDataForm = [];
-
-            urlGetDataForm.push($http.get(response.data.uri.kecamatan));
-
-            $q.all(urlGetDataForm)
-                    .then(
-                            function (result) {
-                                callbackFormData(result);
-                            },
-                            function (error) {
-                                $scope.cancelSumbit();
-                            }
-                    );
+            callbackFormData(response);
         }
 
         function callbackFormData(response) {
-            $scope.KECAMATAN_UST = {
-                dataAutocomplete: response[0].data
-            };
-            $scope.KECAMATAN_UST = formHelper.autocomplete($scope.KECAMATAN_UST);
+            $scope.dataMAPEL_AJ = response.data.mapel;
+            $scope.dataUSTADZ_AJ = response.data.ustadz;
 
             if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
                 formReady();
@@ -62,12 +33,6 @@
         }
 
         function callbackSuccessData(response) {
-            angular.forEach($scope.KECAMATAN_UST.dataAll, function (value, key) {
-                if (parseInt(response.data.KECAMATAN_UST) === parseInt(value.key)) {
-                    $scope.KECAMATAN_UST.selectedItem = value;
-                }
-            });
-
             $scope.formData = response.data;
 
             $scope.addForm = false;
@@ -85,14 +50,7 @@
         };
 
         $scope.saveSubmit = function () {
-            if ($scope.form.KECAMATAN_UST.$valid
-                    && $scope.form.NIP_UST.$valid
-                    && $scope.form.NAMA_UST.$valid
-                    && $scope.form.JK_UST.$valid
-                    && $scope.form.TEMPAT_LAHIR_UST.$valid
-                    && $scope.form.TANGGAL_LAHIR_UST.$valid
-                    && $scope.form.ALAMAT_UST.$valid
-                    ) {
+            if ($scope.form.$valid) {
                 $scope.ajaxRunning = true;
 
                 $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
@@ -106,11 +64,4 @@
             $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
         }
-
-        $scope.$watch('KECAMATAN_UST.selectedItem', function (selectedItem) {
-            if (typeof selectedItem === 'undefined' || selectedItem.key === null)
-                $scope.formData.KECAMATAN_UST = null;
-            else
-                $scope.formData.KECAMATAN_UST = selectedItem.key;
-        });
     });
