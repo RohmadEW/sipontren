@@ -57,9 +57,17 @@ class Jadwal_model extends CI_Model {
         return $result;
     }
 
-    public function get_all() {
-        $this->db->select('ID_AJ as id, CONCAT(NAMA_AJ, " - ", NAMA_GEDUNG) as title');
-        $this->_get_table();
+    public function get_all($params = NULL) {
+        $this->db->select('ID_AJ as id, CONCAT("MAPEL: ",KODE_MAPEL, " - ", NAMA_MAPEL, " | GURU: ", CONCAT(IF(GELAR_AWAL_UST IS NOT NULL, IF(GELAR_AWAL_UST = "", CONCAT(GELAR_AWAL_UST, ". "), ""), ""), NAMA_UST, IF(GELAR_AKHIR_UST IS NOT NULL, IF(GELAR_AKHIR_UST = "", CONCAT(". ", GELAR_AKHIR_UST), ""), ""))) as title');
+        $this->_get_table(false);
+        
+        if (is_array($params)) {
+            if (isset($params['ID_ROMBEL']))
+                $this->db->join('md_rombel', 'KELAS_ROMBEL=ID_KELAS');
+
+            $this->db->where($params);
+        }
+
         $result = $this->db->get();
 
         return $result->result();

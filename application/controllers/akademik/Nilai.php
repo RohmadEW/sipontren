@@ -9,18 +9,17 @@ class Nilai extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'presensi_model' => 'presensi',
+            'nilai_model' => 'nilai',
             'rombel_model' => 'rombel',
-            'jk_model' => 'jk',
-            'kamar_model' => 'kamar',
+            'jadwal_model' => 'jadwal',
         ));
         $this->auth->validation(array(1, 3));
     }
 
     public function index() {
         $data = array(
-            'title' => 'Presensi Santri',
-            'breadcrumb' => 'Santri > Presensi Santri',
+            'title' => 'Nilai Santri',
+            'breadcrumb' => 'Santri > Nilai',
             'rombel' => $this->rombel->get_all(),
             'table' => array(
                 array(
@@ -71,18 +70,27 @@ class Nilai extends CI_Controller {
     public function datatable() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->presensi->get_datatable($post);
+        $data = $this->nilai->get_datatable($post);
 
         $this->output_handler->output_JSON($data);
     }
 
-    public function prosesPresensi() {
+    public function proses_nilai() {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->presensi->prosesPresensi($data);
+        $result = $this->nilai->proses_nilai($data);
         $message = 'diproses';
 
         $this->output_handler->output_JSON($result, $message);
+    }
+
+    public function get_data() {
+        $post = json_decode(file_get_contents('php://input'), true);
+
+        if ($post['MODEL'] == 'JADWAL')
+            $data = $this->jadwal->get_all($post['PARAMS']);
+        
+        $this->output_handler->output_JSON($data);
     }
 
 }

@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $this->auth->validation();
 
-$this->output_handler->start_content('akadPresensiController');
+$this->output_handler->start_content('akadNilaiController');
 ?>
 <form ng-cloak name="form" ng-submit="pilihFilter(form);" novalidate>
     <div layout="row">
@@ -12,7 +12,7 @@ $this->output_handler->start_content('akadPresensiController');
                 $this->output_handler->form_select(
                         array(
                             'type' => 'select',
-                            'field' => 'ROMBEL_ABSENSI',
+                            'field' => 'ROMBEL_AS',
                             'label' => 'Pilih rombel terlebih dahulu'
                 ));
                 ?>
@@ -24,15 +24,15 @@ $this->output_handler->start_content('akadPresensiController');
         <div flex="40">
             <div style="margin: 30px;">
                 <?php
-                $this->output_handler->form_date(
+                $this->output_handler->form_select(
                         array(
                             'type' => 'select',
-                            'field' => 'TANGGAL_ABSENSI',
-                            'label' => 'Pilih tanggal terlebih dahulu'
+                            'field' => 'JADWAL_NILAI',
+                            'label' => 'Pilih jadwal guru - mapel'
                 ));
                 ?>
                 <md-tooltip md-direction="bottom">
-                    Klik untuk memilih tanggal
+                    Pilih rombel terlebih dahulu
                 </md-tooltip>
             </div>
         </div>
@@ -49,28 +49,15 @@ $this->output_handler->start_content('akadPresensiController');
             <tr ng-repeat="row in $data">
                 <td ng-repeat="col in $columns">
                     <div ng-if="col.field === 'ACTION'">
-                        <md-input-container style="margin: unset;">
-                            <label>Alasan</label>
-                            <md-select name="ALASAN_ABSENSI" ng-model="formDataPresensi.ALASAN_ABSENSI[row['ID_SANTRI']]" required>
-                                <md-option value="HADIR">HADIR</md-option>
-                                <md-option value="SAKIT">SAKIT</md-option>
-                                <md-option value="IZIN">IZIN</md-option>
-                                <md-option value="ALPHA">ALPHA</md-option>
-                                <md-option value="TERLAMBAT">TERLAMBAT</md-option>
-                            </md-select>
-                            <div class="errors" ng-messages="form.ALASAN_ABSENSI.$error">
-                                <div ng-message="required">Required</div>
-                            </div>
-                        </md-input-container>
                         <md-input-container style="margin: unset;margin-top: 24px;">
-                            <label>Keterangan</label>
-                            <input ng-model="formDataPresensi.KETERANGAN_ABSENSI[row['ID_SANTRI']]" type="text">
+                            <label>Nilai</label>
+                            <input ng-model="formDataNilai.NILAI_NILAI[row['ID_AS']]" type="text">
                         </md-input-container>
-                        <md-button ng-click="prosesPresensi(row)" class="md-icon-button">
+                        <md-button ng-click="prosesNilai(row)" class="md-icon-button">
                             <md-tooltip md-direction="bottom">
-                                Klik untuk menyimpan presensi
+                                Klik untuk menyimpan nilai
                             </md-tooltip>
-                            <md-icon class="material-icons md-24 kk-icon-title" aria-label="Presensi">check</md-icon>
+                            <md-icon class="material-icons md-24 kk-icon-title" aria-label="Nilai">check</md-icon>
                         </md-button>
                     </div>
                     {{row[col.field]}}

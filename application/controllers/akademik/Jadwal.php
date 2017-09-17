@@ -112,6 +112,8 @@ class Jadwal extends CI_Controller {
     }
 
     public function data() {
+        $post = json_decode(file_get_contents('php://input'), true);
+        
         $data = $this->jadwal->get_datatables();
 
         $this->output_handler->output_JSON($data);

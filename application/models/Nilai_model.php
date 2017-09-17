@@ -26,16 +26,12 @@ class Nilai_model extends CI_Model {
 
     public function get_datatable($post) {
         $this->_get_table();
-        $this->db->join('(SELECT * FROM akad_absensi WHERE TANGGAL_ABSENSI = "'.$this->datetime_handler->date_to_store($post['TANGGAL_ABSENSI']).'") akad_absensi', 'SANTRI_ABSENSI=ID_AS AND ROMBEL_AS=ROMBEL_ABSENSI', 'LEFT');
+        $this->db->join('(SELECT * FROM akad_nilai WHERE TA_NILAI = ' . $this->session->userdata('ID_TA') . ' AND CAWU_NILAI = ' . $this->session->userdata('ID_CAWU') . ' AND JADWAL_NILAI=' . $post['JADWAL_NILAI'] . ') akad_nilai', 'SANTRI_NILAI=ID_AS', 'LEFT');
         $this->db->where(array(
             'ALUMNI_SANTRI' => 0,
             'STATUS_MUTASI_SANTRI' => NULL,
-            'ROMBEL_AS' => $post['ROMBEL_ABSENSI'],
+            'ROMBEL_AS' => $post['ROMBEL_AS'],
         ));
-        $this->db->group_start();
-        $this->db->where('TANGGAL_ABSENSI', $this->datetime_handler->date_to_store($post['TANGGAL_ABSENSI']));
-        $this->db->or_where('TANGGAL_ABSENSI', NULL);
-        $this->db->group_end();
         $data = $this->db->get();
 
         $result = array(
@@ -72,21 +68,16 @@ class Nilai_model extends CI_Model {
         return $this->db->insert_id();
     }
 
-    public function prosesPresensi($data) {
-        $data['TANGGAL_ABSENSI'] = $this->datetime_handler->date_to_store($data['TANGGAL_ABSENSI']);
-
-        $where = array(
-            'SANTRI_ABSENSI' => $data['SANTRI_ABSENSI'],
-            'ROMBEL_ABSENSI' => $data['ROMBEL_ABSENSI'],
-            'TANGGAL_ABSENSI' => $data['TANGGAL_ABSENSI'],
-        );
-        $this->db->delete('akad_absensi', $where);
+    public function proses_nilai($data) {
+        $data['TA_NILAI'] = $this->session->userdata('ID_TA');
+        $data['CAWU_NILAI'] = $this->session->userdata('ID_CAWU');
         
-        if ($data['ALASAN_ABSENSI'] != 'HADIR') {
-            $data['CAWU_ABSENSI'] = $this->session->userdata('ID_CAWU');
-            $data['USER_ABSENSI'] = $this->session->userdata('ID_USER');
-            $this->db->insert('akad_absensi', $data);
-        }
+        $where = $data;
+        unset($where['NILAI_NILAI']);
+        $this->db->delete('akad_nilai', $where);
+        
+        $data['USER_NILAI'] = $this->session->userdata('ID_USER');
+        $this->db->insert('akad_nilai', $data);
 
         return $this->db->affected_rows();
     }
