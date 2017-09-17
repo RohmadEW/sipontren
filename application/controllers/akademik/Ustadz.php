@@ -12,7 +12,7 @@ class Ustadz extends CI_Controller {
             'ustadz_model' => 'data_ustadz',
             'jk_model' => 'jk',
         ));
-        $this->auth->validation(array(1, 2));
+        $this->auth->validation(array(1, 4));
     }
 
     public function index() {

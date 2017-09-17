@@ -15,7 +15,7 @@ class Data extends CI_Controller {
             'kelas_model' => 'kelas',
             'rombel_model' => 'rombel',
         ));
-        $this->auth->validation(array(1, 3));
+        $this->auth->validation(array(1, 4));
     }
 
     public function index() {

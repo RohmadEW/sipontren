@@ -14,7 +14,7 @@ class Presensi extends CI_Controller {
             'jk_model' => 'jk',
             'kamar_model' => 'kamar',
         ));
-        $this->auth->validation(array(1, 3));
+        $this->auth->validation(array(1, 4));
     }
 
     public function index() {
@@ -51,13 +51,14 @@ class Presensi extends CI_Controller {
                     )
                 ),
                 array(
-                    'field' => "AYAH_NAMA_SANTRI",
-                    'title' => "Nama Ayah",
-                    'sortable' => "AYAH_NAMA_SANTRI",
+                    'field' => "KAMAR_GEDUNG",
+                    'title' => "Kamar",
+                    'sortable' => "KAMAR_GEDUNG",
                     'show' => true,
                     'filter' => array(
-                        'AYAH_NAMA_SANTRI' => 'text'
-                    )
+                        'KAMAR_SANTRI' => 'select'
+                    ),
+                    'filterData' => $this->kamar->get_all()
                 ),
                 array(
                     'field' => "ACTION",

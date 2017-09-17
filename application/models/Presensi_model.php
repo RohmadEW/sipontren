@@ -20,6 +20,7 @@ class Presensi_model extends CI_Model {
     private function _get_table() {
         $this->db->from($this->table);
         $this->db->join('md_santri', 'ID_SANTRI=SANTRI_AS');
+        $this->db->join('(SELECT *, CONCAT(NAMA_KAMAR, " - ", NAMA_GEDUNG) AS KAMAR_GEDUNG FROM md_kamar INNER JOIN md_gedung ON GEDUNG_KAMAR=ID_GEDUNG) md_kamar', 'KAMAR_SANTRI=ID_KAMAR');
         $this->db->join('md_jenis_kelamin', 'ID_JK=JK_SANTRI');
         $this->db->where('TA_AS', $this->session->userdata('ID_TA'));
     }
@@ -28,6 +29,7 @@ class Presensi_model extends CI_Model {
         $this->_get_table();
         $this->db->join('(SELECT * FROM akad_absensi WHERE TANGGAL_ABSENSI = "'.$this->datetime_handler->date_to_store($post['TANGGAL_ABSENSI']).'") akad_absensi', 'SANTRI_ABSENSI=ID_AS AND ROMBEL_AS=ROMBEL_ABSENSI', 'LEFT');
         $this->db->where(array(
+            'AKTIF_SANTRI' => 1,
             'ALUMNI_SANTRI' => 0,
             'STATUS_MUTASI_SANTRI' => NULL,
             'ROMBEL_AS' => $post['ROMBEL_ABSENSI'],

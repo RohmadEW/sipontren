@@ -1,4 +1,5 @@
 <?php
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
@@ -22,13 +23,18 @@ class Akad_santri_model extends CI_Model {
         $this->db->join('md_tahun_ajaran', 'ID_TA=TA_AS');
         $this->db->join('md_kelas', 'ID_KELAS=KELAS_AS');
         $this->db->join('md_santri', 'ID_SANTRI=SANTRI_AS');
+        $this->db->join('(SELECT *, CONCAT(NAMA_KAMAR, " - ", NAMA_GEDUNG) AS KAMAR_GEDUNG FROM md_kamar INNER JOIN md_gedung ON GEDUNG_KAMAR=ID_GEDUNG) md_kamar', 'KAMAR_SANTRI=ID_KAMAR');
         $this->db->join('md_rombel', 'ID_ROMBEL=ROMBEL_AS', 'LEFT');
     }
 
-    public function get_datatable() {
+    public function get_datatable($where = NULL) {
         $this->_get_table();
-        $data = $this->db->get()->result();
         
+        if ($where != NULL)
+            $this->db->where($where);
+        
+        $data = $this->db->get()->result();
+
         $result = array(
             "data" => $data
         );
@@ -40,7 +46,7 @@ class Akad_santri_model extends CI_Model {
         $this->_get_table();
         $this->db->where($this->primaryKey, $id);
         $result = $this->db->get()->row_array();
-        
+
         return $result;
     }
 
@@ -48,7 +54,7 @@ class Akad_santri_model extends CI_Model {
         $this->db->from($this->table);
         $this->db->where($where);
         $result = $this->db->get()->row();
-        
+
         return $result;
     }
 
@@ -56,7 +62,7 @@ class Akad_santri_model extends CI_Model {
         $this->db->from($this->table);
         $this->db->where($where);
         $result = $this->db->get()->result();
-        
+
         return $result;
     }
 
@@ -64,7 +70,7 @@ class Akad_santri_model extends CI_Model {
         $this->_get_table();
         $this->db->where($where);
         $result = $this->db->get()->row();
-        
+
         return $result;
     }
 
@@ -72,12 +78,13 @@ class Akad_santri_model extends CI_Model {
         $this->_get_table();
         $this->db->where($where);
         $result = $this->db->get()->result();
-        
+
         return $result;
     }
-    
+
     public function save($data) {
-        if($this->user != '') $data[$this->user] = $this->session->userdata('ID_USER');
+        if ($this->user != '')
+            $data[$this->user] = $this->session->userdata('ID_USER');
         if (isset($data[$this->primaryKey])) {
             $where = array($this->primaryKey => $data[$this->primaryKey]);
             unset($data[$this->primaryKey]);
@@ -86,7 +93,7 @@ class Akad_santri_model extends CI_Model {
             unset($data[$this->primaryKey]);
             $result = $this->insert($data);
         }
-        
+
         return $result;
     }
 
@@ -98,14 +105,14 @@ class Akad_santri_model extends CI_Model {
 
     public function update($data, $where) {
         $this->db->update($this->table, $data, $where);
-        
+
         return $this->db->affected_rows();
     }
 
     public function delete($id) {
         $where = array($this->primaryKey => $id);
         $this->db->delete($this->table, $where);
-        
+
         return $this->db->affected_rows();
     }
 

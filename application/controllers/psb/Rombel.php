@@ -14,7 +14,7 @@ class Rombel extends CI_Controller {
             'jk_model' => 'jk',
             'kamar_model' => 'kamar',
         ));
-        $this->auth->validation(array(1, 3));
+        $this->auth->validation(array(1, 2));
     }
 
     public function index() {

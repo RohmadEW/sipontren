@@ -2659,12 +2659,12 @@
             ALASAN_ABSENSI: [],
             KETERANGAN_ABSENSI: [],
         };
-        
-        $scope.$watch('formData.ROMBEL_ABSENSI', function(ROMBEL_ABSENSI) {
+
+        $scope.$watch('formData.ROMBEL_ABSENSI', function (ROMBEL_ABSENSI) {
             $scope.formReady = false;
         });
-        
-        $scope.$watch('formData.TANGGAL_ABSENSI', function(TANGGAL_ABSENSI) {
+
+        $scope.$watch('formData.TANGGAL_ABSENSI', function (TANGGAL_ABSENSI) {
             $scope.formReady = false;
         });
 
@@ -2705,12 +2705,12 @@
             $scope.dataTablesSantri = new NgTableParams(initialParams, initialSettings);
             $scope.fabHidden = false;
             $scope.formReady = true;
-            
+
             setAlasanPresensi();
         }
-        
+
         function setAlasanPresensi() {
-            angular.forEach($scope.dataOriginal, function(item, index) {
+            angular.forEach($scope.dataOriginal, function (item, index) {
                 $scope.formDataPresensi.ALASAN_ABSENSI[item.ID_SANTRI] = item.ALASAN_ABSENSI === null ? 'HADIR' : item.ALASAN_ABSENSI;
                 $scope.formDataPresensi.KETERANGAN_ABSENSI[item.ID_SANTRI] = item.KETERANGAN_ABSENSI;
             });
@@ -2730,7 +2730,7 @@
         function callbackSuccessProsesSantri(response) {
             notificationService.toastSimple(response.data.notification);
         }
-        
+
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
@@ -3078,12 +3078,12 @@
         $scope.formDataNilai = {
             NILAI_NILAI: [],
         };
-        
-        $scope.$watch('formData.ROMBEL_AS', function(ROMBEL_AS) {
+
+        $scope.$watch('formData.ROMBEL_AS', function (ROMBEL_AS) {
             $scope.formReady = false;
             $scope.formData.JADWAL_NILAI = null;
-            
-            if(ROMBEL_AS !== null) 
+
+            if (ROMBEL_AS !== null)
                 getDataJadwal();
         });
 
@@ -3094,15 +3094,15 @@
                     ID_ROMBEL: $scope.formData.ROMBEL_AS
                 }
             };
-            
+
             $http.post($scope.mainURI + '/get_data', dataRombel).then(callbackJadwal, notificationService.errorCallback);
         }
 
         function callbackJadwal(response) {
             $scope.dataJADWAL_NILAI = response.data;
         }
-        
-        $scope.$watch('formData.JADWAL_NILAI', function(JADWAL_NILAI) {
+
+        $scope.$watch('formData.JADWAL_NILAI', function (JADWAL_NILAI) {
             $scope.formReady = false;
         });
 
@@ -3143,12 +3143,12 @@
             $scope.dataTablesSantri = new NgTableParams(initialParams, initialSettings);
             $scope.fabHidden = false;
             $scope.formReady = true;
-            
+
             setInputNilai();
         }
-        
+
         function setInputNilai() {
-            angular.forEach($scope.dataOriginal, function(item, index) {
+            angular.forEach($scope.dataOriginal, function (item, index) {
                 $scope.formDataNilai.NILAI_NILAI[item.ID_AS] = item.NILAI_NILAI;
             });
         }
@@ -3165,7 +3165,7 @@
         function callbackSuccessProsesSantri(response) {
             notificationService.toastSimple(response.data.notification);
         }
-        
+
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
@@ -3236,6 +3236,107 @@
                 dataScopeShared.addData('DATA_UPDATE', null);
                 $mdDialog.cancel();
             };
+        }
+    });
+
+    angular.module('mainApp').controller('akadRaporController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.mainTemplate = url_template + $routeParams.template;
+        $scope.appReady = false;
+        $scope.dataOriginal = null;
+        $scope.flex = 90;
+        $scope.flexOffset = 5;
+
+        $scope.flexKelas = 25;
+        $scope.flexSantri = 35;
+        $scope.flexNilai = 30;
+
+        $scope.fabHidden = true;
+
+        $scope.NAMA_KELAS = null;
+        $scope.NAMA_SANTRI = null;
+        $scope.TABLE_SANTRI_SHOW = false;
+        $scope.TABLE_NILAI_SHOW = false;
+
+        $http.get($scope.mainURI + '/index').then(callbackSuccess, notificationService.errorCallback);
+
+        function callbackSuccess(response) {
+            $scope.title = response.data.title;
+            $scope.breadcrumb = response.data.breadcrumb;
+            $scope.tableKelas = response.data.table.kelas;
+            $scope.tableSantri = response.data.table.santri;
+            $scope.tableNilai = response.data.table.nilai;
+
+            $scope.appReady = true;
+
+            getDataKelas();
+        }
+
+        function getDataKelas() {
+            $http.post($scope.mainURI + '/get_datatable_kelas', $scope.formData).then(callbackDatatablesKelas, notificationService.errorCallback);
+        }
+
+        function callbackDatatablesKelas(response) {
+            $scope.dataOriginal = response.data.data;
+
+            var initialParams = {
+                count: 15
+            };
+            var initialSettings = {
+                counts: [],
+                dataset: response.data.data
+            };
+
+            $scope.dataTablesKelas = new NgTableParams(initialParams, initialSettings);
+        }
+
+        $scope.datatableSantri = function (row) {
+            $scope.TABLE_SANTRI_SHOW = false;
+            $scope.TABLE_NILAI_SHOW = false;
+
+            $scope.NAMA_KELAS = row.NAMA_KELAS + ' - ' + row.NAMA_KEGIATAN;
+
+            $http.post($scope.mainURI + '/get_datatable_santri', row).then(callbackDatatablesSantri, notificationService.errorCallback);
+        }
+
+        function callbackDatatablesSantri(response) {
+            $scope.dataOriginal = response.data.data;
+
+            var initialParams = {
+                count: 15
+            };
+            var initialSettings = {
+                counts: [],
+                dataset: response.data.data
+            };
+
+            $scope.dataTablesSantri = new NgTableParams(initialParams, initialSettings);
+
+            $scope.TABLE_SANTRI_SHOW = true;
+        }
+
+        $scope.datatableNilai = function (row) {
+            $scope.TABLE_NILAI_SHOW = false;
+
+            $scope.NAMA_SANTRI = (row.NIS_SANTRI === null ? '' : row.NIS_SANTRI) + ' - ' + row.NAMA_SANTRI;
+
+            $http.post($scope.mainURI + '/get_datatable_nilai', row).then(callbackDatatablesNilai, notificationService.errorCallback);
+        }
+
+        function callbackDatatablesNilai(response) {
+            $scope.dataOriginal = response.data.data;
+
+            var initialParams = {
+                count: 15
+            };
+            var initialSettings = {
+                counts: [],
+                dataset: response.data.data
+            };
+
+            $scope.dataTablesNilai = new NgTableParams(initialParams, initialSettings);
+
+            $scope.TABLE_NILAI_SHOW = true;
         }
     });
 })();
