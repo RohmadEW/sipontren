@@ -20,7 +20,7 @@ class Tagihan extends CI_Controller
     public function index()
     {
         $data = array(
-            'title' => 'Master Data Tagihan',
+            'title' => 'Tagihan',
             'breadcrumb' => 'Keuangan > Tagihan',
             'table' => array(
                 array(
