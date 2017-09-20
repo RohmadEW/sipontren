@@ -1,41 +1,68 @@
 
+    angular.module('mainApp').controller('akadKelasController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
 
-$start = -1;
+        $scope.formData = {
+            ID_TAGIHAN: null,
+            TA_TAGIHAN: null,
+            KELAS_TAGIHAN: null,
+            NAMA_TAGIHAN: null,
+            NOMINAL_TAGIHAN: null,
+        };
 
-$dataSeriesLabels = array(
-    new PHPExcel_Chart_DataSeriesValues('String', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 1) . '$' . ($START_ROW_DATA - 1), NULL, 1),
-    new PHPExcel_Chart_DataSeriesValues('String', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 2) . '$' . ($START_ROW_DATA - 1), NULL, 1),
-    new PHPExcel_Chart_DataSeriesValues('String', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 3) . '$' . ($START_ROW_DATA - 1), NULL, 1),
-);
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
 
-$xAxisTickValues = array(
-    new PHPExcel_Chart_DataSeriesValues('String', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$C$' . $START_ROW_DATA . ':$C$' . $END_ROW_DATA, NULL, $END_ROW_DATA - $START_ROW_DATA)
-);
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
 
-$dataSeriesValues = array(
-    new PHPExcel_Chart_DataSeriesValues('Number', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 1) . '$' . $START_ROW_DATA . ':$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 1) . '$' . $END_ROW_DATA, NULL, $END_ROW_DATA - $START_ROW_DATA),
-    new PHPExcel_Chart_DataSeriesValues('Number', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 2) . '$' . $START_ROW_DATA . ':$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 2) . '$' . $END_ROW_DATA, NULL, $END_ROW_DATA - $START_ROW_DATA),
-    new PHPExcel_Chart_DataSeriesValues('Number', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 3) . '$' . $START_ROW_DATA . ':$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 3) . '$' . $END_ROW_DATA, NULL, $END_ROW_DATA - $START_ROW_DATA),
-);
+        function callbackFormData(response) {
+            $scope.dataTA_TAGIHAN = response.data.dataTA_TAGIHAN;
+            $scope.dataKELAS_TAGIHAN = response.data.dataKELAS_TAGIHAN;
 
-$series = new PHPExcel_Chart_DataSeries(
-        PHPExcel_Chart_DataSeries::TYPE_BARCHART, PHPExcel_Chart_DataSeries::GROUPING_STANDARD, range(0, count($dataSeriesValues) - 1), $dataSeriesLabels, $xAxisTickValues, $dataSeriesValues
-);
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
 
-$series->setPlotDirection(PHPExcel_Chart_DataSeries::DIRECTION_COL);
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
 
-$plotArea = new PHPExcel_Chart_PlotArea(NULL, array($series));
-$legend = new PHPExcel_Chart_Legend(PHPExcel_Chart_Legend::POSITION_BOTTOM, NULL, false);
+        function callbackSuccessData(response) {
+            $scope.formData = response.data;
 
-$title = new PHPExcel_Chart_Title('Grafik Jumlah Pelanggaran Umum');
-$xAxisLabel = new PHPExcel_Chart_Title('Kelas');
-$yAxisLabel = new PHPExcel_Chart_Title('Jumlah');
+            $scope.addForm = false;
 
-$chart = new PHPExcel_Chart(
-        'chart1', $title, $legend, $plotArea, true, 0, $xAxisLabel, $yAxisLabel
-);
+            formReady();
+        }
 
-$COLUMN_LAST_CHART = 'B';
-$ROW_LAST_CHART = '2';
-$chart->setTopLeftPosition($COLUMN_LAST_CHART.$ROW_LAST_CHART);
-$chart->setBottomRightPosition($this->cetak->next_char($COLUMN_LAST_CHART, 60) . ($ROW_LAST_CHART + 65));
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
