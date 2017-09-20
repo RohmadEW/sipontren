@@ -22,7 +22,7 @@ class Tagihan extends CI_Controller
         $data = array(
             'title' => 'Tagihan',
             'breadcrumb' => 'Keuangan > Tagihan',
-            'table' => array(
+            'table' => array( 
                 array(
                     'field' => "ID_TAGIHAN",
                     'title' => "ID",
