@@ -31,7 +31,7 @@ class Tagihan extends CI_Controller
                     'filter' => array(
                         'ID_TAGIHAN' => 'number'
                     )
-                ),
+                ),   
                 array(
                     'field' => "NAMA_TAGIHAN",
                     'title' => "Nama Tagihan",
