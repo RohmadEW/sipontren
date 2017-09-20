@@ -1,0 +1,41 @@
+
+
+$start = -1;
+
+$dataSeriesLabels = array(
+    new PHPExcel_Chart_DataSeriesValues('String', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 1) . '$' . ($START_ROW_DATA - 1), NULL, 1),
+    new PHPExcel_Chart_DataSeriesValues('String', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 2) . '$' . ($START_ROW_DATA - 1), NULL, 1),
+    new PHPExcel_Chart_DataSeriesValues('String', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 3) . '$' . ($START_ROW_DATA - 1), NULL, 1),
+);
+
+$xAxisTickValues = array(
+    new PHPExcel_Chart_DataSeriesValues('String', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$C$' . $START_ROW_DATA . ':$C$' . $END_ROW_DATA, NULL, $END_ROW_DATA - $START_ROW_DATA)
+);
+
+$dataSeriesValues = array(
+    new PHPExcel_Chart_DataSeriesValues('Number', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 1) . '$' . $START_ROW_DATA . ':$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 1) . '$' . $END_ROW_DATA, NULL, $END_ROW_DATA - $START_ROW_DATA),
+    new PHPExcel_Chart_DataSeriesValues('Number', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 2) . '$' . $START_ROW_DATA . ':$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 2) . '$' . $END_ROW_DATA, NULL, $END_ROW_DATA - $START_ROW_DATA),
+    new PHPExcel_Chart_DataSeriesValues('Number', $DATA_SHEET[$DATA_NUMBER_SHEET]['title'] . '!$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 3) . '$' . $START_ROW_DATA . ':$' . $this->cetak->next_char($COLUMN_START_UMUM, $start + 3) . '$' . $END_ROW_DATA, NULL, $END_ROW_DATA - $START_ROW_DATA),
+);
+
+$series = new PHPExcel_Chart_DataSeries(
+        PHPExcel_Chart_DataSeries::TYPE_BARCHART, PHPExcel_Chart_DataSeries::GROUPING_STANDARD, range(0, count($dataSeriesValues) - 1), $dataSeriesLabels, $xAxisTickValues, $dataSeriesValues
+);
+
+$series->setPlotDirection(PHPExcel_Chart_DataSeries::DIRECTION_COL);
+
+$plotArea = new PHPExcel_Chart_PlotArea(NULL, array($series));
+$legend = new PHPExcel_Chart_Legend(PHPExcel_Chart_Legend::POSITION_BOTTOM, NULL, false);
+
+$title = new PHPExcel_Chart_Title('Grafik Jumlah Pelanggaran Umum');
+$xAxisLabel = new PHPExcel_Chart_Title('Kelas');
+$yAxisLabel = new PHPExcel_Chart_Title('Jumlah');
+
+$chart = new PHPExcel_Chart(
+        'chart1', $title, $legend, $plotArea, true, 0, $xAxisLabel, $yAxisLabel
+);
+
+$COLUMN_LAST_CHART = 'B';
+$ROW_LAST_CHART = '2';
+$chart->setTopLeftPosition($COLUMN_LAST_CHART.$ROW_LAST_CHART);
+$chart->setBottomRightPosition($this->cetak->next_char($COLUMN_LAST_CHART, 60) . ($ROW_LAST_CHART + 65));

@@ -25,6 +25,7 @@ class Akad_santri_model extends CI_Model {
         $this->db->join('md_santri', 'ID_SANTRI=SANTRI_AS');
         $this->db->join('(SELECT *, CONCAT(NAMA_KAMAR, " - ", NAMA_GEDUNG) AS KAMAR_GEDUNG FROM md_kamar INNER JOIN md_gedung ON GEDUNG_KAMAR=ID_GEDUNG) md_kamar', 'KAMAR_SANTRI=ID_KAMAR');
         $this->db->join('md_rombel', 'ID_ROMBEL=ROMBEL_AS', 'LEFT');
+        $this->db->join('md_ustadz', 'ID_ROMBEL=ROMBEL_UST', 'LEFT');
     }
 
     public function get_datatable($where = NULL) {

@@ -26,6 +26,7 @@ class Rombel_model extends CI_Model {
         $this->db->join('md_kegiatan', 'ID_KEGIATAN=KEGIATAN_KELAS');
         $this->db->join('md_ruang', 'ID_RUANG=RUANG_ROMBEL');
         $this->db->join('md_gedung', 'ID_GEDUNG=GEDUNG_RUANG');
+        $this->db->join('md_ustadz', 'ID_ROMBEL=ROMBEL_UST', 'LEFT');
         $this->db->order_by('NAMA_KELAS, NAMA_ROMBEL', 'ASC');
     }
 
@@ -49,7 +50,7 @@ class Rombel_model extends CI_Model {
     }
 
     public function get_all() {
-        $this->db->select('ID_ROMBEL as id, CONCAT(NAMA_ROMBEL, " - ", NAMA_KEGIATAN) as title');
+        $this->db->select('ID_ROMBEL as id, CONCAT(NAMA_ROMBEL, " - ", NAMA_KEGIATAN, " | ", "WALI KELAS = ",  IF(ID_UST IS NULL, CONCAT("BELUM ", "ADA"), NAMA_UST)) as title');
         $this->_get_table(FALSE);
         $result = $this->db->get();
 

@@ -11,6 +11,7 @@ class Ustadz extends CI_Controller {
         $this->load->model(array(
             'ustadz_model' => 'data_ustadz',
             'jk_model' => 'jk',
+            'rombel_model' => 'rombel',
         ));
         $this->auth->validation(array(1, 4));
     }
@@ -95,6 +96,15 @@ class Ustadz extends CI_Controller {
                     )
                 ),
                 array(
+                    'field' => "ROMBEL_KEGIATAN",
+                    'title' => "Rombel", 
+                    'sortable' => "ROMBEL_KEGIATAN", 
+                    'show' => true,
+                    'filter' => array(
+                        'ROMBEL_KEGIATAN' => 'text'
+                    )
+                ),
+                array(
                     'field' => "ACTION",
                     'title' => "Aksi", 
                     'actions' => array(
@@ -164,6 +174,14 @@ class Ustadz extends CI_Controller {
         $message = 'dihapus';
 
         $this->output_handler->output_JSON($result, $message);
+    }
+    
+    public function get_rombel() {
+        $post = json_decode(file_get_contents('php://input'), true);
+        
+        $data = $this->data_ustadz->get_rombel($post[$this->primaryKey]);
+
+        $this->output_handler->output_JSON($data);
     }
 
 }

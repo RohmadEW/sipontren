@@ -2896,6 +2896,7 @@
             KECAMATAN_UST: null,
             NOHP_UST: null,
             EMAIL_UST: null,
+            ROMBEL_UST: null,
         };
 
         $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
@@ -2933,22 +2934,54 @@
         }
 
         function getData() {
-            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+            var urlDataForm = [];
+
+            urlDataForm.push($http.post($scope.mainURI + '/view', $scope.dataUpdate));
+            urlDataForm.push($http.post($scope.mainURI + '/get_rombel', $scope.dataUpdate));
+            
+            $q.all(urlDataForm)
+                    .then(
+                            function (result) {
+                                callbackFormDataView(result);
+                            },
+                            function (error) {
+                                $scope.cancelSumbit();
+                            }
+                    );
         }
 
-        function callbackSuccessData(response) {
+        function callbackFormDataView(response) {
             angular.forEach($scope.KECAMATAN_UST.dataAll, function (value, key) {
-                if (parseInt(response.data.KECAMATAN_UST) === parseInt(value.key)) {
+                if (parseInt(response[0].data.KECAMATAN_UST) === parseInt(value.key)) {
                     $scope.KECAMATAN_UST.selectedItem = value;
                 }
             });
 
-            $scope.formData = response.data;
+            $scope.formData = response[0].data;
+            $scope.dataROMBEL_UST = response[1].data;
 
             $scope.addForm = false;
 
             formReady();
         }
+
+//        function getData() {
+//            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+//        }
+//
+//        function callbackSuccessData(response) {
+//            angular.forEach($scope.KECAMATAN_UST.dataAll, function (value, key) {
+//                if (parseInt(response.data.KECAMATAN_UST) === parseInt(value.key)) {
+//                    $scope.KECAMATAN_UST.selectedItem = value;
+//                }
+//            });
+//
+//            $scope.formData = response.data;
+//
+//            $scope.addForm = false;
+//
+//            formReady();
+//        }
 
         function formReady() {
             $scope.ajaxRunning = false;
@@ -3247,8 +3280,8 @@
         $scope.flex = 90;
         $scope.flexOffset = 5;
 
-        $scope.flexKelas = 25;
-        $scope.flexSantri = 35;
+        $scope.flexKelas = 20;
+        $scope.flexSantri = 40;
         $scope.flexNilai = 30;
 
         $scope.fabHidden = true;

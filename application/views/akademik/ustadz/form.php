@@ -23,6 +23,12 @@ $data = array(
     ),
     array(
         'required' => FALSE,
+        'type' => 'select',
+        'field' => 'ROMBEL_UST',
+        'label' => 'Wali Kelas untuk Rombel'
+    ),
+    array(
+        'required' => FALSE,
         'type' => 'text',
         'field' => 'GELAR_AWAL_UST',
         'label' => 'Gelar Awal Ustadz'

@@ -19,12 +19,15 @@ class Ustadz_model extends CI_Model {
 
     private function _get_table($select = true) {
         if ($select)
-            $this->db->select('*, CONCAT(ALAMAT_UST, ", ", NAMA_KEC, ", ", NAMA_KAB, ", ", NAMA_PROV) AS ALAMAT_LENGKAP_UST, DATE_FORMAT(TANGGAL_LAHIR_UST, "%d-%m-%Y") AS TANGGAL_LAHIR_UST_SHOW');
+            $this->db->select('*, CONCAT(ALAMAT_UST, ", ", NAMA_KEC, ", ", NAMA_KAB, ", ", NAMA_PROV) AS ALAMAT_LENGKAP_UST, DATE_FORMAT(TANGGAL_LAHIR_UST, "%d-%m-%Y") AS TANGGAL_LAHIR_UST_SHOW, IF(ID_ROMBEL IS NULL, "", CONCAT(NAMA_ROMBEL, " - ", NAMA_KEGIATAN)) AS ROMBEL_KEGIATAN');
         $this->db->from($this->table);
         $this->db->join('md_jenis_kelamin', 'ID_JK=JK_UST');
         $this->db->join('md_kecamatan', 'ID_KEC=KECAMATAN_UST');
         $this->db->join('md_kabupaten', 'ID_KAB=KABUPATEN_KEC');
         $this->db->join('md_provinsi', 'ID_PROV=PROVINSI_KAB');
+        $this->db->join('md_rombel', 'ID_ROMBEL=ROMBEL_UST', 'LEFT');
+        $this->db->join('md_kelas', 'ID_KELAS=KELAS_ROMBEL', 'LEFT');
+        $this->db->join('md_kegiatan', 'ID_KEGIATAN=KEGIATAN_KELAS', 'LEFT');
     }
 
     public function get_datatable() {
@@ -64,6 +67,8 @@ class Ustadz_model extends CI_Model {
     }
 
     public function save($data) {
+        if($data['ROMBEL_UST'] == '') $data['ROMBEL_UST'] = NULL;
+        
         if (isset($data[$this->primaryKey])) {
             $where = array($this->primaryKey => $data[$this->primaryKey]);
             unset($data[$this->primaryKey]);
@@ -93,6 +98,27 @@ class Ustadz_model extends CI_Model {
         $this->db->delete($this->table, $where);
 
         return $this->db->affected_rows();
+    }
+    
+    public function get_rombel($id) {
+        $this->db->select('ID_ROMBEL as id, CONCAT(NAMA_ROMBEL, " - ", NAMA_KEGIATAN) as title');
+        $this->db->from($this->table);
+        $this->db->join('md_rombel', 'ID_ROMBEL=ROMBEL_UST', 'RIGHT');
+        $this->db->join('md_kelas', 'ID_KELAS=KELAS_ROMBEL');
+        $this->db->join('md_kegiatan', 'ID_KEGIATAN=KEGIATAN_KELAS');
+        $this->db->join('md_ruang', 'ID_RUANG=RUANG_ROMBEL');
+        $this->db->join('md_gedung', 'ID_GEDUNG=GEDUNG_RUANG');
+        $this->db->where('ID_UST', NULL);
+        $this->db->or_where('ID_UST', $id);
+        $result = $this->db->get()->result_array();
+        
+        $result[] = array(
+            'id' => NULL,
+            'title' => 'KOSONGKAN'
+        );
+        
+        return $result;
+        
     }
 
 }

@@ -80,6 +80,15 @@ class Rapor extends CI_Controller {
                         'filterData' => $this->rombel->get_all()
                     ),
                     array(
+                        'field' => "NAMA_UST",
+                        'title' => "Wali Kelas",
+                        'sortable' => "NAMA_UST",
+                        'show' => true,
+                        'filter' => array(
+                            'NAMA_UST' => 'text'
+                        ),
+                    ),
+                    array(
                         'field' => "ACTION",
                         'title' => "Aksi",
                     ),
