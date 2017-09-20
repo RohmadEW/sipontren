@@ -21,7 +21,7 @@ class Tagihan extends CI_Controller
     {
         $data = array(
             'title' => 'Master Data Tagihan',
-            'breadcrumb' => 'Master Data > Tagihan',
+            'breadcrumb' => 'Keuangan > Tagihan',
             'table' => array(
                 array(
                     'field' => "ID_TAGIHAN",
