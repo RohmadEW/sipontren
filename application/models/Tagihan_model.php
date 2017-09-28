@@ -63,8 +63,8 @@ class Tagihan_model extends CI_Model
     
     public function get_all()
     {
-        $this->db->select('ID_TAGIHAN as id, CONCAT(NAMA_TAGIHAN, " - ", NAMA_KELAS, " - ") as title');
-        $this->_get_table();
+        $this->db->select('ID_TAGIHAN as id, CONCAT(NAMA_TAGIHAN, " | ", NAMA_KELAS, " - ", NAMA_KEGIATAN) as title');
+        $this->_get_table(FALSE);
         $result = $this->db->get();
         
         return $result->result();

@@ -55,6 +55,7 @@
         $scope.getData = getData();
         $scope.appReady = false;
         $scope.dataOriginal = null;
+        $scope.fieldTable = [];
         $scope.flex = 80;
         $scope.flexOffset = 10;
 
@@ -69,6 +70,11 @@
             $scope.breadcrumb = response.data.breadcrumb;
             $scope.table = response.data.table;
 
+            $scope.fieldTable = [];
+            angular.forEach($scope.table, function (item, key) {
+                $scope.fieldTable.push(item.field);
+            });
+
             if (response.data.wide) {
                 $scope.flex = 90;
                 $scope.flexOffset = 5;
@@ -80,7 +86,7 @@
         }
 
         function getData() {
-            $http.get($scope.mainURI + '/datatable').then(callbackDatatables, notificationService.errorCallback);
+            $http.post($scope.mainURI + '/datatable', $scope.fieldTable).then(callbackDatatables, notificationService.errorCallback);
         }
 
         function callbackDatatables(response) {
@@ -99,12 +105,12 @@
         }
 
         $scope.menuItems = [
-            { id: "add_data", name: "Tambah Data", icon: "add" },
-            { id: "download_data", name: "Unduh Data", icon: "file_download" },
-            { id: "print_data", name: "Catak Data", icon: "print" },
-            { id: "reload_data", name: "Muat Ulang Data", icon: "refresh" },
-            { id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew" },
-            { id: "request_doc", name: "Dokumentasi", icon: "help" },
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
         ];
 
         $scope.openDialog = function ($event, item) {
@@ -146,21 +152,21 @@
 
         function createDialog(event, mode) {
             $mdDialog
-                .show({
-                    controller: DialogController,
-                    clickOutsideToClose: false,
-                    templateUrl: $scope.mainTemplate + '-' + mode + '.html',
-                    targetEvent: event
-                })
-                .then(
-                function (notification) {
-                    notificationService.toastSimple(notification);
-                    getData();
-                },
-                function () {
-                    // CANCEL DIALOG
-                }
-                );
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (notification) {
+                                notificationService.toastSimple(notification);
+                                getData();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
         }
 
         function DialogController($scope, $mdDialog) {
@@ -191,12 +197,12 @@
 
         function deleteRow(event, data) {
             var confirm = $mdDialog.confirm()
-                .title('Apakah Anda yakin melanjutkan?')
-                .textContent('Data yang telah dihapus tidak dapat dikembalikan.')
-                .ariaLabel('Hapus data')
-                .targetEvent(event)
-                .ok('Ya')
-                .cancel('Tidak');
+                    .title('Apakah Anda yakin melanjutkan?')
+                    .textContent('Data yang telah dihapus tidak dapat dikembalikan.')
+                    .ariaLabel('Hapus data')
+                    .targetEvent(event)
+                    .ok('Ya')
+                    .cancel('Tidak');
 
             $mdDialog.show(confirm).then(function () {
                 $http.post($scope.mainURI + '/delete', data).then(callbackSuccessDelete, notificationService.errorCallback);
@@ -1537,14 +1543,14 @@
             urlGetDataForm.push($http.get(response.data.uri.kecamatan));
 
             $q.all(urlGetDataForm)
-                .then(
-                function (result) {
-                    callbackFormData(result);
-                },
-                function (error) {
-                    $scope.cancelSumbit();
-                }
-                );
+                    .then(
+                            function (result) {
+                                callbackFormData(result);
+                            },
+                            function (error) {
+                                $scope.cancelSumbit();
+                            }
+                    );
         }
 
         function callbackFormData(response) {
@@ -1622,15 +1628,15 @@
             if ($scope.formData.KEGIATAN_SANTRI.length === 0) {
                 notificationService.toastSimple('Kegiatan santri tidak boleh kosong.');
             } else if ($scope.form.KECAMATAN_SANTRI.$valid
-                && $scope.form.PSB_KELOMPOK_SANTRI.$valid
-                && $scope.form.NAMA_SANTRI.$valid
-                && $scope.form.JK_SANTRI.$valid
-                && $scope.form.TEMPAT_LAHIR_SANTRI.$valid
-                && $scope.form.TANGGAL_LAHIR_SANTRI.$valid
-                && $scope.form.NOHP_SANTRI.$valid
-                && $scope.form.ALAMAT_SANTRI.$valid
-                && $scope.form.AYAH_NAMA_SANTRI.$valid
-            ) {
+                    && $scope.form.PSB_KELOMPOK_SANTRI.$valid
+                    && $scope.form.NAMA_SANTRI.$valid
+                    && $scope.form.JK_SANTRI.$valid
+                    && $scope.form.TEMPAT_LAHIR_SANTRI.$valid
+                    && $scope.form.TANGGAL_LAHIR_SANTRI.$valid
+                    && $scope.form.NOHP_SANTRI.$valid
+                    && $scope.form.ALAMAT_SANTRI.$valid
+                    && $scope.form.AYAH_NAMA_SANTRI.$valid
+                    ) {
                 $scope.ajaxRunning = true;
 
                 $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
@@ -1866,12 +1872,12 @@
         }
 
         $scope.menuItems = [
-            { id: "add_data", name: "Tambah Data", icon: "add" },
-            { id: "download_data", name: "Unduh Data", icon: "file_download" },
-            { id: "print_data", name: "Catak Data", icon: "print" },
-            { id: "reload_data", name: "Muat Ulang Data", icon: "refresh" },
-            { id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew" },
-            { id: "request_doc", name: "Dokumentasi", icon: "help" },
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
         ];
 
         $scope.openDialog = function ($event, item) {
@@ -1913,21 +1919,21 @@
 
         function createDialog(event, mode) {
             $mdDialog
-                .show({
-                    controller: DialogController,
-                    clickOutsideToClose: false,
-                    templateUrl: $scope.mainTemplate + '-' + mode + '.html',
-                    targetEvent: event
-                })
-                .then(
-                function (text) {
-                    notificationService.toastSimple(text);
-                    getData();
-                },
-                function () {
-                    // CANCEL DIALOG
-                }
-                );
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (text) {
+                                notificationService.toastSimple(text);
+                                getData();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
         }
 
         function DialogController($scope, $mdDialog) {
@@ -2037,14 +2043,14 @@
             urlGetDataForm.push($http.get(response.data.uri.kecamatan));
 
             $q.all(urlGetDataForm)
-                .then(
-                function (result) {
-                    callbackFormData(result);
-                },
-                function (error) {
-                    $scope.cancelSumbit();
-                }
-                );
+                    .then(
+                            function (result) {
+                                callbackFormData(result);
+                            },
+                            function (error) {
+                                $scope.cancelSumbit();
+                            }
+                    );
         }
 
         function callbackFormData(response) {
@@ -2088,30 +2094,30 @@
 
         $scope.saveSubmit = function () {
             if (
-                ((typeof $scope.form.KECAMATAN_SANTRI === 'object') && (
-                    $scope.form.KECAMATAN_SANTRI.$valid
-                    && $scope.form.NIS_SANTRI.$valid
-                    && $scope.form.NIK_SANTRI.$valid
-                    && $scope.form.NAMA_SANTRI.$valid
-                    && $scope.form.ANGKATAN_SANTRI.$valid
-                    && $scope.form.JK_SANTRI.$valid
-                    && $scope.form.TEMPAT_LAHIR_SANTRI.$valid
-                    && $scope.form.TANGGAL_LAHIR_SANTRI.$valid
-                    && $scope.form.ALAMAT_SANTRI.$valid
-                    && $scope.form.NOHP_SANTRI.$valid
-                ))
-                ||
-                ((typeof $scope.form.AYAH_NAMA_SANTRI === 'object')
-                    && $scope.form.AYAH_NAMA_SANTRI.$valid
-                )
-                ||
-                ((typeof $scope.form.IBU_NAMA_SANTRI === 'object')
-                    && $scope.form.IBU_NAMA_SANTRI.$valid
-                )
-                ||
-                ((typeof $scope.form.WALI_NAMA_SANTRI === 'object')
-                    && $scope.form.WALI_NAMA_SANTRI.$valid
-                )) {
+                    ((typeof $scope.form.KECAMATAN_SANTRI === 'object') && (
+                            $scope.form.KECAMATAN_SANTRI.$valid
+                            && $scope.form.NIS_SANTRI.$valid
+                            && $scope.form.NIK_SANTRI.$valid
+                            && $scope.form.NAMA_SANTRI.$valid
+                            && $scope.form.ANGKATAN_SANTRI.$valid
+                            && $scope.form.JK_SANTRI.$valid
+                            && $scope.form.TEMPAT_LAHIR_SANTRI.$valid
+                            && $scope.form.TANGGAL_LAHIR_SANTRI.$valid
+                            && $scope.form.ALAMAT_SANTRI.$valid
+                            && $scope.form.NOHP_SANTRI.$valid
+                            ))
+                    ||
+                    ((typeof $scope.form.AYAH_NAMA_SANTRI === 'object')
+                            && $scope.form.AYAH_NAMA_SANTRI.$valid
+                            )
+                    ||
+                    ((typeof $scope.form.IBU_NAMA_SANTRI === 'object')
+                            && $scope.form.IBU_NAMA_SANTRI.$valid
+                            )
+                    ||
+                    ((typeof $scope.form.WALI_NAMA_SANTRI === 'object')
+                            && $scope.form.WALI_NAMA_SANTRI.$valid
+                            )) {
                 $scope.ajaxRunning = true;
 
                 $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
@@ -2208,12 +2214,12 @@
         }
 
         $scope.menuItems = [
-            { id: "add_data", name: "Tambah Data", icon: "add" },
-            { id: "download_data", name: "Unduh Data", icon: "file_download" },
-            { id: "print_data", name: "Catak Data", icon: "print" },
-            { id: "reload_data", name: "Muat Ulang Data", icon: "refresh" },
-            { id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew" },
-            { id: "request_doc", name: "Dokumentasi", icon: "help" },
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
         ];
 
         $scope.openDialog = function ($event, item) {
@@ -2255,21 +2261,21 @@
 
         function createDialog(event, mode) {
             $mdDialog
-                .show({
-                    controller: DialogController,
-                    clickOutsideToClose: false,
-                    templateUrl: $scope.mainTemplate + '-' + mode + '.html',
-                    targetEvent: event
-                })
-                .then(
-                function (text) {
-                    notificationService.toastSimple(text);
-                    getData();
-                },
-                function () {
-                    // CANCEL DIALOG
-                }
-                );
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (text) {
+                                notificationService.toastSimple(text);
+                                getData();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
         }
 
         function DialogController($scope, $mdDialog) {
@@ -2375,12 +2381,12 @@
         }
 
         $scope.menuItems = [
-            { id: "add_data", name: "Tambah Data", icon: "add" },
-            { id: "download_data", name: "Unduh Data", icon: "file_download" },
-            { id: "print_data", name: "Catak Data", icon: "print" },
-            { id: "reload_data", name: "Muat Ulang Data", icon: "refresh" },
-            { id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew" },
-            { id: "request_doc", name: "Dokumentasi", icon: "help" },
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
         ];
 
         $scope.openDialog = function ($event, item) {
@@ -2422,21 +2428,21 @@
 
         function createDialog(event, mode) {
             $mdDialog
-                .show({
-                    controller: DialogController,
-                    clickOutsideToClose: false,
-                    templateUrl: $scope.mainTemplate + '-' + mode + '.html',
-                    targetEvent: event
-                })
-                .then(
-                function (text) {
-                    notificationService.toastSimple(text);
-                    getDataSantri();
-                },
-                function () {
-                    // CANCEL DIALOG
-                }
-                );
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (text) {
+                                notificationService.toastSimple(text);
+                                getDataSantri();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
         }
 
         function DialogController($scope, $mdDialog) {
@@ -2542,12 +2548,12 @@
         }
 
         $scope.menuItems = [
-            { id: "add_data", name: "Tambah Data", icon: "add" },
-            { id: "download_data", name: "Unduh Data", icon: "file_download" },
-            { id: "print_data", name: "Catak Data", icon: "print" },
-            { id: "reload_data", name: "Muat Ulang Data", icon: "refresh" },
-            { id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew" },
-            { id: "request_doc", name: "Dokumentasi", icon: "help" },
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
         ];
 
         $scope.openDialog = function ($event, item) {
@@ -2589,21 +2595,21 @@
 
         function createDialog(event, mode) {
             $mdDialog
-                .show({
-                    controller: DialogController,
-                    clickOutsideToClose: false,
-                    templateUrl: $scope.mainTemplate + '-' + mode + '.html',
-                    targetEvent: event
-                })
-                .then(
-                function (text) {
-                    notificationService.toastSimple(text);
-                    getDataSantri();
-                },
-                function () {
-                    // CANCEL DIALOG
-                }
-                );
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (text) {
+                                notificationService.toastSimple(text);
+                                getDataSantri();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
         }
 
         function DialogController($scope, $mdDialog) {
@@ -2732,12 +2738,12 @@
         }
 
         $scope.menuItems = [
-            { id: "add_data", name: "Tambah Data", icon: "add" },
-            { id: "download_data", name: "Unduh Data", icon: "file_download" },
-            { id: "print_data", name: "Catak Data", icon: "print" },
-            { id: "reload_data", name: "Muat Ulang Data", icon: "refresh" },
-            { id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew" },
-            { id: "request_doc", name: "Dokumentasi", icon: "help" },
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
         ];
 
         $scope.openDialog = function ($event, item) {
@@ -2779,21 +2785,21 @@
 
         function createDialog(event, mode) {
             $mdDialog
-                .show({
-                    controller: DialogController,
-                    clickOutsideToClose: false,
-                    templateUrl: $scope.mainTemplate + '-' + mode + '.html',
-                    targetEvent: event
-                })
-                .then(
-                function (text) {
-                    notificationService.toastSimple(text);
-                    getDataSantri();
-                },
-                function () {
-                    // CANCEL DIALOG
-                }
-                );
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (text) {
+                                notificationService.toastSimple(text);
+                                getDataSantri();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
         }
 
         function DialogController($scope, $mdDialog) {
@@ -2911,14 +2917,14 @@
             urlGetDataForm.push($http.get(response.data.uri.kecamatan));
 
             $q.all(urlGetDataForm)
-                .then(
-                function (result) {
-                    callbackFormData(result);
-                },
-                function (error) {
-                    $scope.cancelSumbit();
-                }
-                );
+                    .then(
+                            function (result) {
+                                callbackFormData(result);
+                            },
+                            function (error) {
+                                $scope.cancelSumbit();
+                            }
+                    );
         }
 
         function callbackFormData(response) {
@@ -2940,14 +2946,14 @@
             urlDataForm.push($http.post($scope.mainURI + '/get_rombel', $scope.dataUpdate));
 
             $q.all(urlDataForm)
-                .then(
-                function (result) {
-                    callbackFormDataView(result);
-                },
-                function (error) {
-                    $scope.cancelSumbit();
-                }
-                );
+                    .then(
+                            function (result) {
+                                callbackFormDataView(result);
+                            },
+                            function (error) {
+                                $scope.cancelSumbit();
+                            }
+                    );
         }
 
         function callbackFormDataView(response) {
@@ -2976,13 +2982,13 @@
 
         $scope.saveSubmit = function () {
             if ($scope.form.KECAMATAN_UST.$valid
-                && $scope.form.NIP_UST.$valid
-                && $scope.form.NAMA_UST.$valid
-                && $scope.form.JK_UST.$valid
-                && $scope.form.TEMPAT_LAHIR_UST.$valid
-                && $scope.form.TANGGAL_LAHIR_UST.$valid
-                && $scope.form.ALAMAT_UST.$valid
-            ) {
+                    && $scope.form.NIP_UST.$valid
+                    && $scope.form.NAMA_UST.$valid
+                    && $scope.form.JK_UST.$valid
+                    && $scope.form.TEMPAT_LAHIR_UST.$valid
+                    && $scope.form.TANGGAL_LAHIR_UST.$valid
+                    && $scope.form.ALAMAT_UST.$valid
+                    ) {
                 $scope.ajaxRunning = true;
 
                 $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
@@ -3182,12 +3188,12 @@
         }
 
         $scope.menuItems = [
-            { id: "add_data", name: "Tambah Data", icon: "add" },
-            { id: "download_data", name: "Unduh Data", icon: "file_download" },
-            { id: "print_data", name: "Catak Data", icon: "print" },
-            { id: "reload_data", name: "Muat Ulang Data", icon: "refresh" },
-            { id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew" },
-            { id: "request_doc", name: "Dokumentasi", icon: "help" },
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
         ];
 
         $scope.openDialog = function ($event, item) {
@@ -3229,21 +3235,21 @@
 
         function createDialog(event, mode) {
             $mdDialog
-                .show({
-                    controller: DialogController,
-                    clickOutsideToClose: false,
-                    templateUrl: $scope.mainTemplate + '-' + mode + '.html',
-                    targetEvent: event
-                })
-                .then(
-                function (text) {
-                    notificationService.toastSimple(text);
-                    getDataSantri();
-                },
-                function () {
-                    // CANCEL DIALOG
-                }
-                );
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (text) {
+                                notificationService.toastSimple(text);
+                                getDataSantri();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
         }
 
         function DialogController($scope, $mdDialog) {
@@ -3489,6 +3495,713 @@
             $scope.ajaxRunning = false;
             $mdDialog.hide(response.data.notification);
             dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
+    angular.module('mainApp').controller('keuTagihanController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.mainTemplate = url_template + $routeParams.template;
+        $scope.appReady = false;
+        $scope.dataOriginal = null;
+        $scope.flex = 90;
+        $scope.flexOffset = 5;
+
+        $scope.fabHidden = true;
+        $scope.fabIsOpen = false;
+        $scope.fabHover = false;
+
+        $scope.formReady = false;
+
+        $scope.formData = {
+            ROMBEL_AS: null,
+            TAGIHAN_KPC: null,
+        };
+
+        $scope.formDataTag = {
+            TAGIHAN_KPC: [],
+        };
+
+        $scope.$watch('formData.TAGIHAN_KPC', function (ROMBEL_AS) {
+            $scope.formReady = false;
+        });
+
+        $scope.$watch('formData.ROMBEL_AS', function (ROMBEL_AS) {
+            $scope.formReady = false;
+            $scope.formData.TAGIHAN_KPC = null;
+
+            if (ROMBEL_AS !== null)
+                $http.post($scope.mainURI + '/get_tagihan', $scope.formData).then(callbackSuccessTagihan, notificationService.errorCallback);
+        });
+
+        function callbackSuccessTagihan(response) {
+            $scope.dataTAGIHAN_KPC = response.data;
+        }
+
+        $http.get($scope.mainURI + '/index').then(callbackSuccess, notificationService.errorCallback);
+
+        function callbackSuccess(response) {
+            $scope.title = response.data.title;
+            $scope.breadcrumb = response.data.breadcrumb;
+            $scope.table = response.data.table;
+            $scope.dataROMBEL_AS = response.data.rombel;
+
+            $scope.appReady = true;
+        }
+
+        $scope.pilihFilter = function (form) {
+            if (form.$valid) {
+                getDataSantri();
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function getDataSantri() {
+            if ($scope.formData.TAGIHAN_KPC !== '')
+                $http.post($scope.mainURI + '/datatable', $scope.formData).then(callbackDatatablesSantri, notificationService.errorCallback);
+            else
+                notificationService.toastSimple('Tidak ada tagihan pada rombel tersebut.');
+        }
+
+        function callbackDatatablesSantri(response) {
+            $scope.dataOriginal = response.data.data;
+
+            var initialParams = {
+                count: 15
+            };
+            var initialSettings = {
+                counts: [],
+                dataset: response.data.data
+            };
+
+            $scope.dataTablesSantri = new NgTableParams(initialParams, initialSettings);
+            $scope.fabHidden = false;
+            $scope.formReady = true;
+
+            setDatatableKeu();
+        }
+
+        function setDatatableKeu() {
+            angular.forEach($scope.dataOriginal, function (item, index) {
+                $scope.formDataTag.TAGIHAN_KPC[item.ID_SANTRI] = item.TAGIHAN_KPC_SHOW === null ? true : false;
+            });
+        }
+
+        $scope.prosesTagihan = function (row) {
+            var dataSantri = {
+                SANTRI_KPC: row.ID_SANTRI,
+                STATUS_TAGIHAN: $scope.formDataTag.TAGIHAN_KPC[parseInt(row.ID_SANTRI)],
+                TAGIHAN_KPC: $scope.formData.TAGIHAN_KPC,
+            };
+
+            $http.post($scope.mainURI + '/prosesTagihan', dataSantri).then(callbackSuccessProsesSantri, notificationService.errorCallback);
+        }
+
+        function callbackSuccessProsesSantri(response) {
+            notificationService.toastSimple(response.data.notification);
+        }
+
+        $scope.menuItems = [
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
+        ];
+
+        $scope.openDialog = function ($event, item) {
+            if (item.id === 'reload_data') {
+                $scope.fabHidden = true;
+                getDataSantri();
+            } else if (item.id === 'reload_page') {
+                reloadPage();
+            } else if (item.id === 'request_doc') {
+                $mdSidenav('right').toggle();
+            } else if (item.id === 'add_data') {
+                createDialog($event, 'form');
+            } else if (item.id === 'print_data') {
+                var mywindow = window.open('', 'PRINT', 'height=600,width=700');
+
+                mywindow.document.write('<html><head><title>' + document.title + '</title><style type="text/css">body{font-family: "Roboto",Arial,sans-serif;overflow:visible;}.ng-table-filters,.ng-table-counts{display: none;} tr {border-top: 1px solid #f2f6f9;} .data-table{overflow: visible;} table{overflow:visible;}body, h1, h2, h3, ol, ul, div {     width: auto;     border: 0;     margin: 0 5%;     padding: 0;     float: none;     position: static;     overflow: visible; }</style>');
+                mywindow.document.write('</head><body onload="window.print()">');
+                mywindow.document.write('<h1>' + document.title + '</h1>');
+                mywindow.document.write(document.getElementById('printable').innerHTML);
+                mywindow.document.write('</body></html>');
+
+                mywindow.document.close();
+                mywindow.focus();
+
+                return true;
+            } else if (item.id === 'download_data') {
+                if ($scope.dataOriginal === null)
+                    notificationService.toastSimple('Data tidak ditemukan');
+                else
+                    alasql('SELECT * INTO XLSX("data_download.xlsx",{headers:true}) FROM ?', [$scope.dataOriginal]);
+            }
+        };
+
+        function reloadPage() {
+            var currentPageTemplate = $route.current.templateUrl;
+            $templateCache.remove(currentPageTemplate);
+            $route.reload();
+        }
+
+        function createDialog(event, mode) {
+            $mdDialog
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (text) {
+                                notificationService.toastSimple(text);
+                                getDataSantri();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
+        }
+
+        function DialogController($scope, $mdDialog) {
+            $scope.cancelSumbit = function () {
+                dataScopeShared.addData('DATA_UPDATE', null);
+                $mdDialog.cancel();
+            };
+        }
+    });
+
+    angular.module('mainApp').controller('keuPembayaranController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache, dataScopeShared, formHelper) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.mainTemplate = url_template + $routeParams.template;
+        $scope.appReady = false;
+        $scope.dataOriginal = null;
+        $scope.flex = 80;
+        $scope.flexOffset = 10;
+
+        $scope.fabHidden = true;
+        $scope.fabIsOpen = false;
+        $scope.fabHover = false;
+
+        $scope.formReady = false;
+        $scope.total_tagihan = 0;
+        $scope.data_tagihan = [];
+
+        $scope.formData = {
+            ID_SANTRI: null,
+        };
+
+        $scope.formDataTag = {
+            TAGIHAN_BAYAR: [],
+            NOMINAL_TAGIHAN: [],
+        };
+
+        $scope.$watch('formData.ID_SANTRI', function (ID_SANTRI) {
+            $scope.formReady = false;
+
+            getTagihan();
+        });
+
+        $http.get($scope.mainURI + '/index').then(callbackSuccess, notificationService.errorCallback);
+
+        function callbackSuccess(response) {
+            $scope.title = response.data.title;
+            $scope.breadcrumb = response.data.breadcrumb;
+            $scope.table = response.data.table;
+            $scope.ID_SANTRI = {
+                dataAutocomplete: response.data.santri
+            };
+            $scope.ID_SANTRI = formHelper.autocomplete($scope.ID_SANTRI);
+
+            $scope.appReady = true;
+        }
+
+        $scope.$watch('ID_SANTRI.selectedItem', function (selectedItem) {
+            if (typeof selectedItem === 'undefined' || selectedItem.key === null || selectedItem === null) {
+                $scope.formData.ID_SANTRI = null;
+            } else {
+                $scope.formData.ID_SANTRI = selectedItem.key;
+            }
+        });
+
+        $scope.pilihFilter = function (form) {
+            if (form.ID_SANTRI.$valid) {
+                getTagihan();
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function getTagihan() {
+            if ($scope.formData.ID_SANTRI !== null)
+                $http.post($scope.mainURI + '/get_tagihan', $scope.formData).then(callbackSuccessTagihan, notificationService.errorCallback);
+        }
+
+        function callbackSuccessTagihan(response) {
+            $scope.dataOriginal = response.data.data;
+
+            var initialParams = {
+                count: 15
+            };
+            var initialSettings = {
+                counts: [],
+                dataset: response.data.data
+            };
+
+            $scope.dataTablesTagihan = new NgTableParams(initialParams, initialSettings);
+            $scope.fabHidden = false;
+            $scope.formReady = true;
+
+            $scope.total_tagihan = 0;
+            setDatatableKeu();
+        }
+
+        function setDatatableKeu() {
+            angular.forEach($scope.dataOriginal, function (item, index) {
+                $scope.formDataTag.TAGIHAN_BAYAR[item.ID_TAGIHAN] = item.TAGIHAN_BAYAR === null ? false : true;
+                $scope.formDataTag.NOMINAL_TAGIHAN[item.ID_TAGIHAN] = parseInt(item.NOMINAL_TAGIHAN);
+            });
+        }
+
+        $scope.prosesPembayaran = function (ev) {
+            if ($scope.data_tagihan.length > 0) {
+                var confirm = $mdDialog.confirm()
+                        .title('Santri membayar sebanyak Rp ' + $scope.total_tagihan + '. Simpan pembayaran?')
+                        .targetEvent(ev)
+                        .ok('YA')
+                        .cancel('TIDAK');
+
+                $mdDialog.show(confirm).then(function () {
+                    var dataSantri = {
+                        DATA_TAGIHAN: $scope.data_tagihan,
+                        SANTRI_BAYAR: $scope.formData.ID_SANTRI,
+                    };
+
+                    $http.post($scope.mainURI + '/prosesPembayaran', dataSantri).then(callbackSuccessProsesSantri, notificationService.errorCallback);
+                }, function () {
+
+                });
+            } else {
+                notificationService.toastSimple('Silahkan pilih tagihan yang akan dibayar terlebih dahulu');
+            }
+        }
+
+        function callbackSuccessProsesSantri(response) {
+            $scope.hapusInput();
+
+            notificationService.toastSimple(response.data.notification);
+        }
+
+        $scope.hitungTagihan = function () {
+            $scope.total_tagihan = 0;
+
+            $scope.data_tagihan = [];
+
+            angular.forEach($scope.formDataTag.TAGIHAN_BAYAR, function (status, id) {
+                if (status) {
+                    $scope.data_tagihan.push(id);
+                    $scope.total_tagihan += $scope.formDataTag.NOMINAL_TAGIHAN[id];
+                }
+            });
+
+        }
+
+        $scope.hapusInput = function () {
+            $scope.formDataTag.TAGIHAN_BAYAR = [];
+            $scope.ID_SANTRI.selectedItem = null;
+            $scope.formData.ID_SANTRI = null;
+        }
+
+        $scope.menuItems = [
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
+        ];
+
+        $scope.openDialog = function ($event, item) {
+            if (item.id === 'reload_data') {
+                $scope.fabHidden = true;
+                getDataSantri();
+            } else if (item.id === 'reload_page') {
+                reloadPage();
+            } else if (item.id === 'request_doc') {
+                $mdSidenav('right').toggle();
+            } else if (item.id === 'add_data') {
+                createDialog($event, 'form');
+            } else if (item.id === 'print_data') {
+                var mywindow = window.open('', 'PRINT', 'height=600,width=700');
+
+                mywindow.document.write('<html><head><title>' + document.title + '</title><style type="text/css">body{font-family: "Roboto",Arial,sans-serif;overflow:visible;}.ng-table-filters,.ng-table-counts{display: none;} tr {border-top: 1px solid #f2f6f9;} .data-table{overflow: visible;} table{overflow:visible;}body, h1, h2, h3, ol, ul, div {     width: auto;     border: 0;     margin: 0 5%;     padding: 0;     float: none;     position: static;     overflow: visible; }</style>');
+                mywindow.document.write('</head><body onload="window.print()">');
+                mywindow.document.write('<h1>' + document.title + '</h1>');
+                mywindow.document.write(document.getElementById('printable').innerHTML);
+                mywindow.document.write('</body></html>');
+
+                mywindow.document.close();
+                mywindow.focus();
+
+                return true;
+            } else if (item.id === 'download_data') {
+                if ($scope.dataOriginal === null)
+                    notificationService.toastSimple('Data tidak ditemukan');
+                else
+                    alasql('SELECT * INTO XLSX("data_download.xlsx",{headers:true}) FROM ?', [$scope.dataOriginal]);
+            }
+        };
+
+        function reloadPage() {
+            var currentPageTemplate = $route.current.templateUrl;
+            $templateCache.remove(currentPageTemplate);
+            $route.reload();
+        }
+
+        function createDialog(event, mode) {
+            $mdDialog
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (text) {
+                                notificationService.toastSimple(text);
+                                getDataSantri();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
+        }
+
+        function DialogController($scope, $mdDialog) {
+            $scope.cancelSumbit = function () {
+                dataScopeShared.addData('DATA_UPDATE', null);
+                $mdDialog.cancel();
+            };
+        }
+    });
+
+    angular.module('mainApp').controller('perpusJenisController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+
+        $scope.formData = {
+            ID_PJB: null,
+            NAMA_PJB: null,
+        };
+
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData.ID_PJB = response.data.ID_PJB;
+            $scope.formData.NAMA_PJB = response.data.NAMA_PJB;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
+    angular.module('mainApp').controller('perpusBukuController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+        $scope.flex = 80;
+        $scope.flexOffset = 10;
+
+        $scope.formData = {
+            ID_BUKU: null,
+            KODE_BUKU: null,
+            JENIS_BUKU: null,
+            NAMA_BUKU: null,
+            PENGARANG_BUKU: null,
+            PENERBIT_BUKU: null,
+            STOK_BUKU: null,
+            KETERANGAN_BUKU: null,
+        };
+
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            $scope.dataJENIS_BUKU = response.data.jenis;
+
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData = response.data;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
+    angular.module('mainApp').controller('perpusPeminajamanController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache, dataScopeShared, formHelper) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.mainTemplate = url_template + $routeParams.template;
+        $scope.appReady = false;
+        $scope.dataOriginal = null;
+        $scope.flex = 80;
+        $scope.flexOffset = 10;
+
+        $scope.fabHidden = true;
+        $scope.fabIsOpen = false;
+        $scope.fabHover = false;
+
+        $scope.formReady = false;
+        $scope.data_pinjaman = [];
+        $scope.data_buku = [];
+
+        $scope.formData = {
+            ID_SANTRI: null,
+            ID_BUKU: null,
+        };
+
+        $http.get($scope.mainURI + '/index').then(callbackSuccess, notificationService.errorCallback);
+
+        function callbackSuccess(response) {
+            $scope.title = response.data.title;
+            $scope.breadcrumb = response.data.breadcrumb;
+            $scope.table = response.data.table;
+            
+            $scope.ID_SANTRI = {
+                dataAutocomplete: response.data.santri
+            };
+            $scope.ID_SANTRI = formHelper.autocomplete($scope.ID_SANTRI);
+            
+            $scope.ID_BUKU = {
+                dataAutocomplete: response.data.buku
+            };
+            $scope.ID_BUKU = formHelper.autocomplete($scope.ID_BUKU);
+
+            $scope.appReady = true;
+        }
+
+        $scope.$watch('ID_SANTRI.selectedItem', function (selectedItem) {
+            if (typeof selectedItem === 'undefined' || selectedItem.key === null || selectedItem === null) {
+                $scope.formData.ID_SANTRI = null;
+            } else {
+                $scope.formData.ID_SANTRI = selectedItem.key;
+                hapusInput();
+                $scope.formReady = true;
+            }
+        });
+
+        $scope.tambahPeminjaman = function (form) {
+            if (form.ID_BUKU.$valid) {
+                $scope.data_pinjaman.push(form.ID_BUKU);
+                
+                getBuku();
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function getBuku() {
+            var formDataBuku = {
+                ID_BUKU: $scope.formData.ID_BUKU
+            };
+            $http.post($scope.mainURI + '/get_buku', formDataBuku).then(callbackSuccessBuku, notificationService.errorCallback);
+        }
+
+        function callbackSuccessBuku(response) {
+            $scope.data_buku.push(response.data);
+            
+            $scope.ID_BUKU.selectedItem = null;
+        }
+
+        $scope.prosesPeminjaman = function (ev) {
+            if ($scope.data_pinjaman.length > 0) {
+                var confirm = $mdDialog.confirm()
+                        .title('Apakan Anda akan menyimpan pinjaman buku santri?')
+                        .targetEvent(ev)
+                        .ok('YA')
+                        .cancel('TIDAK');
+
+                $mdDialog.show(confirm).then(function () {
+                    var dataSantri = {
+                        DATA_PINJAMAN: $scope.data_pinjaman,
+                        ID_SANTRI: $scope.formData.ID_SANTRI,
+                    };
+
+                    $http.post($scope.mainURI + '/proses_peminjaman', dataSantri).then(callbackSuccessProsesSantri, notificationService.errorCallback);
+                }, function () {
+
+                });
+            } else {
+                notificationService.toastSimple('Silahkan pilih tagihan yang akan dibayar terlebih dahulu');
+            }
+        }
+
+        function callbackSuccessProsesSantri(response) {
+            $scope.hapusInput();
+
+            notificationService.toastSimple(response.data.notification);
+        }
+
+        $scope.hapusInput = function () {
+            $scope.data_pinjaman = [];
+            $scope.data_buku = [];
+            $scope.formData.ID_SANTRI = null;
+        };
+
+        $scope.menuItems = [
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
+        ];
+
+        $scope.openDialog = function ($event, item) {
+            if (item.id === 'reload_data') {
+                $scope.fabHidden = true;
+                getDataSantri();
+            } else if (item.id === 'reload_page') {
+                reloadPage();
+            } else if (item.id === 'request_doc') {
+                $mdSidenav('right').toggle();
+            } else if (item.id === 'add_data') {
+                createDialog($event, 'form');
+            } else if (item.id === 'print_data') {
+                var mywindow = window.open('', 'PRINT', 'height=600,width=700');
+
+                mywindow.document.write('<html><head><title>' + document.title + '</title><style type="text/css">body{font-family: "Roboto",Arial,sans-serif;overflow:visible;}.ng-table-filters,.ng-table-counts{display: none;} tr {border-top: 1px solid #f2f6f9;} .data-table{overflow: visible;} table{overflow:visible;}body, h1, h2, h3, ol, ul, div {     width: auto;     border: 0;     margin: 0 5%;     padding: 0;     float: none;     position: static;     overflow: visible; }</style>');
+                mywindow.document.write('</head><body onload="window.print()">');
+                mywindow.document.write('<h1>' + document.title + '</h1>');
+                mywindow.document.write(document.getElementById('printable').innerHTML);
+                mywindow.document.write('</body></html>');
+
+                mywindow.document.close();
+                mywindow.focus();
+
+                return true;
+            } else if (item.id === 'download_data') {
+                if ($scope.dataOriginal === null)
+                    notificationService.toastSimple('Data tidak ditemukan');
+                else
+                    alasql('SELECT * INTO XLSX("data_download.xlsx",{headers:true}) FROM ?', [$scope.dataOriginal]);
+            }
+        };
+
+        function reloadPage() {
+            var currentPageTemplate = $route.current.templateUrl;
+            $templateCache.remove(currentPageTemplate);
+            $route.reload();
+        }
+
+        function createDialog(event, mode) {
+            $mdDialog
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (text) {
+                                notificationService.toastSimple(text);
+                                getDataSantri();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
+        }
+
+        function DialogController($scope, $mdDialog) {
+            $scope.cancelSumbit = function () {
+                dataScopeShared.addData('DATA_UPDATE', null);
+                $mdDialog.cancel();
+            };
         }
     });
 })();

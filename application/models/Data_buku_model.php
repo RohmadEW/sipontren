@@ -8,39 +8,38 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * and open the template in the editor.
  */
 
-class Data_santri_model extends CI_Model {
+class Data_buku_model extends CI_Model {
 
-    var $table = 'md_santri';
-    var $primaryKey = 'ID_SANTRI';
+    var $table = 'perpus_buku';
+    var $primaryKey = 'ID_BUKU';
+    var $user = 'USER_BUKU';
 
     public function __construct() {
         parent::__construct();
     }
 
-    private function _get_table($select = true) {
-        if ($select)
-            $this->db->select('*, CONCAT(ALAMAT_SANTRI, ", ", NAMA_KEC, ", ", NAMA_KAB, ", ", NAMA_PROV) AS ALAMAT_LENGKAP_SANTRI, IF(ID_KAMAR IS NULL, "-", CONCAT(NAMA_KAMAR, " - ", NAMA_GEDUNG)) AS KAMAR_SANTRI, CONCAT(TEMPAT_LAHIR_SANTRI, ", ", DATE_FORMAT(TANGGAL_LAHIR_SANTRI, "%d-%m-%Y")) AS TTL_SANTRI');
+    private function _get_table() {
         $this->db->from($this->table);
-        $this->db->join('md_jenis_kelamin', 'ID_JK=JK_SANTRI');
-        $this->db->join('md_kecamatan', 'ID_KEC=KECAMATAN_SANTRI');
-        $this->db->join('md_kabupaten', 'ID_KAB=KABUPATEN_KEC');
-        $this->db->join('md_provinsi', 'ID_PROV=PROVINSI_KAB');
-        $this->db->join('md_kamar', 'ID_KAMAR=KAMAR_SANTRI', 'LEFT');
-        $this->db->join('md_gedung', 'GEDUNG_KAMAR=ID_GEDUNG', 'LEFT');
-        $this->db->where(array(
-            'ALUMNI_SANTRI' => 0,
-            'AKTIF_SANTRI' => 1,
-            'STATUS_MUTASI_SANTRI' => NULL,
-        ));
+        $this->db->join('perpus_jenis_buku', 'JENIS_BUKU=ID_PJB');
+        $this->db->order_by('NAMA_BUKU', 'ASC');
     }
 
-    public function get_datatable() {
+    public function get_datatable($post) {
+        $this->db->select($this->database_handler->set_select($post));
         $this->_get_table();
         $data = $this->db->get()->result();
 
         $result = array(
             "data" => $data
         );
+
+        return $result;
+    }
+
+    public function get_form_data($id) {
+        $this->db->from($this->table);
+        $this->db->where($this->primaryKey, $id);
+        $result = $this->db->get()->row_array();
 
         return $result;
     }
@@ -53,28 +52,17 @@ class Data_santri_model extends CI_Model {
         return $result;
     }
 
-    public function get_data_form($id) {
-        $this->db->from($this->table);
-        $this->db->where($this->primaryKey, $id);
-        $result = $this->db->get()->row_array();
-
-        return $result;
-    }
-
     public function get_all() {
-        $this->db->select('ID_SANTRI as id,  CONCAT("NIS: ",IF(NIS_SANTRI IS NULL, "-", NIS_SANTRI), " | ", "NAMA: ", NAMA_SANTRI," | ", "KAMAR: ", IF(ID_KAMAR IS NULL, "-", CONCAT(NAMA_KAMAR, " - ", NAMA_GEDUNG))) as title');
-        $this->_get_table(FALSE);
+        $this->db->select('ID_BUKU as id, CONCAT("KODE: ",KODE_BUKU, " | ", "NAMA: ", NAMA_BUKU, " | ", "PENGARANG: ",PENGARANG_BUKU) as title');
+        $this->_get_table();
         $result = $this->db->get();
 
         return $result->result();
     }
 
     public function save($data) {
-        foreach ($data as $key => $value) {
-            if ($value === NULL)
-                unset($data[$key]);
-        }
-
+        if ($this->user != '')
+            $data[$this->user] = $this->session->userdata('ID_USER');
         if (isset($data[$this->primaryKey])) {
             $where = array($this->primaryKey => $data[$this->primaryKey]);
             unset($data[$this->primaryKey]);

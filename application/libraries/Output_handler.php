@@ -136,7 +136,7 @@ class Output_handler {
         ';
     }
 
-    private function form_autocomplete($data) {
+    public function form_autocomplete($data) {
         if (!isset($data['required']))
             $data['required'] = true;
         echo '

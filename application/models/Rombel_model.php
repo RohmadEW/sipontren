@@ -50,7 +50,7 @@ class Rombel_model extends CI_Model {
     }
 
     public function get_all() {
-        $this->db->select('ID_ROMBEL as id, CONCAT(NAMA_ROMBEL, " - ", NAMA_KEGIATAN, " | ", "WALI KELAS = ",  IF(ID_UST IS NULL, CONCAT("BELUM ", "ADA"), NAMA_UST)) as title');
+        $this->db->select('ID_ROMBEL as id, CONCAT(NAMA_ROMBEL, " - ", NAMA_KEGIATAN, " | ", "WALI KELAS: ",  IF(ID_UST IS NULL, CONCAT("BELUM ", "ADA"), NAMA_UST)) as title');
         $this->_get_table(FALSE);
         $result = $this->db->get();
 
