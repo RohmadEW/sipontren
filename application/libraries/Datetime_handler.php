@@ -15,7 +15,7 @@ class Datetime_handler {
         if ($normal)
             return date('Y-m-d', strtotime($date));
         else
-            return date('Y-m-d', strtotime($date . ' +1 days'));
+            return date('Y-m-d', strtotime('+1 days', strtotime($date)));
     }
 
 }

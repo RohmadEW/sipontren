@@ -85,6 +85,7 @@ class Presensi_model extends CI_Model {
         $this->db->delete('akad_absensi', $where);
         
         if ($data['ALASAN_ABSENSI'] != 'HADIR') {
+            $data['TA_ABSENSI'] = $this->session->userdata('ID_TA');
             $data['CAWU_ABSENSI'] = $this->session->userdata('ID_CAWU');
             $data['USER_ABSENSI'] = $this->session->userdata('ID_USER');
             $this->db->insert('akad_absensi', $data);

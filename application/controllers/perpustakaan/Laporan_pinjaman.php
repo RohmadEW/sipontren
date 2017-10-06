@@ -2,27 +2,24 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Peminjaman extends CI_Controller {
+class Laporan_pinjaman extends CI_Controller {
 
-    var $primaryKey = 'ID_SANTRI';
+    var $primaryKey = 'ID_BUKU';
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'peminjaman_model' => 'peminjaman',
-            'data_santri_model' => 'data_santri',
-            'data_buku_model' => 'data_buku',
-            'jenis_buku_model' => 'jenis_buku',
+            'laporan_pinjaman_model' => 'laporan_pinjaman',
+            'jenis_buku_model' => 'jenis',
         ));
-        $this->auth->validation(array(1, 4));
+        $this->auth->validation(array(1, 3));
     }
 
     public function index() {
         $data = array(
-            'title' => 'Peminjaman Buku',
-            'breadcrumb' => 'Perpustakaan > Peminjaman Buku',
-            'santri' => $this->data_santri->get_all(),
-            'buku' => $this->peminjaman->get_buku(),
+            'title' => 'Laporan Pinjaman',
+            'breadcrumb' => 'Perpustakaan > Laporan -> Pinjaman',
+            'wide' => true,
             'table' => array(
                 array(
                     'field' => "ID_BUKU",
@@ -34,6 +31,42 @@ class Peminjaman extends CI_Controller {
                     )
                 ),
                 array(
+                    'field' => "ID_PJB",
+                    'title' => "ID",
+                    'sortable' => "ID_PJB",
+                    'show' => FALSE,
+                    'filter' => array(
+                        'ID_PJB' => 'number'
+                    )
+                ),
+                array(
+                    'field' => "NIS_SANTRI",
+                    'title' => "NIS",
+                    'sortable' => "NIS_SANTRI",
+                    'show' => TRUE,
+                    'filter' => array(
+                        'NIS_SANTRI' => 'text'
+                    )
+                ),
+                array(
+                    'field' => "NAMA_SANTRI",
+                    'title' => "Nama Santri",
+                    'sortable' => "NAMA_SANTRI",
+                    'show' => TRUE,
+                    'filter' => array(
+                        'NAMA_SANTRI' => 'text'
+                    )
+                ),
+                array(
+                    'field' => "KAMAR_SANTRI",
+                    'title' => "Kamar",
+                    'sortable' => "KAMAR_SANTRI",
+                    'show' => TRUE,
+                    'filter' => array(
+                        'KAMAR_SANTRI' => 'text'
+                    )
+                ),
+                array(
                     'field' => "NAMA_PJB",
                     'title' => "Jenis Buku",
                     'sortable' => "NAMA_PJB",
@@ -41,7 +74,16 @@ class Peminjaman extends CI_Controller {
                     'filter' => array(
                         'ID_PJB' => 'select'
                     ),
-                    'filterData' => $this->jenis_buku->get_all()
+                    'filterData' => $this->jenis->get_all()
+                ),
+                array(
+                    'field' => "TANGGAL_PINJAM",
+                    'title' => "Tanggal",
+                    'sortable' => "TANGGAL_PINJAM",
+                    'show' => true,
+                    'filter' => array(
+                        'TANGGAL_PINJAM' => 'text'
+                    ),
                 ),
                 array(
                     'field' => "KODE_BUKU",
@@ -79,30 +121,16 @@ class Peminjaman extends CI_Controller {
                         'PENERBIT_BUKU' => 'text'
                     )
                 ),
-                array(
-                    'field' => "ACTION",
-                    'title' => "Aksi",
-                ),
             )
         );
         $this->output_handler->output_JSON($data);
     }
-    
-    public function get_buku() {
-        $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->data_buku->get_by_id($post['ID_BUKU']);
+    public function datatable() {
+        $post = json_decode(file_get_contents('php://input'), true);
+        
+        $data = $this->laporan_pinjaman->get_datatable($post);
 
         $this->output_handler->output_JSON($data);
     }
-
-    public function proses_peminjaman() {
-        $data = json_decode(file_get_contents('php://input'), true);
-
-        $result = $this->peminjaman->proses_peminjaman($data);
-        $message = 'diproses';
-
-        $this->output_handler->output_JSON($result, $message);
-    }
-
 }

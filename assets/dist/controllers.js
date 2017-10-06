@@ -4050,12 +4050,12 @@
             $scope.title = response.data.title;
             $scope.breadcrumb = response.data.breadcrumb;
             $scope.table = response.data.table;
-            
+
             $scope.ID_SANTRI = {
                 dataAutocomplete: response.data.santri
             };
             $scope.ID_SANTRI = formHelper.autocomplete($scope.ID_SANTRI);
-            
+
             $scope.ID_BUKU = {
                 dataAutocomplete: response.data.buku
             };
@@ -4069,15 +4069,23 @@
                 $scope.formData.ID_SANTRI = null;
             } else {
                 $scope.formData.ID_SANTRI = selectedItem.key;
-                hapusInput();
+
                 $scope.formReady = true;
+            }
+        });
+
+        $scope.$watch('ID_BUKU.selectedItem', function (selectedItem) {
+            if (typeof selectedItem === 'undefined' || selectedItem.key === null || selectedItem === null) {
+                $scope.formData.ID_BUKU = null;
+            } else {
+                $scope.formData.ID_BUKU = selectedItem.key;
             }
         });
 
         $scope.tambahPeminjaman = function (form) {
             if (form.ID_BUKU.$valid) {
-                $scope.data_pinjaman.push(form.ID_BUKU);
-                
+                $scope.data_pinjaman.push($scope.formData.ID_BUKU);
+
                 getBuku();
             } else {
                 notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
@@ -4093,9 +4101,24 @@
 
         function callbackSuccessBuku(response) {
             $scope.data_buku.push(response.data);
-            
+
             $scope.ID_BUKU.selectedItem = null;
         }
+
+        $scope.hapusBuku = function (index, ev) {
+            var confirm = $mdDialog.confirm()
+                    .title('Apakan Anda akan menghapus buku tsb?')
+                    .targetEvent(ev)
+                    .ok('YA')
+                    .cancel('TIDAK');
+
+            $mdDialog.show(confirm).then(function () {
+                $scope.data_buku.splice(index, 1);
+                $scope.data_pinjaman.splice(index, 1);
+            }, function () {
+
+            });
+        };
 
         $scope.prosesPeminjaman = function (ev) {
             if ($scope.data_pinjaman.length > 0) {
@@ -4116,12 +4139,12 @@
 
                 });
             } else {
-                notificationService.toastSimple('Silahkan pilih tagihan yang akan dibayar terlebih dahulu');
+                notificationService.toastSimple('Silahkan pilih buku yang akan dipinjam terlebih dahulu');
             }
         }
 
         function callbackSuccessProsesSantri(response) {
-            $scope.hapusInput();
+            reloadPage();
 
             notificationService.toastSimple(response.data.notification);
         }
@@ -4130,7 +4153,145 @@
             $scope.data_pinjaman = [];
             $scope.data_buku = [];
             $scope.formData.ID_SANTRI = null;
+            $scope.ID_SANTRI.selectedItem = null;
         };
+
+        $scope.menuItems = [
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
+        ];
+
+        $scope.openDialog = function ($event, item) {
+            if (item.id === 'reload_data') {
+                $scope.fabHidden = true;
+                getDataSantri();
+            } else if (item.id === 'reload_page') {
+                reloadPage();
+            } else if (item.id === 'request_doc') {
+                $mdSidenav('right').toggle();
+            } else if (item.id === 'add_data') {
+                createDialog($event, 'form');
+            } else if (item.id === 'print_data') {
+                var mywindow = window.open('', 'PRINT', 'height=600,width=700');
+
+                mywindow.document.write('<html><head><title>' + document.title + '</title><style type="text/css">body{font-family: "Roboto",Arial,sans-serif;overflow:visible;}.ng-table-filters,.ng-table-counts{display: none;} tr {border-top: 1px solid #f2f6f9;} .data-table{overflow: visible;} table{overflow:visible;}body, h1, h2, h3, ol, ul, div {     width: auto;     border: 0;     margin: 0 5%;     padding: 0;     float: none;     position: static;     overflow: visible; }</style>');
+                mywindow.document.write('</head><body onload="window.print()">');
+                mywindow.document.write('<h1>' + document.title + '</h1>');
+                mywindow.document.write(document.getElementById('printable').innerHTML);
+                mywindow.document.write('</body></html>');
+
+                mywindow.document.close();
+                mywindow.focus();
+
+                return true;
+            } else if (item.id === 'download_data') {
+                if ($scope.dataOriginal === null)
+                    notificationService.toastSimple('Data tidak ditemukan');
+                else
+                    alasql('SELECT * INTO XLSX("data_download.xlsx",{headers:true}) FROM ?', [$scope.dataOriginal]);
+            }
+        };
+
+        function reloadPage() {
+            var currentPageTemplate = $route.current.templateUrl;
+            $templateCache.remove(currentPageTemplate);
+            $route.reload();
+        }
+
+        function createDialog(event, mode) {
+            $mdDialog
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (text) {
+                                notificationService.toastSimple(text);
+                                getDataSantri();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
+        }
+
+        function DialogController($scope, $mdDialog) {
+            $scope.cancelSumbit = function () {
+                dataScopeShared.addData('DATA_UPDATE', null);
+                $mdDialog.cancel();
+            };
+        }
+    });
+
+    angular.module('mainApp').controller('perpusPengembalianController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache, dataScopeShared, formHelper) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.mainTemplate = url_template + $routeParams.template;
+        $scope.appReady = false;
+        $scope.dataOriginal = null;
+        $scope.flex = 80;
+        $scope.flexOffset = 10;
+
+        $scope.fabHidden = true;
+        $scope.fabIsOpen = false;
+        $scope.fabHover = false;
+        $scope.formReady = false;
+
+        $scope.ID_PINJAM = null;
+
+        $http.get($scope.mainURI + '/index').then(callbackSuccess, notificationService.errorCallback);
+
+        function callbackSuccess(response) {
+            $scope.title = response.data.title;
+            $scope.breadcrumb = response.data.breadcrumb;
+            $scope.ID_BUKU = {
+                dataAutocomplete: response.data.buku
+            };
+            $scope.ID_BUKU = formHelper.autocomplete($scope.ID_BUKU);
+            
+            $scope.appReady = true;
+        }
+
+        $scope.$watch('ID_BUKU.selectedItem', function (selectedItem) {
+            if (!(typeof selectedItem === 'undefined' || selectedItem.key === null || selectedItem === null)) {
+                $scope.ID_PINJAM = selectedItem.key;
+            } else {
+                $scope.ID_PINJAM = null;
+            }
+        });
+
+        $scope.prosesPengembalian = function (ev) {
+            if ($scope.ID_PINJAM === null) {
+                notificationService.toastSimple('Silahkan pilih buku terlebih dahulu');
+            } else {
+                var confirm = $mdDialog.confirm()
+                        .title('Apakan Anda akan menyimpan pengembalian buku tsb?')
+                        .targetEvent(ev)
+                        .ok('YA')
+                        .cancel('TIDAK');
+
+                $mdDialog.show(confirm).then(function () {
+                    var dataSantri = {
+                        ID_PINJAM: $scope.ID_PINJAM,
+                    };
+
+                    $http.post($scope.mainURI + '/proses_pengembalian', dataSantri).then(callbackSuccessProsesSantri, notificationService.errorCallback);
+                }, function () {
+                    
+                });
+            }
+        }
+
+        function callbackSuccessProsesSantri(response) {
+            reloadPage();
+            
+            notificationService.toastSimple(response.data.notification);
+        }
 
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},

@@ -5,7 +5,7 @@ $this->auth->validation();
 $this->output_handler->start_content('perpusPeminajamanController');
 ?>
 <form ng-cloak name="form" ng-submit="tambahPeminjaman(form);" novalidate>
-    <div layout="row">
+    <div layout="row" style="margin-bottom: -25px;">
         <div flex="60" flex-offset='5'>
             <div style="margin: 12px;">
                 <?php
@@ -30,7 +30,7 @@ $this->output_handler->start_content('perpusPeminajamanController');
                         array(
                             'type' => 'autocomplete',
                             'field' => 'ID_BUKU',
-                            'label' => 'santri terlebih dahulu'
+                            'label' => 'buku terlebih dahulu'
                 ));
                 ?>
                 <md-tooltip md-direction="bottom">
@@ -42,30 +42,34 @@ $this->output_handler->start_content('perpusPeminajamanController');
             <md-button type="submit" class="md-primary md-raised">
                 TAMBAH
             </md-button>
+            <md-tooltip md-direction="bottom">
+                Klik untuk memasukan buku ke list pinjaman
+            </md-tooltip>
         </div>
         <div flex="10" style="margin-top: 20px">
-            <md-button type="button" class="md-primary md-raised" ng-click="prosesPeminjaman()">
+            <md-button type="button" class="md-accent md-raised" ng-click="prosesPeminjaman()">
                 SIMPAN
             </md-button>
+            <md-tooltip md-direction="bottom">
+                Klik untuk menyimpan pinjaman
+            </md-tooltip>
         </div>
     </div>
 </form>
 <div layout="row" ng-if="formReady">
     <div flex>
-        <table ng-table-dynamic="dataTablesPinjaman with table" class="table table-condensed table-bordered table-striped table-hover" show-filter="true">
-            <tr ng-repeat="row in $data">
-                <td ng-repeat="col in $columns">
-                    <div ng-if="col.field === 'ACTION'">
-                        <md-checkbox class="md-primary" ng-checked="hitungTagihan()" ng-model="formDataTag.TAGIHAN_BAYAR[row['ID_TAGIHAN']]" style="margin: 10px;" aria-label="Pilih Tagihan">
-                            <md-tooltip md-direction="bottom">
-                                Klik untuk memilih tagihan yang akan dibayar santri
-                            </md-tooltip>
-                        </md-checkbox>
-                    </div>
-                    {{row[col.field]}}
-                </td>
-            </tr>
-        </table>
+        <md-list flex>
+            <md-list-item class="md-2-line" ng-repeat="(index, buku) in data_buku" ng-click="hapusBuku(index, $event);">
+                <div class="md-list-item-text" layout="column">
+                    <h3>{{ buku.KODE_BUKU}} - {{ buku.NAMA_BUKU}}</h3>
+                    <h4>Jenis: {{buku.NAMA_PJB}} | Pengarang: {{ buku.PENGARANG_BUKU}} | Penerbit: {{ buku.PENERBIT_BUKU}}</h4>
+                </div>
+                <md-divider ></md-divider>
+            </md-list-item>
+            <md-tooltip md-direction="bottom">
+                Klik untuk menghapus buku
+            </md-tooltip>
+        </md-list>
     </div>
 </div>
 
