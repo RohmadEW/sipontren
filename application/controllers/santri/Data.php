@@ -198,4 +198,10 @@ class Data extends CI_Controller {
         $this->output_handler->output_JSON($result, $message);
     }
 
+    public function get_all() {
+        $data = $this->data_santri->get_all();
+
+        $this->output_handler->output_JSON($data);
+    }
+
 }

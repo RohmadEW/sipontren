@@ -8,7 +8,7 @@
 
 class Datetime_handler {
 
-    function date_to_store($date = null, $normal = false) {
+    function date_to_store($date = null, $normal = true) {
         if ($date == NULL)
             $date = date('Y-m-d');
 

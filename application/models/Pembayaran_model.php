@@ -39,7 +39,7 @@ class Pembayaran_model extends CI_Model {
         foreach ($data['DATA_TAGIHAN'] as $id_tagihan) {
             $data = array(
                 'TA_BAYAR' => $this->session->userdata('ID_TA'),
-                'TANGGAL_BAYAR' => $this->datetime_handler->date_to_store('Y-m-d', TRUE),
+                'TANGGAL_BAYAR' => $this->datetime_handler->date_to_store(),
                 'TAGIHAN_BAYAR' => $id_tagihan,
                 'SANTRI_BAYAR' => $data['SANTRI_BAYAR'],
                 'USER_BAYAR' => $this->session->userdata('ID_USER')

@@ -4365,4 +4365,201 @@
             };
         }
     });
+
+    angular.module('mainApp').controller('pelanggaranJenisController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+        $scope.flex = 80;
+        $scope.flexOffset = 10;
+
+        $scope.formData = {
+            NAMA_PJS: null,
+            POIN_PJS: null,
+        };
+
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            $scope.dataJENIS_PJS = response.data.jenis;
+
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData = response.data;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
+    angular.module('mainApp').controller('pelanggaranDetailController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared, $q) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+        $scope.dataForm = [];
+
+        $scope.formData = {
+            ID_PSN: null,
+            TANGGAL_PSN: null,
+            JENIS_PSN: null,
+            SANTRI_PSN: null,
+            KETERANGAN_PSN: null,
+        };
+
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            var urlGetDataForm = [];
+
+            urlGetDataForm.push($http.get(response.data.uri.santri));
+            urlGetDataForm.push($http.get(response.data.uri.jenis));
+
+            $q.all(urlGetDataForm)
+                    .then(
+                            function (result) {
+                                callbackFormData(result);
+                            },
+                            function (error) {
+                                $scope.cancelSumbit();
+                            }
+                    );
+        }
+
+        function callbackFormData(response) {
+            $scope.SANTRI_PSN = {
+                dataAutocomplete: response[0].data
+            };
+            $scope.SANTRI_PSN = formHelper.autocomplete($scope.SANTRI_PSN);
+            
+            $scope.JENIS_PSN = {
+                dataAutocomplete: response[1].data
+            };
+            $scope.JENIS_PSN = formHelper.autocomplete($scope.JENIS_PSN);
+
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            var urlDataForm = [];
+
+            urlDataForm.push($http.post($scope.mainURI + '/view', $scope.dataUpdate));
+
+            $q.all(urlDataForm)
+                    .then(
+                            function (result) {
+                                callbackFormDataView(result);
+                            },
+                            function (error) {
+                                $scope.cancelSumbit();
+                            }
+                    );
+        }
+
+        function callbackFormDataView(response) {
+            angular.forEach($scope.SANTRI_PSN.dataAll, function (value, key) {
+                if (parseInt(response[0].data.SANTRI_PSN) === parseInt(value.key)) {
+                    $scope.SANTRI_PSN.selectedItem = value;
+                }
+            });
+            
+            angular.forEach($scope.JENIS_PSN.dataAll, function (value, key) {
+                if (parseInt(response[0].data.JENIS_PSN) === parseInt(value.key)) {
+                    $scope.JENIS_PSN.selectedItem = value;
+                }
+            });
+
+            $scope.formData = response[0].data;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.JENIS_PSN.$valid
+                    && $scope.form.SANTRI_PSN.$valid
+                    && $scope.form.TANGGAL_PSN.$valid
+                    && $scope.form.KETERANGAN_PSN.$valid
+                    ) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+
+        $scope.$watch('JENIS_PSN.selectedItem', function (selectedItem) {
+            if (typeof selectedItem === 'undefined' || selectedItem.key === null)
+                $scope.formData.JENIS_PSN = null;
+            else
+                $scope.formData.JENIS_PSN = selectedItem.key;
+        });
+        
+        $scope.$watch('SANTRI_PSN.selectedItem', function (selectedItem) {
+            if (typeof selectedItem === 'undefined' || selectedItem.key === null)
+                $scope.formData.SANTRI_PSN = null;
+            else
+                $scope.formData.SANTRI_PSN = selectedItem.key;
+        });
+    });
 })();
