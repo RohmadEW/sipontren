@@ -8,19 +8,29 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * and open the template in the editor.
  */
 
-class Tahun_ajaran_model extends CI_Model {
+class Data_alumni_model extends CI_Model {
 
-    var $table = 'md_tahun_ajaran';
-    var $primaryKey = 'ID_TA';
+    var $table = 'md_santri';
+    var $primaryKey = 'ID_SANTRI';
 
     public function __construct() {
         parent::__construct();
     }
 
-    private function _get_table() {
-        $this->db->select('*, IF(AKTIF_TA = 1, "YA", "TIDAK") AS STATUS_AKTIF_TA');
+    private function _get_table($select = true) {
+        if ($select)
+            $this->db->select('*, CONCAT(ALAMAT_SANTRI, ", ", NAMA_KEC, ", ", NAMA_KAB, ", ", NAMA_PROV) AS ALAMAT_LENGKAP_SANTRI, IF(ID_KAMAR IS NULL, "-", CONCAT(NAMA_KAMAR, " - ", NAMA_GEDUNG)) AS KAMAR_SANTRI, CONCAT(TEMPAT_LAHIR_SANTRI, ", ", DATE_FORMAT(TANGGAL_LAHIR_SANTRI, "%d-%m-%Y")) AS TTL_SANTRI');
         $this->db->from($this->table);
-        $this->db->order_by('NAMA_TA', 'ASC');
+        $this->db->join('md_jenis_kelamin', 'ID_JK=JK_SANTRI');
+        $this->db->join('md_kecamatan', 'ID_KEC=KECAMATAN_SANTRI');
+        $this->db->join('md_kabupaten', 'ID_KAB=KABUPATEN_KEC');
+        $this->db->join('md_provinsi', 'ID_PROV=PROVINSI_KAB');
+        $this->db->join('md_kamar', 'ID_KAMAR=KAMAR_SANTRI', 'LEFT');
+        $this->db->join('md_gedung', 'GEDUNG_KAMAR=ID_GEDUNG', 'LEFT');
+        $this->db->where(array(
+            'ALUMNI_SANTRI' => 1,
+            'AKTIF_SANTRI' => 0,
+        ));
     }
 
     public function get_datatable() {
@@ -42,37 +52,28 @@ class Tahun_ajaran_model extends CI_Model {
         return $result;
     }
 
-    public function get_next_ta() {
-        $this->db->select('ID_TA as id, CONCAT("Tahun ", NAMA_TA) as title');
+    public function get_data_form($id) {
         $this->db->from($this->table);
-        $this->db->where('NAMA_TA > ', $this->session->userdata('NAMA_TA'));
-        $result = $this->db->get()->result_array();
-
-        return $result;
-    }
-
-    public function get_ta_active() {
-        $this->db->from($this->table);
-        $this->db->where(array(
-            'AKTIF_TA' => 1
-        ));
+        $this->db->where($this->primaryKey, $id);
         $result = $this->db->get()->row_array();
 
         return $result;
     }
 
     public function get_all() {
-        $this->db->select('ID_TA as id, CONCAT("Tahun ", NAMA_TA) as title');
-        $this->db->from($this->table);
+        $this->db->select('ID_SANTRI as id,  CONCAT("NAMA: ", NAMA_SANTRI) as title');
+        $this->_get_table(FALSE);
         $result = $this->db->get();
 
         return $result->result();
     }
 
     public function save($data) {
-        if ($data['AKTIF_TA'])
-            $this->reset_aktif();
-        
+        foreach ($data as $key => $value) {
+            if ($value === NULL)
+                unset($data[$key]);
+        }
+
         if (isset($data[$this->primaryKey])) {
             $where = array($this->primaryKey => $data[$this->primaryKey]);
             unset($data[$this->primaryKey]);
@@ -81,14 +82,8 @@ class Tahun_ajaran_model extends CI_Model {
             unset($data[$this->primaryKey]);
             $result = $this->insert($data);
         }
-        
-        return $result;
-    }
 
-    private function reset_aktif() {
-        $data = array('AKTIF_TA' => 0);
-        $where = array('AKTIF_TA' => 1);
-        $this->update($data, $where);
+        return $result;
     }
 
     public function insert($data) {
