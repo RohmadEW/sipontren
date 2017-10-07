@@ -19,14 +19,13 @@ class Data_alumni_model extends CI_Model {
 
     private function _get_table($select = true) {
         if ($select)
-            $this->db->select('*, CONCAT(ALAMAT_SANTRI, ", ", NAMA_KEC, ", ", NAMA_KAB, ", ", NAMA_PROV) AS ALAMAT_LENGKAP_SANTRI, IF(ID_KAMAR IS NULL, "-", CONCAT(NAMA_KAMAR, " - ", NAMA_GEDUNG)) AS KAMAR_SANTRI, CONCAT(TEMPAT_LAHIR_SANTRI, ", ", DATE_FORMAT(TANGGAL_LAHIR_SANTRI, "%d-%m-%Y")) AS TTL_SANTRI');
+            $this->db->select('*, CONCAT(ALAMAT_SANTRI, ", ", NAMA_KEC, ", ", NAMA_KAB, ", ", NAMA_PROV) AS ALAMAT_LENGKAP_SANTRI, CONCAT(TEMPAT_LAHIR_SANTRI, ", ", DATE_FORMAT(TANGGAL_LAHIR_SANTRI, "%d-%m-%Y")) AS TTL_SANTRI');
         $this->db->from($this->table);
         $this->db->join('md_jenis_kelamin', 'ID_JK=JK_SANTRI');
         $this->db->join('md_kecamatan', 'ID_KEC=KECAMATAN_SANTRI');
         $this->db->join('md_kabupaten', 'ID_KAB=KABUPATEN_KEC');
         $this->db->join('md_provinsi', 'ID_PROV=PROVINSI_KAB');
-        $this->db->join('md_kamar', 'ID_KAMAR=KAMAR_SANTRI', 'LEFT');
-        $this->db->join('md_gedung', 'GEDUNG_KAMAR=ID_GEDUNG', 'LEFT');
+        $this->db->join('md_status_mutasi', 'STATUS_MUTASI_SANTRI=ID_MUTASI');
         $this->db->where(array(
             'ALUMNI_SANTRI' => 1,
             'AKTIF_SANTRI' => 0,

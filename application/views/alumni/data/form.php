@@ -2,18 +2,30 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $this->auth->validation();
 
-$title = 'Data Diri Santri';
+$title = 'Data Diri Alumni';
 $controller = 'dataSantri';
 $data = array(
     array(
         'type' => 'text',
         'field' => 'NIS_SANTRI',
-        'label' => 'NIS'
+        'label' => 'NIS',
+        'required' => FALSE
     ),
     array(
         'type' => 'number',
         'field' => 'NIK_SANTRI',
-        'label' => 'NIK'
+        'label' => 'NIK',
+        'required' => FALSE
+    ),
+    array(
+        'type' => 'select',
+        'field' => 'STATUS_MUTASI_SANTRI',
+        'label' => 'Status Mutasi'
+    ),
+    array(
+        'type' => 'date',
+        'field' => 'TANGGAL_MUTASI_SANTRI',
+        'label' => 'Tanggal Mutasi'
     ),
     array(
         'type' => 'text',
@@ -21,30 +33,9 @@ $data = array(
         'label' => 'Nama Santri'
     ),
     array(
-        'type' => 'text',
-        'field' => 'PANGGILAN_SANTRI',
-        'label' => 'Nama Panggilan Santri',
-        'required' => FALSE
-    ),
-    array(
-        'type' => 'number',
-        'field' => 'ANGKATAN_SANTRI',
-        'label' => 'Angkatan'
-    ),
-    array(
         'type' => 'select',
         'field' => 'JK_SANTRI',
         'label' => 'Jenis Kelamin'
-    ),
-    array(
-        'type' => 'text',
-        'field' => 'TEMPAT_LAHIR_SANTRI',
-        'label' => 'Tempat Lahir'
-    ),
-    array(
-        'type' => 'date',
-        'field' => 'TANGGAL_LAHIR_SANTRI',
-        'label' => 'Tanggal Lahir'
     ),
     array(
         'type' => 'text',
@@ -60,6 +51,30 @@ $data = array(
         'type' => 'text',
         'field' => 'NOHP_SANTRI',
         'label' => 'No HP'
+    ),
+    array(
+        'type' => 'text',
+        'field' => 'PANGGILAN_SANTRI',
+        'label' => 'Nama Panggilan Santri',
+        'required' => FALSE
+    ),
+    array(
+        'type' => 'number',
+        'field' => 'ANGKATAN_SANTRI',
+        'label' => 'Angkatan',
+        'required' => FALSE
+    ),
+    array(
+        'type' => 'text',
+        'field' => 'TEMPAT_LAHIR_SANTRI',
+        'label' => 'Tempat Lahir',
+        'required' => FALSE
+    ),
+    array(
+        'type' => 'date',
+        'field' => 'TANGGAL_LAHIR_SANTRI',
+        'label' => 'Tanggal Lahir',
+        'required' => FALSE
     ),
     array(
         'type' => 'text',

@@ -74,6 +74,11 @@ class Data_santri_model extends CI_Model {
             if ($value === NULL)
                 unset($data[$key]);
         }
+        
+        if(isset($data['STATUS_MUTASI_SANTRI'])) {
+            $data['AKTIF_SANTRI'] = 0;
+            $data['ALUMNI_SANTRI'] = 1;
+        }
 
         if (isset($data[$this->primaryKey])) {
             $where = array($this->primaryKey => $data[$this->primaryKey]);

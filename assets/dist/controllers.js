@@ -2018,6 +2018,8 @@
             WALI_HUBUNGAN_SANTRI: null,
             WALI_PENDIDIKAN_SANTRI: null,
             WALI_PEKERJAAN_SANTRI: null,
+            STATUS_MUTASI_SANTRI: null,
+            TANGGAL_MUTASI_SANTRI: null,
         };
 
         $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
@@ -2037,6 +2039,7 @@
             $scope.dataWALI_HUBUNGAN_SANTRI = response.data.HUBUNGAN_SANTRI;
             $scope.dataWALI_PENDIDIKAN_SANTRI = response.data.PENDIDIKAN_SANTRI;
             $scope.dataWALI_PEKERJAAN_SANTRI = response.data.PEKERJAAN_SANTRI;
+            $scope.dataSTATUS_MUTASI_SANTRI = response.data.STATUS_MUTASI;
 
             var urlGetDataForm = [];
 
@@ -2106,6 +2109,14 @@
                             && $scope.form.ALAMAT_SANTRI.$valid
                             && $scope.form.NOHP_SANTRI.$valid
                             ))
+                    ||
+                    ((typeof $scope.form.STATUS_MUTASI_SANTRI === 'object')
+                            && $scope.form.STATUS_MUTASI_SANTRI.$valid
+                            )
+                    ||
+                    ((typeof $scope.form.TANGGAL_MUTASI_SANTRI === 'object')
+                            && $scope.form.TANGGAL_MUTASI_SANTRI.$valid
+                            )
                     ||
                     ((typeof $scope.form.AYAH_NAMA_SANTRI === 'object')
                             && $scope.form.AYAH_NAMA_SANTRI.$valid
@@ -4693,6 +4704,182 @@
             notificationService.toastSimple(response.data.notification);
 
             getData();
+        }
+
+        $scope.menuItems = [
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
+        ];
+
+        $scope.openDialog = function ($event, item) {
+            if (item.id === 'reload_data') {
+                $scope.fabHidden = true;
+                getDataSantri();
+            } else if (item.id === 'reload_page') {
+                reloadPage();
+            } else if (item.id === 'request_doc') {
+                $mdSidenav('right').toggle();
+            } else if (item.id === 'add_data') {
+                createDialog($event, 'form');
+            } else if (item.id === 'print_data') {
+                var mywindow = window.open('', 'PRINT', 'height=600,width=700');
+
+                mywindow.document.write('<html><head><title>' + document.title + '</title><style type="text/css">body{font-family: "Roboto",Arial,sans-serif;overflow:visible;}.ng-table-filters,.ng-table-counts{display: none;} tr {border-top: 1px solid #f2f6f9;} .data-table{overflow: visible;} table{overflow:visible;}body, h1, h2, h3, ol, ul, div {     width: auto;     border: 0;     margin: 0 5%;     padding: 0;     float: none;     position: static;     overflow: visible; }</style>');
+                mywindow.document.write('</head><body onload="window.print()">');
+                mywindow.document.write('<h1>' + document.title + '</h1>');
+                mywindow.document.write(document.getElementById('printable').innerHTML);
+                mywindow.document.write('</body></html>');
+
+                mywindow.document.close();
+                mywindow.focus();
+
+                return true;
+            } else if (item.id === 'download_data') {
+                if ($scope.dataOriginal === null)
+                    notificationService.toastSimple('Data tidak ditemukan');
+                else
+                    alasql('SELECT * INTO XLSX("data_download.xlsx",{headers:true}) FROM ?', [$scope.dataOriginal]);
+            }
+        };
+
+        function reloadPage() {
+            var currentPageTemplate = $route.current.templateUrl;
+            $templateCache.remove(currentPageTemplate);
+            $route.reload();
+        }
+
+        function createDialog(event, mode) {
+            $mdDialog
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (text) {
+                                notificationService.toastSimple(text);
+                                getDataSantri();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
+        }
+
+        function DialogController($scope, $mdDialog) {
+            $scope.cancelSumbit = function () {
+                dataScopeShared.addData('DATA_UPDATE', null);
+                $mdDialog.cancel();
+            };
+        }
+    });
+
+    angular.module('mainApp').controller('akadMutasiController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.mainTemplate = url_template + $routeParams.template;
+        $scope.appReady = false;
+        $scope.dataOriginal = null;
+        $scope.flex = 90;
+        $scope.flexOffset = 5;
+
+        $scope.fabHidden = true;
+        $scope.fabIsOpen = false;
+        $scope.fabHover = false;
+
+        $scope.formReady = false;
+
+        $scope.formData = {
+            ROMBEL_AS: null,
+            STATUS_MUTASI_SANTRI: null,
+        };
+
+        $scope.$watch('formData.ROMBEL_AS', function (ROMBEL_AS) {
+            $scope.formReady = false;
+
+            if (($scope.formData.ROMBEL_AS !== null) && ($scope.formData.STATUS_MUTASI_SANTRI !== null))
+                getDataSantri();
+        });
+
+        $scope.$watch('formData.STATUS_MUTASI_SANTRI', function (STATUS_MUTASI_SANTRI) {
+            $scope.formReady = false;
+
+            if (($scope.formData.ROMBEL_AS !== null) && ($scope.formData.STATUS_MUTASI_SANTRI !== null))
+                getDataSantri();
+        });
+
+        $http.get($scope.mainURI + '/index').then(callbackSuccess, notificationService.errorCallback);
+
+        function callbackSuccess(response) {
+            $scope.title = response.data.title;
+            $scope.breadcrumb = response.data.breadcrumb;
+            $scope.table = response.data.table;
+            $scope.dataROMBEL_AS = response.data.rombel;
+            $scope.dataSTATUS_MUTASI_SANTRI = response.data.status_mutasi;
+
+            $scope.appReady = true;
+        }
+
+        function getDataSantri() {
+            $http.post($scope.mainURI + '/datatable', $scope.formData).then(callbackDatatablesSantri, notificationService.errorCallback);
+        }
+
+        function callbackDatatablesSantri(response) {
+            $scope.dataOriginal = response.data.data;
+
+            var initialParams = {
+                count: 15
+            };
+            var initialSettings = {
+                counts: [],
+                dataset: response.data.data
+            };
+
+            $scope.dataTablesSantri = new NgTableParams(initialParams, initialSettings);
+            $scope.fabHidden = false;
+            $scope.formReady = true;
+        }
+
+        $scope.prosesSemua = function (ev) {
+            var confirm = $mdDialog.confirm()
+                    .title('Apakan Anda akan meluluskan/memutasikan semua santri pada rombel tsb?')
+                    .targetEvent(ev)
+                    .ok('YA')
+                    .cancel('TIDAK');
+
+            $mdDialog.show(confirm).then(function () {
+                $http.post($scope.mainURI + '/proses_mutasi', $scope.formData).then(callbackSuccessProsesSantri, notificationService.errorCallback);
+            }, function () {
+
+            });
+        }
+
+        $scope.prosesMutasi = function (row, ev) {
+            var confirm = $mdDialog.confirm()
+                    .title('Apakan Anda akan meluluskan/memutasikan santri tsb? ')
+                    .targetEvent(ev)
+                    .ok('YA')
+                    .cancel('TIDAK');
+
+            $mdDialog.show(confirm).then(function () {
+                var dataSantri = {
+                    ID_SANTRI: row.ID_SANTRI,
+                    STATUS_MUTASI_SANTRI: $scope.formData.STATUS_MUTASI_SANTRI,
+                };
+                $http.post($scope.mainURI + '/proses_mutasi', dataSantri).then(callbackSuccessProsesSantri, notificationService.errorCallback);
+            }, function () {
+
+            });
+        }
+
+        function callbackSuccessProsesSantri(response) {
+            notificationService.toastSimple(response.data.notification);
+            
+            getDataSantri();
         }
 
         $scope.menuItems = [

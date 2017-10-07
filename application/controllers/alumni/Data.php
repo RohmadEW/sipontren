@@ -17,6 +17,7 @@ class Data extends CI_Controller {
             'status_hidup_model' => 'hidup',
             'jenjang_pendidikan_model' => 'pendidikan',
             'kamar_model' => 'kamar',
+            'status_keluar_model' => 'status_mutasi',
         ));
         $this->auth->validation(array(1, 3));
     }
@@ -110,14 +111,23 @@ class Data extends CI_Controller {
                     )
                 ),
                 array(
-                    'field' => "KAMAR_SANTRI",
-                    'title' => "Kamar", 
-                    'sortable' => "KAMAR_SANTRI", 
+                    'field' => "TANGGAL_MUTASI_SANTRI",
+                    'title' => "Tanggal Mutasi", 
+                    'sortable' => "TANGGAL_MUTASI_SANTRI", 
                     'show' => true,
                     'filter' => array(
-                        'ID_KAMAR' => 'select'
+                        'TANGGAL_MUTASI_SANTRI' => 'text'
+                    )
+                ),
+                array(
+                    'field' => "NAMA_MUTASI",
+                    'title' => "Status Mutasi", 
+                    'sortable' => "NAMA_MUTASI", 
+                    'show' => true,
+                    'filter' => array(
+                        'ID_MUTASI' => 'select'
                     ),
-                    'filterData' => $this->kamar->get_all()
+                    'filterData' => $this->status_mutasi->get_all()
                 ),
                 array(
                     'field' => "ACTION",
@@ -158,6 +168,7 @@ class Data extends CI_Controller {
                 'kecamatan' => site_url('master_data/kecamatan/get_all'),
             ),
             'JK' => $this->jk->get_all(),
+            'STATUS_MUTASI' => $this->status_mutasi->get_all(),
             'AGAMA' => $this->masterdata->get_agama(),
             'SUKU' => $this->masterdata->get_suku(),
             'KONDISI' => $this->kondisi->get_all(),
