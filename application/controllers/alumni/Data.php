@@ -145,10 +145,6 @@ class Data extends CI_Controller {
                             'title' => 'Ubah Data Ibu',
                             'form' => 'form_ibu'
                         ),
-                        array(
-                            'title' => 'Ubah Data Wali',
-                            'form' => 'form_wali'
-                        ),
                     )
                 ),
             )
