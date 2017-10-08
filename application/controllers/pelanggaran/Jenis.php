@@ -11,7 +11,7 @@ class Jenis extends CI_Controller {
         $this->load->model(array(
             'pelanggaran_jenis_model' => 'jenis',
         ));
-        $this->auth->validation(array(1, 3));
+        $this->auth->validation(array(1, 7));
     }
 
     public function index() {

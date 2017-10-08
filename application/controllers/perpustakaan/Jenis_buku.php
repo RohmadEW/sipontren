@@ -11,7 +11,7 @@ class Jenis_buku extends CI_Controller {
         $this->load->model(array(
             'jenis_buku_model' => 'jenis_buku'
         ));
-        $this->auth->validation(array(1, 2, 3));
+        $this->auth->validation(array(1, 6));
     }
 
     public function index() {

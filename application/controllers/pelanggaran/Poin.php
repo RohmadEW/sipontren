@@ -12,7 +12,7 @@ class Poin extends CI_Controller {
             'pelanggaran_poin_model' => 'poin',
             'kamar_model' => 'kamar',
         ));
-        $this->auth->validation(array(1, 3));
+        $this->auth->validation(array(1, 7));
     }
 
     public function index() {

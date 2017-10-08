@@ -3,6 +3,16 @@
 (function () {
     "use strict";
 
+    angular.module('mainApp').controller('aboutController', function ($scope, $http, notificationService, dataScopeShared) {
+        $scope.version = 0;
+        
+        $http.get('template/info').then(callbackSuccess, notificationService.errorCallback);
+
+        function callbackSuccess(response) {
+            $scope.version = response.data.version;
+        }
+    });
+    
     angular.module('mainApp').controller('homeController', function ($scope, $http, notificationService, dataScopeShared) {
         $scope.dataID_TA = {};
         $scope.formData = {
@@ -5034,6 +5044,166 @@
             $scope.dataTables = new NgTableParams(initialParams, initialSettings);
             $scope.fabHidden = false;
             $scope.formReady = true;
+        }
+
+        $scope.menuItems = [
+            {id: "add_data", name: "Tambah Data", icon: "add"},
+            {id: "download_data", name: "Unduh Data", icon: "file_download"},
+            {id: "print_data", name: "Catak Data", icon: "print"},
+            {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
+            {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
+            {id: "request_doc", name: "Dokumentasi", icon: "help"},
+        ];
+
+        $scope.openDialog = function ($event, item) {
+            if (item.id === 'reload_data') {
+                $scope.fabHidden = true;
+                getData();
+            } else if (item.id === 'reload_page') {
+                reloadPage();
+            } else if (item.id === 'request_doc') {
+                $mdSidenav('right').toggle();
+            } else if (item.id === 'add_data') {
+                createDialog($event, 'form');
+            } else if (item.id === 'print_data') {
+                var mywindow = window.open('', 'PRINT', 'height=600,width=700');
+
+                mywindow.document.write('<html><head><title>' + document.title + '</title><style type="text/css">body{font-family: "Roboto",Arial,sans-serif;overflow:visible;}.ng-table-filters,.ng-table-counts{display: none;} tr {border-top: 1px solid #f2f6f9;} .data-table{overflow: visible;} table{overflow:visible;}body, h1, h2, h3, ol, ul, div {     width: auto;     border: 0;     margin: 0 5%;     padding: 0;     float: none;     position: static;     overflow: visible; }</style>');
+                mywindow.document.write('</head><body onload="window.print()">');
+                mywindow.document.write('<h1>' + document.title + '</h1>');
+                mywindow.document.write(document.getElementById('printable').innerHTML);
+                mywindow.document.write('</body></html>');
+
+                mywindow.document.close();
+                mywindow.focus();
+
+                return true;
+            } else if (item.id === 'download_data') {
+                if ($scope.dataOriginal === null)
+                    notificationService.toastSimple('Data tidak ditemukan');
+                else
+                    alasql('SELECT * INTO XLSX("data_download.xlsx",{headers:true}) FROM ?', [$scope.dataOriginal]);
+            }
+        };
+
+        function reloadPage() {
+            var currentPageTemplate = $route.current.templateUrl;
+            $templateCache.remove(currentPageTemplate);
+            $route.reload();
+        }
+
+        function createDialog(event, mode) {
+            $mdDialog
+                    .show({
+                        controller: DialogController,
+                        clickOutsideToClose: false,
+                        templateUrl: $scope.mainTemplate + '-' + mode + '.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (notification) {
+                                notificationService.toastSimple(notification);
+                                getData();
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
+        }
+
+        function DialogController($scope, $mdDialog) {
+            $scope.cancelSumbit = function () {
+                dataScopeShared.addData('DATA_UPDATE', null);
+                $mdDialog.cancel();
+            };
+        }
+
+        $scope.actionRow = function ($event, action, data) {
+            if (action.update)
+                updateRow($event, data);
+            else if (action.delete)
+                deleteRow($event, data);
+            else if (action.form)
+                formRow($event, data, action.form);
+        };
+
+        function formRow(event, data, form) {
+            dataScopeShared.addData('DATA_UPDATE', data);
+            createDialog(event, form);
+        }
+
+        function updateRow(event, data) {
+            dataScopeShared.addData('DATA_UPDATE', data);
+            createDialog(event, 'form');
+        }
+
+        function deleteRow(event, data) {
+            var confirm = $mdDialog.confirm()
+                    .title('Apakah Anda yakin melanjutkan?')
+                    .textContent('Data yang telah dihapus tidak dapat dikembalikan.')
+                    .ariaLabel('Hapus data')
+                    .targetEvent(event)
+                    .ok('Ya')
+                    .cancel('Tidak');
+
+            $mdDialog.show(confirm).then(function () {
+                $http.post($scope.mainURI + '/delete', data).then(callbackSuccessDelete, notificationService.errorCallback);
+            }, function () {
+                // cancel
+            });
+        }
+
+        function callbackSuccessDelete(response) {
+            notificationService.toastSimple(response.data.notification);
+            getData();
+        }
+    });
+
+    angular.module('mainApp').controller('settingAppsController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.mainTemplate = url_template + $routeParams.template;
+        $scope.appReady = false;
+        $scope.flex = 80;
+        $scope.flexOffset = 10;
+
+        $scope.fabHidden = true;
+        $scope.fabIsOpen = false;
+        $scope.fabHover = false;
+
+        $scope.formData = {
+            nama_aplikasi: null,
+        };
+
+        $http.get($scope.mainURI + '/index').then(callbackSuccess, notificationService.errorCallback);
+
+        function callbackSuccess(response) {
+            $scope.title = response.data.title;
+            $scope.breadcrumb = response.data.breadcrumb;
+            $scope.formData = response.data.data;
+
+            if (response.data.wide) {
+                $scope.flex = 90;
+                $scope.flexOffset = 5;
+            }
+
+            $scope.appReady = true;
+        }
+
+        $scope.simpan = function (form) {
+            if (form.$valid) {
+                simpanData();
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function simpanData() {
+            $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSave, notificationService.errorCallback);
+        }
+        
+        function callbackSave(response) {
+            notificationService.toastSimple(response.data.notification);
+            reloadPage();
         }
 
         $scope.menuItems = [

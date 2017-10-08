@@ -12,7 +12,7 @@ class Laporan_pengembalian extends CI_Controller {
             'laporan_pengembalian_model' => 'laporan_pengembalian',
             'jenis_buku_model' => 'jenis',
         ));
-        $this->auth->validation(array(1, 3));
+        $this->auth->validation(array(1, 6));
     }
 
     public function index() {

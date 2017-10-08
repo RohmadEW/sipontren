@@ -12,7 +12,7 @@ class Detail extends CI_Controller {
             'pelanggaran_detail_model' => 'detail',
             'kamar_model' => 'kamar',
         ));
-        $this->auth->validation(array(1, 3));
+        $this->auth->validation(array(1, 7));
     }
 
     public function index() {

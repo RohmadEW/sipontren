@@ -16,7 +16,7 @@ class Laporan_tunggakan extends CI_Controller {
             'rombel_model' => 'rombel',
             'tagihan_model' => 'tagihan',
         ));
-        $this->auth->validation(array(1, 4));
+        $this->auth->validation(array(1, 5));
     }
 
     public function index() {

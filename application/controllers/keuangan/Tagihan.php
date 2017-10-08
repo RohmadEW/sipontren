@@ -14,7 +14,7 @@ class Tagihan extends CI_Controller
             'kelas_model' => 'kelas',
             'tahun_ajaran_model' => 'ta',
         ));
-        $this->auth->validation(1);
+        $this->auth->validation(array(1, 5));
     }
 
     public function index()

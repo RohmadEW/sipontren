@@ -19,7 +19,7 @@ class Data extends CI_Controller {
             'kamar_model' => 'kamar',
             'status_keluar_model' => 'status_mutasi',
         ));
-        $this->auth->validation(array(1, 3));
+        $this->auth->validation(array(1, 8));
     }
 
     public function index() {

@@ -20,6 +20,10 @@ class Pengaturan {
         return $this->CI->data_pengaturan->get_by_id('nama_aplikasi');
     }
 
+    public function getVersiApp() {
+        return $this->CI->data_pengaturan->get_by_id('versi_parent').'.'.$this->CI->data_pengaturan->get_by_id('versi_child');
+    }
+
     public function getMotto() {
         return $this->CI->data_pengaturan->get_by_id('motto');
     }

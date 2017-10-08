@@ -12,7 +12,7 @@ class Pembayaran extends CI_Controller {
             'pembayaran_model' => 'pembayaran',
             'data_santri_model' => 'data_santri',
         ));
-        $this->auth->validation(array(1, 4));
+        $this->auth->validation(array(1, 5));
     }
 
     public function index() {

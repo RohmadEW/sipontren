@@ -12,7 +12,7 @@ class Laporan_pinjaman extends CI_Controller {
             'laporan_pinjaman_model' => 'laporan_pinjaman',
             'jenis_buku_model' => 'jenis',
         ));
-        $this->auth->validation(array(1, 3));
+        $this->auth->validation(array(1, 6));
     }
 
     public function index() {

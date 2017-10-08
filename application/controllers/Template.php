@@ -18,7 +18,7 @@ class Template extends CI_Controller {
 
     public function menu() {
         $data = array();
-        $data['name_app'] = 'SIPONTREN';
+        $data['name_app'] = $this->pengaturan->getNamaApp();
 
         if ($this->auth->check_validation()) {
             $data['menus'] = array();
@@ -67,7 +67,7 @@ class Template extends CI_Controller {
         $data = array(
             'name_dev' => 'Rohmad Eko Wahyudi',
             'email_dev' => 'rohmad.ew@gmail.com',
-            'version' => '1.1.0',
+            'version' => $this->pengaturan->getVersiApp(),
             'github' => 'https://github.com/RohmadEW/simapes'
         );
 

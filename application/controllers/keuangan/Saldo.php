@@ -16,7 +16,7 @@ class Saldo extends CI_Controller {
             'tagihan_model' => 'tagihan',
             'ustadz_model' => 'ustadz',
         ));
-        $this->auth->validation(array(1, 4));
+        $this->auth->validation(array(1, 5));
     }
 
     public function index() {

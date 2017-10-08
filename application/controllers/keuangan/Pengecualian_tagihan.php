@@ -14,7 +14,7 @@ class Pengecualian_tagihan extends CI_Controller {
             'jk_model' => 'jk',
             'kamar_model' => 'kamar',
         ));
-        $this->auth->validation(array(1, 4));
+        $this->auth->validation(array(1, 5));
     }
 
     public function index() {

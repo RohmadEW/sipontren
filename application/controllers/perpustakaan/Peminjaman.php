@@ -14,7 +14,7 @@ class Peminjaman extends CI_Controller {
             'data_buku_model' => 'data_buku',
             'jenis_buku_model' => 'jenis_buku',
         ));
-        $this->auth->validation(array(1, 4));
+        $this->auth->validation(array(1, 6));
     }
 
     public function index() {
