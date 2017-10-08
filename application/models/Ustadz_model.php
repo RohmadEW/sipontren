@@ -48,13 +48,13 @@ class Ustadz_model extends CI_Model {
 
         return $result;
     }
-    
+
     public function get_all() {
         $this->db->select('ID_UST as id, CONCAT(IF(GELAR_AWAL_UST IS NOT NULL, IF(GELAR_AWAL_UST = "", CONCAT(GELAR_AWAL_UST, ". "), ""), ""), NAMA_UST, IF(GELAR_AKHIR_UST IS NOT NULL, IF(GELAR_AKHIR_UST = "", CONCAT(". ", GELAR_AKHIR_UST), ""), "")) as title');
         $this->_get_table(FALSE);
         $this->db->where('AKTIF_UST', 1);
         $result = $this->db->get();
-        
+
         return $result->result();
     }
 
@@ -67,15 +67,31 @@ class Ustadz_model extends CI_Model {
     }
 
     public function save($data) {
-        if($data['ROMBEL_UST'] == '') $data['ROMBEL_UST'] = NULL;
-        
+        if ($data['ROMBEL_UST'] == '')
+            $data['ROMBEL_UST'] = NULL;
+
         if (isset($data[$this->primaryKey])) {
             $where = array($this->primaryKey => $data[$this->primaryKey]);
             unset($data[$this->primaryKey]);
             $result = $this->update($data, $where);
+            
+            $data_user = array(
+                'NAME_USER' => $data['NIP_UST'],
+            );
+            $where_user = array(
+                'USTADZ_USER' => $data[$this->primaryKey]
+            );
+            $this->db->update($this->table, $data_user, $where_user);
         } else {
             unset($data[$this->primaryKey]);
             $result = $this->insert($data);
+
+            $data_user = array(
+                'NAME_USER' => $data['NIP_UST'],
+                'PASSWORD_USER' => $this->crypt->encryptDefaultPassword(),
+                'USTADZ_USER' => $result,
+            );
+            $this->db->insert('md_user', $data_user);
         }
 
         return $result;
@@ -99,7 +115,7 @@ class Ustadz_model extends CI_Model {
 
         return $this->db->affected_rows();
     }
-    
+
     public function get_rombel($id) {
         $this->db->select('ID_ROMBEL as id, CONCAT(NAMA_ROMBEL, " - ", NAMA_KEGIATAN) as title');
         $this->db->from($this->table);
@@ -111,14 +127,13 @@ class Ustadz_model extends CI_Model {
         $this->db->where('ID_UST', NULL);
         $this->db->or_where('ID_UST', $id);
         $result = $this->db->get()->result_array();
-        
+
         $result[] = array(
             'id' => NULL,
             'title' => 'KOSONGKAN'
         );
-        
+
         return $result;
-        
     }
 
 }

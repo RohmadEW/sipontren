@@ -19,6 +19,8 @@ class Saldo_model extends CI_Model {
 
     private function _get_table() {
         $this->db->from($this->table);
+        $this->db->join('md_user', 'USER_BAYAR=ID_USER');
+        $this->db->join('md_ustadz', 'USTADZ_USER=ID_UST');
         $this->db->join('keu_tagihan', 'TAGIHAN_BAYAR=ID_TAGIHAN');
         $this->db->join('md_santri', 'SANTRI_BAYAR=ID_SANTRI');
         $this->db->join('akad_santri', 'SANTRI_AS=ID_SANTRI AND TA_AS=TA_BAYAR AND KELAS_TAGIHAN=KELAS_AS');
@@ -41,7 +43,7 @@ class Saldo_model extends CI_Model {
         $where = array(
             'TANGGAL_BAYAR >= ' => $this->datetime_handler->date_to_store($post['where']['START_DATE']),
             'TANGGAL_BAYAR <= ' => $this->datetime_handler->date_to_store($post['where']['END_DATE']),
-            'USER_BAYAR' => $post['where']['USER_BAYAR']
+            'ID_UST' => $post['where']['USER_BAYAR']
         );
         
         $exl = array(

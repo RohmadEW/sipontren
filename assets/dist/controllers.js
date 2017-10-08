@@ -5,14 +5,14 @@
 
     angular.module('mainApp').controller('aboutController', function ($scope, $http, notificationService, dataScopeShared) {
         $scope.version = 0;
-        
+
         $http.get('template/info').then(callbackSuccess, notificationService.errorCallback);
 
         function callbackSuccess(response) {
             $scope.version = response.data.version;
         }
     });
-    
+
     angular.module('mainApp').controller('homeController', function ($scope, $http, notificationService, dataScopeShared) {
         $scope.dataID_TA = {};
         $scope.formData = {
@@ -117,7 +117,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -1884,7 +1884,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -2237,7 +2237,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -2404,7 +2404,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -2571,7 +2571,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -2761,7 +2761,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -3211,7 +3211,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -3625,7 +3625,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -3839,7 +3839,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -4180,7 +4180,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -4317,7 +4317,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -4719,7 +4719,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -4895,7 +4895,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -5008,7 +5008,7 @@
 
         $scope.pilihFilter = function (form) {
             $scope.formReady = false;
-            
+
             if (form.$valid) {
                 getData();
             } else {
@@ -5049,7 +5049,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -5200,7 +5200,7 @@
         function simpanData() {
             $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSave, notificationService.errorCallback);
         }
-        
+
         function callbackSave(response) {
             notificationService.toastSimple(response.data.notification);
             reloadPage();
@@ -5209,7 +5209,7 @@
         $scope.menuItems = [
             {id: "add_data", name: "Tambah Data", icon: "add"},
             {id: "download_data", name: "Unduh Data", icon: "file_download"},
-            {id: "print_data", name: "Catak Data", icon: "print"},
+            // {id: "print_data", name: "Catak Data", icon: "print"},
             {id: "reload_data", name: "Muat Ulang Data", icon: "refresh"},
             {id: "reload_page", name: "Muat Ulang Halaman", icon: "autorenew"},
             {id: "request_doc", name: "Dokumentasi", icon: "help"},
@@ -5317,5 +5317,153 @@
             notificationService.toastSimple(response.data.notification);
             getData();
         }
+    });
+
+    angular.module('mainApp').controller('settingAkunController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.mainTemplate = url_template + $routeParams.template;
+        $scope.appReady = false;
+        $scope.dataOriginal = null;
+        $scope.flex = 90;
+        $scope.flexOffset = 5;
+
+        $scope.flexAkun = 60;
+        $scope.flexHakakses = 35;
+
+        $scope.fabHidden = true;
+        $scope.fieldTable = [];
+
+        $scope.NAMA_UST = null;
+        $scope.ID_USER = null;
+        $scope.formData = {
+            NEW_PASSWORD: ''
+        };
+
+        $scope.tableHakaksesShow = false;
+        $scope.tablePasswordShow = false;
+
+        $http.get($scope.mainURI + '/index').then(callbackSuccess, notificationService.errorCallback);
+
+        function callbackSuccess(response) {
+            $scope.title = response.data.title;
+            $scope.breadcrumb = response.data.breadcrumb;
+            $scope.tableAkun = response.data.table.akun;
+            $scope.tableHakakses = response.data.table.hakakses;
+
+            $scope.fieldTable = [];
+            angular.forEach($scope.tableAkun, function (item, key) {
+                $scope.fieldTable.push(item.field);
+            });
+
+            $scope.appReady = true;
+
+            getDataAkun();
+        }
+
+        function getDataAkun() {
+            $scope.tableHakaksesShow = false;
+            $scope.tablePasswordShow = false;
+
+            $http.post($scope.mainURI + '/get_datatable_akun', $scope.fieldTable).then(callbackDatatablesAkun, notificationService.errorCallback);
+        }
+
+        function callbackDatatablesAkun(response) {
+            $scope.dataOriginal = response.data.data;
+
+            var initialParams = {
+                count: 15
+            };
+            var initialSettings = {
+                counts: [],
+                dataset: response.data.data
+            };
+
+            $scope.dataTablesAkun = new NgTableParams(initialParams, initialSettings);
+        }
+
+        $scope.datatableHakakses = function (row) {
+            $scope.tableHakaksesShow = false;
+            $scope.tablePasswordShow = false;
+
+            $scope.NAMA_UST = row.NAMA_UST;
+            $scope.ID_USER = row.ID_USER;
+
+            getDatatablesHakakses();
+        }
+
+        function getDatatablesHakakses() {
+            var dataPost = {
+                ID_USER: $scope.ID_USER
+            };
+            $http.post($scope.mainURI + '/get_datatable_hakakses', dataPost).then(callbackDatatablesHakakses, notificationService.errorCallback);
+        }
+
+        function callbackDatatablesHakakses(response) {
+            $scope.dataOriginal = response.data.data;
+
+            var initialParams = {
+                count: 15
+            };
+            var initialSettings = {
+                counts: [],
+                dataset: response.data.data
+            };
+
+            $scope.dataTablesHakakses = new NgTableParams(initialParams, initialSettings);
+
+            $scope.tableHakaksesShow = true;
+        }
+
+        $scope.prosesHakakses = function (row, status) {
+            var dataPost = {
+                set: status,
+                USER_HU: $scope.ID_USER,
+                HAKAKSES_HU: row.ID_HAKAKSES
+            };
+
+            $http.post($scope.mainURI + '/proses_hakakses', dataPost).then(callbackProses, notificationService.errorCallback);
+        };
+
+        function callbackProses(response) {
+            notificationService.toastSimple(response.data.notification);
+            
+            if (response.data.extra.akun)
+                getDataAkun();
+
+            if (response.data.extra.hakakses)
+                getDatatablesHakakses();
+
+            $scope.formData.NEW_PASSWORD = '';
+            $scope.tablePasswordShow = false;
+        }
+
+        $scope.activatedUser = function (row) {
+            var dataPost = {
+                ID_USER: $scope.ID_USER,
+            };
+
+            $http.post($scope.mainURI + '/proses_status', dataPost).then(callbackProses, notificationService.errorCallback);
+        };
+
+        $scope.changePassword = function (row) {
+            $scope.tableHakaksesShow = false;
+            $scope.tablePasswordShow = true;
+
+            $scope.NAMA_UST = row.NAMA_UST;
+            $scope.ID_USER = row.ID_USER;
+        };
+
+        $scope.simpanPassword = function (form) {
+            if (form.$valid) {
+                var dataPost = {
+                    ID_USER: $scope.ID_USER,
+                    NEW_PASSWORD: $scope.formData.NEW_PASSWORD,
+                };
+
+                $http.post($scope.mainURI + '/change_password', dataPost).then(callbackProses, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
     });
 })();

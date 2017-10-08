@@ -16,7 +16,7 @@ class Output_handler {
         }
     }
 
-    public function output_JSON($data, $standar_notification = null) {
+    public function output_JSON($data, $standar_notification = null, $extra = null) {
         if (is_object($data))
             $data = (array) $data;
 
@@ -46,6 +46,10 @@ class Output_handler {
                     'title' => 'Gagal',
                     'text' => 'Data gagal ' . $standar_notification
                 );
+        }
+        
+        if($extra != NULL) {
+            $data['extra'] = $extra;
         }
 
         echo json_encode($data, JSON_PRETTY_PRINT);

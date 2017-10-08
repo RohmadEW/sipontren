@@ -27,7 +27,8 @@ class Laporan_pembayaran_model extends CI_Model {
         $this->db->join('md_jenis_kelamin', 'ID_JK=JK_SANTRI');
         $this->db->join('md_kamar', 'ID_KAMAR=KAMAR_SANTRI', 'LEFT');
         $this->db->join('md_gedung', 'GEDUNG_KAMAR=ID_GEDUNG', 'LEFT');
-        $this->db->join('md_ustadz', 'USER_BAYAR=ID_UST', 'LEFT');
+        $this->db->join('md_user', 'USER_BAYAR=ID_USER');
+        $this->db->join('md_ustadz', 'USTADZ_USER=ID_UST');
         $this->db->where(array(
             'DIKEMBALIKAN_BAYAR' => 0,
             'ALUMNI_SANTRI' => 0,
