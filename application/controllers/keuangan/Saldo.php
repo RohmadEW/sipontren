@@ -2,28 +2,28 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Laporan_pembayaran_persantri extends CI_Controller {
+class Saldo extends CI_Controller {
 
-    var $primaryKey = 'ID_BAYAR';
+    var $primaryKey = 'ID_SANTRI';
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'laporan_pembayaran_model' => 'laporan_pembayaran',
+            'saldo_model' => 'saldo',
+            'rombel_model' => 'rombel',
             'jk_model' => 'jk',
             'kamar_model' => 'kamar',
-            'kelas_model' => 'kelas',
-            'rombel_model' => 'rombel',
             'tagihan_model' => 'tagihan',
+            'ustadz_model' => 'ustadz',
         ));
         $this->auth->validation(array(1, 4));
     }
 
     public function index() {
         $data = array(
-            'title' => 'Laporan Pembayaran Santri',
-            'breadcrumb' => 'Keuangan > Laporan > Laporan Pembayaran Santri',
-            'wide' => true,
+            'title' => 'Saldo Pembayaran Santri',
+            'breadcrumb' => 'Keuangan > Laporan > Saldo Keuangan',
+            'ustadz' => $this->ustadz->get_all(),
             'table' => array(
                 array(
                     'field' => "ID_BAYAR",
@@ -119,25 +119,6 @@ class Laporan_pembayaran_persantri extends CI_Controller {
                         'NOMIMAL_TAGIHAN' => 'number'
                     ),
                 ),
-                array(
-                    'field' => "NAMA_UST",
-                    'title' => "Petugas",
-                    'sortable' => "NAMA_UST",
-                    'show' => true,
-                    'filter' => array(
-                        'NAMA_UST' => 'text'
-                    ),
-                ),
-                array(
-                    'field' => "ACTION",
-                    'title' => "Aksi",
-                    'actions' => array(
-                        array(
-                            'title' => 'Hapus',
-                            'delete' => true
-                        )
-                    )
-                ),
             )
         );
         $this->output_handler->output_JSON($data);
@@ -145,19 +126,10 @@ class Laporan_pembayaran_persantri extends CI_Controller {
 
     public function datatable() {
         $post = json_decode(file_get_contents('php://input'), true);
-        
-        $data = $this->laporan_pembayaran->get_datatable_persantri($post);
+
+        $data = $this->saldo->get_datatable($post);
 
         $this->output_handler->output_JSON($data);
-    }
-
-    public function delete() {
-        $post = json_decode(file_get_contents('php://input'), true);
-
-        $result = $this->laporan_pembayaran->delete($post[$this->primaryKey]);
-        $message = 'dihapus';
-
-        $this->output_handler->output_JSON($result, $message);
     }
 
 }

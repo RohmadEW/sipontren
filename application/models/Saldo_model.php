@@ -1,4 +1,5 @@
 <?php
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
@@ -7,7 +8,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * and open the template in the editor.
  */
 
-class Laporan_pembayaran_model extends CI_Model {
+class Saldo_model extends CI_Model {
 
     var $table = 'keu_pembayaran';
     var $primaryKey = 'ID_BAYAR';
@@ -27,7 +28,6 @@ class Laporan_pembayaran_model extends CI_Model {
         $this->db->join('md_jenis_kelamin', 'ID_JK=JK_SANTRI');
         $this->db->join('md_kamar', 'ID_KAMAR=KAMAR_SANTRI', 'LEFT');
         $this->db->join('md_gedung', 'GEDUNG_KAMAR=ID_GEDUNG', 'LEFT');
-        $this->db->join('md_ustadz', 'USER_BAYAR=ID_UST', 'LEFT');
         $this->db->where(array(
             'DIKEMBALIKAN_BAYAR' => 0,
             'ALUMNI_SANTRI' => 0,
@@ -37,26 +37,33 @@ class Laporan_pembayaran_model extends CI_Model {
         ));
     }
 
-    public function get_datatable_persantri($post) {
+    public function get_datatable($post) {
+        $where = array(
+            'TANGGAL_BAYAR >= ' => $this->datetime_handler->date_to_store($post['where']['START_DATE']),
+            'TANGGAL_BAYAR <= ' => $this->datetime_handler->date_to_store($post['where']['END_DATE']),
+            'USER_BAYAR' => $post['where']['USER_BAYAR']
+        );
+        
         $exl = array(
             'ROMBEL_SANTRI',
             'NOMIMAL_TAGIHAN_SHOW',
         );
-        $this->db->select($this->database_handler->set_select($post, $exl).', IF(ID_KAMAR IS NULL, "-", CONCAT(NAMA_KAMAR, " - ", NAMA_GEDUNG)) AS KAMAR_SANTRI, CONCAT(TEMPAT_LAHIR_SANTRI, ", ", DATE_FORMAT(TANGGAL_LAHIR_SANTRI, "%d-%m-%Y")) AS TTL_SANTRI, IF(ROMBEL_AS IS NULL, "-", CONCAT(NAMA_ROMBEL, " - ", NAMA_KEGIATAN)) AS ROMBEL_SANTRI, CONCAT("Rp ", FORMAT(NOMINAL_TAGIHAN, 2)) AS NOMIMAL_TAGIHAN_SHOW');
+        $this->db->select($this->database_handler->set_select($post['select'], $exl).', IF(ID_KAMAR IS NULL, "-", CONCAT(NAMA_KAMAR, " - ", NAMA_GEDUNG)) AS KAMAR_SANTRI, CONCAT(TEMPAT_LAHIR_SANTRI, ", ", DATE_FORMAT(TANGGAL_LAHIR_SANTRI, "%d-%m-%Y")) AS TTL_SANTRI, IF(ROMBEL_AS IS NULL, "-", CONCAT(NAMA_ROMBEL, " - ", NAMA_KEGIATAN)) AS ROMBEL_SANTRI, CONCAT("Rp ", FORMAT(NOMINAL_TAGIHAN, 2)) AS NOMIMAL_TAGIHAN_SHOW');
         $this->_get_table();
+        $this->db->where($where);
         $data = $this->db->get()->result();
         
+        $this->db->select('SUM(NOMINAL_TAGIHAN) AS TOTAL_PEMBAYARAN');
+        $this->_get_table();
+        $this->db->where($where);
+        $total = $this->db->get()->row();
+        
         $result = array(
-            "data" => $data
+            "data" => $data,
+            "total" => $total->TOTAL_PEMBAYARAN
         );
 
         return $result;
     }
 
-    public function delete($id) {
-        $where = array($this->primaryKey => $id);
-        $this->db->delete($this->table, $where);
-        
-        return $this->db->affected_rows();
-    }
 }
