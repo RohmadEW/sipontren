@@ -1,5 +1,5 @@
-
-        $this->db->from('(SELECT * FROM (SELECT *, IF(TA_AS <= '.$this->session->userdata('ID_TA').', NULL, TA_AS) AS TA_SHOW FROM `akad_santri` WHERE ((ROMBEL_AS = '.$where['ROMBEL_LAMA'].' AND TA_AS='.$this->session->userdata('ID_TA').') OR (ROMBEL_AS = '.$where['ROMBEL_BARU'].' AND TA_AS='.$where['TA_BARU'].')) ) aq WHERE TA_SHOW IS NOT NULL) sq');
-        $this->db->join('md_santri', 'ID_SANTRI=SANTRI_AS');
-        $this->db->join('(SELECT *, CONCAT(NAMA_KAMAR, " - ", NAMA_GEDUNG) AS KAMAR_GEDUNG FROM md_kamar INNER JOIN md_gedung ON GEDUNG_KAMAR=ID_GEDUNG) md_kamar', 'KAMAR_SANTRI=ID_KAMAR');
-        $this->db->where('ROMBEL_AS', $where['LAMA'] ? $where['ROMBEL_LAMA'] : $where['ROMBEL_BARU']);
+NNN   NN EEEEEE GGGGGG EEEEEE RRRRR  II
+NNNN  NN EE     GG     EE     RR  RR II
+NN NN NN EEEE   GG GGG EEEE   RRRRR  II
+NN  NNNN EE     GG  GG EE     RR RR  II
+NN   NNN EEEEEE GGGGGG EEEEEE RR  RR II
