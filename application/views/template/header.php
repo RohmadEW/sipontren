@@ -41,7 +41,8 @@
         <script src="assets/dist/locale.js"></script>
         <script src="assets/dist/app.js"></script>
         <script src="assets/dist/login.js"></script>
-        <?php if ($this->session->userdata('ID_USER')) echo '<script src="assets/dist/controllers.js"></script>'; ?>
+        <script src="assets/dist/controllers.js"></script>
+        <?php // if ($this->session->userdata('ID_USER')) echo '<script src="assets/dist/controllers.js"></script>'; ?>
 
     </head>
     <body ng-cloak class="kk-bg-dark-body">

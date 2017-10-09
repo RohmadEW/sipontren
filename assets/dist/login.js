@@ -43,11 +43,11 @@
             if (typeof response.data === 'object') {
                 dataScopeShared.addData('TA_ACTIVE', response.data.ta.ID_TA);
                 dataScopeShared.addData('CAWU_ACTIVE', response.data.cawu.ID_CAWU);
-                
+
                 notificationService.toastSimple('Ajaran aktif adalah Tahun ' + response.data.ta.NAMA_TA + ' dan ' + response.data.cawu.NAMA_CAWU);
             } else {
                 notificationService.toastSimple('Tahun Ajaran belum diatur. Silahkan diatur terlebih dahulu');
-                
+
                 $scope.routeToHome();
             }
         }
@@ -66,7 +66,17 @@
             'password': ''
         };
 
+//        $http.get($scope.mainURI + '/check_session').then(successCheck, notificationService.errorCallback);
+//
+//        function successCheck(response) {
+//            if (response.data.status)
+//                $location.path(url_home);
+//            else
+//                $http.get($scope.mainURI + '/logout');
+//        }
+        
         $http.get($scope.mainURI + '/logout');
+
         $scope.loginApp = function () {
             $http.post($scope.mainURI + '/proccess', $scope.formData).then(successCallback, notificationService.errorCallback);
         };
@@ -82,7 +92,7 @@
 //                var currentPageTemplate = $route.current.templateUrl;
 //                $templateCache.remove(currentPageTemplate);
 //                $route.reload();
-                window.location.reload();
+//                window.location.reload();
             }
         }
     });
