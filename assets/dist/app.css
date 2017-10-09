@@ -399,10 +399,14 @@ md-toolbar.md-menu-toolbar {
     margin-top: 25px;
 }
 .kk-bg-dark {
+    background-color: transparent;
+}
+.kk-bg-dark-body {
     background-color: #0da67b;
 }
 md-toolbar.md-menu-toolbar .kk-toolbar-filler {
-    background-color: #245871;
+    background-color: #01264c;
+    /*background-color: #245871;*/
 }
 .kk-icon-title {
     height: unset;
@@ -469,4 +473,15 @@ md-toast.md-success-toast-theme {
     .md-toast-content {
         background-color: green;
     }
+}
+.background-image-src {
+}
+
+#svg-background {
+    position: absolute;
+    bottom: 0;
+}
+#svg-menu {
+    top: 0;
+    width: 80px;
 }
