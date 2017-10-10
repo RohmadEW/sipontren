@@ -21,6 +21,23 @@
             });
         };
 
+        $scope.changePassword = function (event) {
+            $mdDialog
+                    .show({
+                        clickOutsideToClose: true,
+                        templateUrl: url_template + 'template-change_password.html',
+                        targetEvent: event
+                    })
+                    .then(
+                            function (notification) {
+                                notificationService.toastSimple(notification);
+                            },
+                            function () {
+                                // CANCEL DIALOG
+                            }
+                    );
+        };
+
         $scope.logOut = function (ev) {
             var confirm = $mdDialog.confirm()
                     .title('Apakah Anda yakin keluar aplikasi?')
@@ -74,7 +91,7 @@
 //            else
 //                $http.get($scope.mainURI + '/logout');
 //        }
-        
+
         $http.get($scope.mainURI + '/logout');
 
         $scope.loginApp = function () {

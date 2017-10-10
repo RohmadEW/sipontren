@@ -59,6 +59,39 @@
         }
     });
 
+    angular.module('mainApp').controller('changePasswordController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.ajaxRunning = false;
+        $scope.addForm = false;
+
+        $scope.formData = {
+            NEW_PASSWORD: null,
+            NEW_REPASSWORD: null,
+        };
+
+        $scope.cancelSumbit = function () {
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                if ($scope.formData.NEW_PASSWORD === $scope.formData.NEW_REPASSWORD) {
+                    $scope.ajaxRunning = true;
+
+                    $http.post('user/login/change_password', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+                } else {
+                    notificationService.toastSimple('Password yang Anda masukan tidak sama');
+                }
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification);
+        }
+    });
+
     angular.module('mainApp').controller('datatableController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache, dataScopeShared) {
         $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
         $scope.mainTemplate = url_template + $routeParams.template;
@@ -5426,7 +5459,7 @@
 
         function callbackProses(response) {
             notificationService.toastSimple(response.data.notification);
-            
+
             if (response.data.extra.akun)
                 getDataAkun();
 

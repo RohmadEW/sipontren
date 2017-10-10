@@ -37,4 +37,28 @@ class Login extends CI_Controller {
         $this->output_handler->output_JSON($result);
     }
 
+    public function change_password() {
+        $this->auth->validation();
+        $this->load->model('user_model');
+
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if($data['NEW_PASSWORD'] == $data['NEW_REPASSWORD']) {
+            $data = array(
+                'PASSWORD_USER' => $this->crypt->encryptPassword($data['NEW_PASSWORD'])
+            );
+            $where = array(
+                'ID_USER' => $this->session->userdata('ID_USER')
+            );
+
+            $result = $this->user_model->update($where, $data);
+        } else {
+            $result = false;
+        }
+        
+        $message = 'diubah';
+
+        $this->output_handler->output_JSON($result, $message);
+    }
+
 }

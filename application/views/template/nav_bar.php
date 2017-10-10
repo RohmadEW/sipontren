@@ -210,8 +210,8 @@ $this->auth->validation();
 </div>
 <div flex="20" layout="row" layout-align="end center" ng-if="showMenu">
     <div>
-        <md-button class="md-fab kk-button" aria-label="Cari Santri">
-            <md-tooltip md-direction="bottom">Cari Santri</md-tooltip>
+        <md-button class="md-fab kk-button" aria-label="Ubah Password" ng-click="changePassword($event)">
+            <md-tooltip md-direction="bottom">Ubah Password</md-tooltip>
             <md-icon class="material-icons md-36 kk-icon-nav-bar">vpn_key</md-icon>
         </md-button>
     </div>
