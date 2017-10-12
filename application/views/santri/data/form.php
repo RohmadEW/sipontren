@@ -69,6 +69,12 @@ $data = array(
     ),
     array(
         'type' => 'select',
+        'field' => 'STATUS_ASAL_SANTRI',
+        'label' => 'Asal Santri',
+        'required' => FALSE
+    ),
+    array(
+        'type' => 'select',
         'field' => 'AGAMA_SANTRI',
         'label' => 'Agama',
         'required' => FALSE

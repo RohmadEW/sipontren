@@ -2061,6 +2061,12 @@
             WALI_HUBUNGAN_SANTRI: null,
             WALI_PENDIDIKAN_SANTRI: null,
             WALI_PEKERJAAN_SANTRI: null,
+            ORTU_PENGHASILAN_SANTRI: null,
+            ORTU_NOHP1_SANTRI: null,
+            ORTU_NOHP2_SANTRI: null,
+            ORTU_NOHP3_SANTRI: null,
+            ORTU_EMAIL_SANTRI: null,
+            STATUS_ASAL_SANTRI: null,
             STATUS_MUTASI_SANTRI: null,
             TANGGAL_MUTASI_SANTRI: null,
         };
@@ -2083,6 +2089,8 @@
             $scope.dataWALI_PENDIDIKAN_SANTRI = response.data.PENDIDIKAN_SANTRI;
             $scope.dataWALI_PEKERJAAN_SANTRI = response.data.PEKERJAAN_SANTRI;
             $scope.dataSTATUS_MUTASI_SANTRI = response.data.STATUS_MUTASI;
+            $scope.dataORTU_PENGHASILAN_SANTRI = response.data.ORTU_PENGHASILAN_SANTRI;
+            $scope.dataSTATUS_ASAL_SANTRI = response.data.STATUS_ASAL_SANTRI;
 
             var urlGetDataForm = [];
 
@@ -2167,6 +2175,10 @@
                     ||
                     ((typeof $scope.form.IBU_NAMA_SANTRI === 'object')
                             && $scope.form.IBU_NAMA_SANTRI.$valid
+                            )
+                    ||
+                    ((typeof $scope.form.ORTU_PENGHASILAN_SANTRI === 'object')
+                            && $scope.form.ORTU_PENGHASILAN_SANTRI.$valid
                             )
                     ||
                     ((typeof $scope.form.WALI_NAMA_SANTRI === 'object')
@@ -5498,5 +5510,37 @@
                 notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
             }
         };
+    });
+
+    angular.module('mainApp').controller('settingsEmisController', function ($scope, $routeParams, $http, notificationService, NgTableParams, $mdDialog, url_template, $timeout, $mdSidenav, $route, $templateCache, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.mainTemplate = url_template + $routeParams.template;
+        $scope.appReady = false;
+        $scope.dataOriginal = null;
+        $scope.flex = 90;
+        $scope.flexOffset = 5;
+
+        $scope.fabHidden = true;
+
+        $http.get($scope.mainURI + '/index').then(callbackSuccess, notificationService.errorCallback);
+
+        function callbackSuccess(response) {
+            $scope.title = response.data.title;
+            $scope.breadcrumb = response.data.breadcrumb;
+
+            $scope.appReady = true;
+        }
+        
+        $scope.downloadTemplate = function() {
+            window.open('/assets/dist/emis.xls');
+        };
+        
+        $scope.downloadEMIS = function() {
+            window.open($scope.mainURI + '/download_emis');
+        };
+        
+        $scope.importEMIS = function() {
+            
+        }
     });
 })();

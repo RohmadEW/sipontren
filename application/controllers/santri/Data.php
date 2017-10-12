@@ -17,6 +17,8 @@ class Data extends CI_Controller {
             'status_hidup_model' => 'hidup',
             'jenjang_pendidikan_model' => 'pendidikan',
             'kamar_model' => 'kamar',
+            'penghasilan_model' => 'penghasilan',
+            'asal_santri_model' => 'asal_santri',
         ));
         $this->auth->validation(array(1, 3));
     }
@@ -139,6 +141,10 @@ class Data extends CI_Controller {
                             'title' => 'Ubah Data Wali',
                             'form' => 'form_wali'
                         ),
+                        array(
+                            'title' => 'Ubah Data Orangtua',
+                            'form' => 'form_orangtua'
+                        ),
                     )
                 ),
             )
@@ -166,6 +172,8 @@ class Data extends CI_Controller {
             'PENDIDIKAN_SANTRI' => $this->pendidikan->get_all(),
             'PEKERJAAN_SANTRI' => $this->pekerjaan->get_all(),
             'HUBUNGAN_SANTRI' => $this->masterdata->get_hubungan(),
+            'ORTU_PENGHASILAN_SANTRI' => $this->penghasilan->get_all(),
+            'STATUS_ASAL_SANTRI' => $this->asal_santri->get_all(),
         );
         
         $this->output_handler->output_JSON($data);

@@ -29,4 +29,12 @@ class Crypt {
         return $randomString;
     }
 
+    function next_char($char, $count) {
+        for ($i = 0; $i < $count; $i++) {
+            ++$char;
+        }
+
+        return $char;
+    }
+
 }
