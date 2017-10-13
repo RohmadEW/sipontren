@@ -2,48 +2,48 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Jk extends CI_Controller {
+class Agama extends CI_Controller {
 
-    var $primaryKey = 'ID_JK';
+    var $primaryKey = 'ID_AGAMA';
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'jk_model' => 'jk'
+            'agama_model' => 'agama'
         ));
         $this->auth->validation(array(1, 2, 3));
     }
 
     public function index() {
         $data = array(
-            'title' => 'Master Data Jenis Kelamin',
-            'breadcrumb' => 'Master Data > Jenis Kelamin',
+            'title' => 'Master Data Agama',
+            'breadcrumb' => 'Master Data > Agama',
             'table' => array(
                 array(
-                    'field' => "ID_JK",
+                    'field' => "ID_AGAMA",
                     'title' => "ID",
-                    'sortable' => "ID_JK",
+                    'sortable' => "ID_AGAMA",
                     'show' => FALSE,
                     'filter' => array(
-                        'ID_JK' => 'number'
+                        'ID_AGAMA' => 'number'
                     )
                 ),
                 array(
-                    'field' => "NAMA_JK",
-                    'title' => "Nama",
-                    'sortable' => "NAMA_JK",
+                    'field' => "NAMA_AGAMA",
+                    'title' => "Nama Gedung",
+                    'sortable' => "NAMA_AGAMA",
                     'show' => true,
                     'filter' => array(
-                        'NAMA_JK' => 'text'
+                        'NAMA_AGAMA' => 'text'
                     )
                 ),
                 array(
-                    'field' => "KODE_EMIS_JK",
+                    'field' => "KODE_EMIS_AGAMA",
                     'title' => "Kode EMIS",
-                    'sortable' => "KODE_EMIS_JK",
+                    'sortable' => "KODE_EMIS_AGAMA",
                     'show' => true,
                     'filter' => array(
-                        'KODE_EMIS_JK' => 'text'
+                        'KODE_EMIS_AGAMA' => 'text'
                     )
                 ),
                 array(
@@ -66,7 +66,7 @@ class Jk extends CI_Controller {
     }
 
     public function datatable() {
-        $data = $this->jk->get_datatable();
+        $data = $this->agama->get_datatable();
 
         $this->output_handler->output_JSON($data);
     }
@@ -80,7 +80,7 @@ class Jk extends CI_Controller {
     }
 
     public function data() {
-        $data = $this->jk->get_datatables();
+        $data = $this->agama->get_datatables();
 
         $this->output_handler->output_JSON($data);
     }
@@ -88,7 +88,7 @@ class Jk extends CI_Controller {
     public function view() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->jk->get_by_id($post[$this->primaryKey]);
+        $data = $this->agama->get_by_id($post[$this->primaryKey]);
 
         $this->output_handler->output_JSON($data);
     }
@@ -96,7 +96,7 @@ class Jk extends CI_Controller {
     public function save() {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->jk->save($data);
+        $result = $this->agama->save($data);
 
         if (isset($data[$this->primaryKey]))
             $message = 'diubah';
@@ -109,14 +109,14 @@ class Jk extends CI_Controller {
     public function delete() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->jk->delete($post[$this->primaryKey]);
+        $result = $this->agama->delete($post[$this->primaryKey]);
         $message = 'dihapus';
 
         $this->output_handler->output_JSON($result, $message);
     }
 
     public function get_all() {
-        $data = $this->jk->get_all();
+        $data = $this->agama->get_all();
 
         $this->output_handler->output_JSON($data);
     }
