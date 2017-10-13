@@ -18,7 +18,7 @@ class Tahun_ajaran extends CI_Controller {
     public function index() {
         $data = array(
             'title' => 'Master Data Tahun Ajaran',
-            'breadcrumb' => 'Master Data > Tahun Ajaran',
+            'breadcrumb' => 'Pengaturan > Akademik > Tahun Ajaran',
             'table' => array(
                 array(
                     'field' => "ID_TA",

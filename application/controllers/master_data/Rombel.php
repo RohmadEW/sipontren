@@ -12,6 +12,7 @@ class Rombel extends CI_Controller {
             'rombel_model' => 'rombel',
             'kelas_model' => 'kelas',
             'ruang_model' => 'ruang',
+            'jurusan_model' => 'jurusan',
         ));
         $this->auth->validation(1);
     }
@@ -19,7 +20,7 @@ class Rombel extends CI_Controller {
     public function index() {
         $data = array(
             'title' => 'Master Data Rombongan Belajar',
-            'breadcrumb' => 'Master Data > Rombongan Belajar',
+            'breadcrumb' => 'Pengaturan > Akademik > Rombongan Belajar',
             'table' => array(
                 array(
                     'field' => "ID_ROMBEL",
@@ -60,6 +61,16 @@ class Rombel extends CI_Controller {
                     )
                 ),
                 array(
+                    'field' => "NAMA_JURUSAN",
+                    'title' => "Jurusan",
+                    'sortable' => "NAMA_JURUSAN",
+                    'show' => true,
+                    'filter' => array(
+                        'ID_JURUSAN' => 'select'
+                    ),
+                    'filterData' => $this->jurusan->get_all()
+                ),
+                array(
                     'field' => "KETERANGAN_ROMBEL",
                     'title' => "Keterangan",
                     'sortable' => "KETERANGAN_ROMBEL",
@@ -97,6 +108,7 @@ class Rombel extends CI_Controller {
         $data = array(
             'dataKELAS_ROMBEL' => $this->kelas->get_all(),
             'dataRUANG_ROMBEL' => $this->ruang->get_all(),
+            'dataJURUSAN_ROMBEL' => $this->jurusan->get_all(),
         );
 
         $this->output_handler->output_JSON($data);

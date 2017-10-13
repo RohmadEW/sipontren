@@ -18,7 +18,7 @@ class Ruang extends CI_Controller {
     public function index() {
         $data = array(
             'title' => 'Master Data Ruang',
-            'breadcrumb' => 'Master Data > Ruang',
+            'breadcrumb' => 'Pengaturan > Akademik > Ruang',
             'table' => array(
                 array(
                     'field' => "ID_RUANG",

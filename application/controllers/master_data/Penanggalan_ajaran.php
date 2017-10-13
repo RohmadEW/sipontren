@@ -17,7 +17,7 @@ class Penanggalan_ajaran extends CI_Controller {
     public function index() {
         $data = array(
             'title' => 'Master Data Penanggalan Ajaran',
-            'breadcrumb' => 'Master Data > Penanggalan Ajaran',
+            'breadcrumb' => 'Pengaturan > Akademik > Penanggalan Ajaran',
             'table' => array(
                 array(
                     'field' => "ID_CAWU",

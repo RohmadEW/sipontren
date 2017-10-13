@@ -26,7 +26,7 @@ class Emis_model extends CI_Model {
                 . ',ANGKATAN_SANTRI AS ANGKATAN'
                 . ',SUKU_SANTRI AS KODE_SUKU'
                 . ',NAMA_SUKU AS NAMA_SUKU'
-                . ',AGAMA_SANTRI AS KODE_AGAMA'
+                . ',KODE_EMIS_AGAMA AS KODE_AGAMA'
                 . ',NAMA_AGAMA AS NAMA_AGAMA'
                 . ',KONDISI_SANTRI AS KODE_KONDISI'
                 . ',NAMA_KONDISI AS NAMA_KONDISI'
@@ -130,6 +130,36 @@ class Emis_model extends CI_Model {
         ksort($data);
 
         return array_values($data);
+    }
+
+    public function simpan_data($santri, $akademik) {
+        $santri['AKTIF_SANTRI'] = 1;
+        $this->db->insert('md_santri', $santri);
+        $id = $this->db->insert_id();
+
+        if ($id) {
+            $akademik['SANTRI_AS'] = $id;
+            $akademik['TA_AS'] = $this->session->userdata('ID_TA');
+            
+            $sql = 'INSERT INTO akad_santri (`KELAS_AS`, `ROMBEL_AS`, `NO_ABSEN_AS`, `SANTRI_AS`, `TA_AS`, `USER_AS`) '
+                    . 'SELECT ID_KELAS, '.$akademik['ROMBEL_AS'].', '.$akademik['NO_ABSEN_AS'].', '.$id.', '.$this->session->userdata('ID_TA').', '.$this->session->userdata('ID_USER').' '
+                    . 'FROM md_kelas INNER JOIN md_kegiatan ON KEGIATAN_KELAS=ID_KEGIATAN AND KODE_EMIS_KELAS='.$akademik['KODE_EMIS_KELAS'].' AND ID_KEGIATAN='.$akademik['ID_KEGIATAN'];
+            $this->db->query($sql);
+            $result = $this->db->affected_rows();
+            
+            if($result) {
+                return true;
+            } else {
+                $where = array(
+                    'ID_SANTRI' => $id
+                );
+                $this->db->delete('md_santri', $where);
+                
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
 }

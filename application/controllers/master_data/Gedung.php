@@ -17,7 +17,7 @@ class Gedung extends CI_Controller {
     public function index() {
         $data = array(
             'title' => 'Master Data Gedung',
-            'breadcrumb' => 'Master Data > Gedung',
+            'breadcrumb' => 'Pengaturan > Akademik > Gedung',
             'table' => array(
                 array(
                     'field' => "ID_GEDUNG",

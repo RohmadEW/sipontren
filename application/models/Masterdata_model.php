@@ -29,6 +29,13 @@ class Masterdata_model extends CI_Model {
         return $result->result();
     }
     
+    public function get_data_agama() {
+        $this->db->from('md_agama');
+        $result = $this->db->get();
+        
+        return $result->result();
+    }
+    
     public function get_agama() {
         $this->db->select('ID_AGAMA as id, NAMA_AGAMA as title');
         $this->db->from('md_agama');
@@ -37,9 +44,32 @@ class Masterdata_model extends CI_Model {
         return $result->result();
     }
     
+    public function get_data_hubungan() {
+        $this->db->from('md_hubungan');
+        $result = $this->db->get();
+        
+        return $result->result();
+    }
+    
+    public function get_data_jurusan() {
+        $this->db->from('md_hubungan');
+        $result = $this->db->get();
+        
+        return $result->result();
+    }
+    
     public function get_hubungan() {
         $this->db->select('ID_HUB as id, NAMA_HUB as title');
         $this->db->from('md_hubungan');
+        $result = $this->db->get();
+        
+        return $result->result();
+    }
+    
+    public function get_data_kelas() {
+        $this->db->select('CONCAT(KODE_EMIS_KEGIATAN, "-", KEGIATAN_KELAS) as KODE_EMIS, ID_KELAS');
+        $this->db->from('md_kelas');
+        $this->db->join('md_kegiatan', 'ID_KEGIATAN=KEGIATAN_KELAS');
         $result = $this->db->get();
         
         return $result->result();

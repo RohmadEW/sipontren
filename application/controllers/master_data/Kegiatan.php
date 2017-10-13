@@ -17,7 +17,7 @@ class Kegiatan extends CI_Controller {
     public function index() {
         $data = array(
             'title' => 'Master Data Kegiatan',
-            'breadcrumb' => 'Master Data > Kegiatan',
+            'breadcrumb' => 'Pengaturan > Akademik > Kegiatan',
             'table' => array(
                 array(
                     'field' => "ID_KEGIATAN",

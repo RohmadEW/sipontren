@@ -21,6 +21,11 @@ $data = array(
         'label' => 'Nama Rombongan Belajar'
     ),
     array(
+        'type' => 'select',
+        'field' => 'JURUSAN_ROMBEL',
+        'label' => 'Jurusan'
+    ),
+    array(
         'type' => 'text',
         'field' => 'KETERANGAN_ROMBEL',
         'label' => 'Keterangan'

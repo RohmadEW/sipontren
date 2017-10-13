@@ -14,14 +14,13 @@ $this->output_handler->start_content('settingsEmisController');
     <div layout="row">
         <div flex="70">
             <div style="margin: 30px;">
-                <?php
-                $this->output_handler->form_input(
-                        array(
-                            'type' => 'file',
-                            'field' => 'FILE_EMIS',
-                            'label' => 'Pilih File yang akan diimport'
-                ));
-                ?>
+                <md-input-container class="md-block kk-form-control" flex-gt-sm>
+                    <label>Pilih File yang akan di upload</label>
+                    <input type="file" id="file" name="file" ng-disabled="ajaxRunning">
+                    <div ng-messages="form.file.$error">
+                        <div ng-message="required">Wajid diisi</div>
+                    </div>
+                </md-input-container>
             </div>
         </div>
         <div flex="10" style="margin-top: 20px">

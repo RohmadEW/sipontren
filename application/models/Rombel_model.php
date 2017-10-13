@@ -20,8 +20,9 @@ class Rombel_model extends CI_Model {
 
     private function _get_table($select = TRUE) {
         if ($select)
-            $this->db->select('*, CONCAT(NAMA_ROMBEL, " - ", NAMA_KEGIATAN) AS NAMA_KELAS_ROMBEL, CONCAT(NAMA_RUANG, " - ", NAMA_GEDUNG) AS NAMA_RUANG_ROMBEL');
+            $this->db->select('*, CONCAT(NAMA_KELAS, " - ", NAMA_KEGIATAN) AS NAMA_KELAS_ROMBEL, CONCAT(NAMA_RUANG, " - ", NAMA_GEDUNG) AS NAMA_RUANG_ROMBEL');
         $this->db->from($this->table);
+        $this->db->join('md_jurusan', 'ID_JURUSAN=JURUSAN_ROMBEL');
         $this->db->join('md_kelas', 'ID_KELAS=KELAS_ROMBEL');
         $this->db->join('md_kegiatan', 'ID_KEGIATAN=KEGIATAN_KELAS');
         $this->db->join('md_ruang', 'ID_RUANG=RUANG_ROMBEL');

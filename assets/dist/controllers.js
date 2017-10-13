@@ -847,6 +847,7 @@
             NAMA_ROMBEL: null,
             KELAS_ROMBEL: null,
             RUANG_ROMBEL: null,
+            JURUSAN_ROMBEL: null,
             KETERANGAN_ROMBEL: null,
         };
 
@@ -859,6 +860,7 @@
         function callbackFormData(response) {
             $scope.dataKELAS_ROMBEL = response.data.dataKELAS_ROMBEL;
             $scope.dataRUANG_ROMBEL = response.data.dataRUANG_ROMBEL;
+            $scope.dataJURUSAN_ROMBEL = response.data.dataJURUSAN_ROMBEL;
 
             if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
                 formReady();
@@ -875,6 +877,7 @@
             $scope.formData.NAMA_ROMBEL = response.data.NAMA_ROMBEL;
             $scope.formData.KELAS_ROMBEL = response.data.KELAS_ROMBEL;
             $scope.formData.RUANG_ROMBEL = response.data.RUANG_ROMBEL;
+            $scope.formData.JURUSAN_ROMBEL = response.data.JURUSAN_ROMBEL;
             $scope.formData.KETERANGAN_ROMBEL = response.data.KETERANGAN_ROMBEL;
 
             $scope.addForm = false;
@@ -1102,6 +1105,70 @@
             dataScopeShared.addData('DATA_UPDATE', null);
         }
     });
+
+    angular.module('mainApp').controller('mdJurusanController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
+        $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
+        $scope.ajaxRunning = true;
+        $scope.dataUpdate = dataScopeShared.getData('DATA_UPDATE');
+        $scope.addForm = true;
+
+        $scope.formData = {
+            ID_JURUSAN: null,
+            NAMA_JURUSAN: null,
+            KODE_EMIS_JURUSAN: null,
+        };
+
+        $http.get($scope.mainURI + '/form').then(callbackForm, notificationService.errorCallback);
+
+        function callbackForm(response) {
+            callbackFormData(response);
+        }
+
+        function callbackFormData(response) {
+            if ($scope.dataUpdate === null || typeof $scope.dataUpdate === 'undefined')
+                formReady();
+            else
+                getData();
+        }
+
+        function getData() {
+            $http.post($scope.mainURI + '/view', $scope.dataUpdate).then(callbackSuccessData, notificationService.errorCallback);
+        }
+
+        function callbackSuccessData(response) {
+            $scope.formData = response.data;
+
+            $scope.addForm = false;
+
+            formReady();
+        }
+
+        function formReady() {
+            $scope.ajaxRunning = false;
+        }
+
+        $scope.cancelSumbit = function () {
+            dataScopeShared.addData('DATA_UPDATE', null);
+            $mdDialog.cancel();
+        };
+
+        $scope.saveSubmit = function () {
+            if ($scope.form.$valid) {
+                $scope.ajaxRunning = true;
+
+                $http.post($scope.mainURI + '/save', $scope.formData).then(callbackSuccessSaving, notificationService.errorCallback);
+            } else {
+                notificationService.toastSimple('Silahkan periksa kembali masukan Anda');
+            }
+        };
+
+        function callbackSuccessSaving(response) {
+            $scope.ajaxRunning = false;
+            $mdDialog.hide(response.data.notification);
+            dataScopeShared.addData('DATA_UPDATE', null);
+        }
+    });
+
 
     angular.module('mainApp').controller('mdKondisiController', function ($scope, formHelper, notificationService, $routeParams, $http, $mdDialog, dataScopeShared) {
         $scope.mainURI = $routeParams.ci_dir + '/' + $routeParams.ci_class;
@@ -2138,6 +2205,12 @@
         }
 
         function formReady() {
+            if ($scope.addForm) {
+                notificationService.toastSimple('Menambahkan santri hanya dapat dilakukan pada menu PSB.');
+
+                $mdDialog.cancel();
+            }
+
             $scope.ajaxRunning = false;
         }
 
@@ -5522,25 +5595,44 @@
 
         $scope.fabHidden = true;
 
+        $scope.formData = {
+            ID_KEGIATAN: null
+        };
+
         $http.get($scope.mainURI + '/index').then(callbackSuccess, notificationService.errorCallback);
 
         function callbackSuccess(response) {
             $scope.title = response.data.title;
             $scope.breadcrumb = response.data.breadcrumb;
+            $scope.dataID_KEGIATAN = response.data.KEGIATAN;
 
             $scope.appReady = true;
         }
-        
-        $scope.downloadTemplate = function() {
-            window.open('/assets/dist/emis.xls');
+
+        $scope.downloadTemplate = function () {
+            window.open('assets/dist/template_emis.xls');
+            notificationService.toastSimple('Jangan merubah format template agar proses import berhasil');
         };
-        
-        $scope.downloadEMIS = function() {
+
+        $scope.downloadEMIS = function () {
             window.open($scope.mainURI + '/download_emis');
         };
-        
-        $scope.importEMIS = function() {
-            
+
+        $scope.importEMIS = function () {
+            var formData = new FormData();
+            formData.append('file', document.getElementById("file").files[0]);
+            formData.append('ID_KEGIATAN', $scope.formData.ID_KEGIATAN);
+            var config = {
+                headers: {
+                    'Content-Type': undefined
+                }
+            }
+            $http.post($scope.mainURI + '/upload_emis', formData, config).then(callbackProses, notificationService.errorCallback);
+        };
+
+        function callbackProses(response) {
+            notificationService.toastSimple(response.data.notification);
         }
     });
+
 })();

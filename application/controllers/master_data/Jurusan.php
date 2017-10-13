@@ -2,68 +2,48 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Kelas extends CI_Controller {
+class Jurusan extends CI_Controller {
 
-    var $primaryKey = 'ID_KELAS';
+    var $primaryKey = 'ID_JURUSAN';
 
     public function __construct() {
         parent::__construct();
         $this->load->model(array(
-            'kelas_model' => 'kelas',
-            'kegiatan_model' => 'kegiatan',
+            'jurusan_model' => 'jurusan',
         ));
         $this->auth->validation(1);
     }
 
     public function index() {
         $data = array(
-            'title' => 'Master Data Kelas',
-            'breadcrumb' => 'Pengaturan > Akademik > Kelas',
+            'title' => 'Master Data Jurusan',
+            'breadcrumb' => 'Pengaturan > Akademik > Jurusan',
             'table' => array(
                 array(
-                    'field' => "ID_KELAS",
+                    'field' => "ID_JURUSAN",
                     'title' => "ID",
-                    'sortable' => "ID_KELAS",
+                    'sortable' => "ID_JURUSAN",
                     'show' => FALSE,
                     'filter' => array(
-                        'ID_KELAS' => 'number'
+                        'ID_JURUSAN' => 'number'
                     )
                 ),
                 array(
-                    'field' => "NAMA_KEGIATAN",
-                    'title' => "Nama Kegiatan",
-                    'sortable' => "NAMA_KEGIATAN",
+                    'field' => "NAMA_JURUSAN",
+                    'title' => "Nama",
+                    'sortable' => "NAMA_JURUSAN",
                     'show' => true,
                     'filter' => array(
-                        'ID_KEGIATAN' => 'select'
-                    ),
-                    'filterData' => $this->kegiatan->get_all()
-                ),
-                array(
-                    'field' => "NAMA_KELAS",
-                    'title' => "Nama Kelas",
-                    'sortable' => "NAMA_KELAS",
-                    'show' => true,
-                    'filter' => array(
-                        'NAMA_KELAS' => 'text'
+                        'NAMA_JURUSAN' => 'text'
                     )
                 ),
                 array(
-                    'field' => "KETERANGAN_KELAS",
-                    'title' => "Keterangan",
-                    'sortable' => "KETERANGAN_KELAS",
-                    'show' => true,
-                    'filter' => array(
-                        'KETERANGAN_KELAS' => 'text'
-                    )
-                ),
-                array(
-                    'field' => "KODE_EMIS_KELAS",
+                    'field' => "KODE_EMIS_JURUSAN",
                     'title' => "Kode EMIS",
-                    'sortable' => "KODE_EMIS_KELAS",
+                    'sortable' => "KODE_EMIS_JURUSAN",
                     'show' => true,
                     'filter' => array(
-                        'KODE_EMIS_KELAS' => 'text'
+                        'KODE_EMIS_JURUSAN' => 'text'
                     )
                 ),
                 array(
@@ -86,21 +66,20 @@ class Kelas extends CI_Controller {
     }
 
     public function datatable() {
-        $data = $this->kelas->get_datatable();
+        $data = $this->jurusan->get_datatable();
 
         $this->output_handler->output_JSON($data);
     }
 
     public function form() {
         $data = array(
-            'dataKEGIATAN_KELAS' => $this->kegiatan->get_all()
         );
 
         $this->output_handler->output_JSON($data);
     }
 
     public function data() {
-        $data = $this->kelas->get_datatables();
+        $data = $this->jurusan->get_datatables();
 
         $this->output_handler->output_JSON($data);
     }
@@ -108,7 +87,7 @@ class Kelas extends CI_Controller {
     public function view() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $data = $this->kelas->get_by_id($post[$this->primaryKey]);
+        $data = $this->jurusan->get_by_id($post[$this->primaryKey]);
 
         $this->output_handler->output_JSON($data);
     }
@@ -116,7 +95,7 @@ class Kelas extends CI_Controller {
     public function save() {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->kelas->save($data);
+        $result = $this->jurusan->save($data);
 
         if (isset($data[$this->primaryKey]))
             $message = 'diubah';
@@ -129,14 +108,14 @@ class Kelas extends CI_Controller {
     public function delete() {
         $post = json_decode(file_get_contents('php://input'), true);
 
-        $result = $this->kelas->delete($post[$this->primaryKey]);
+        $result = $this->jurusan->delete($post[$this->primaryKey]);
         $message = 'dihapus';
 
         $this->output_handler->output_JSON($result, $message);
     }
 
     public function get_all() {
-        $data = $this->kelas->get_all();
+        $data = $this->jurusan->get_all();
 
         $this->output_handler->output_JSON($data);
     }
